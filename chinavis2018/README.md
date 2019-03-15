@@ -7,7 +7,7 @@
 ## 1.将email.csv的subject绘制词云，观察文本分布情况，可以首先筛除垃圾邮件;
 看到包含“ALARM”，“RECOVER”，“互联网资产监控报警”，“安全邮件崩溃”字样的邮件主题，这些我们明显不需要：
 
-![](/wrong_result1.png)
+![](/chinavis2018/res/wrong_result1.png)
 ![](/res/wrong_result2.png)
 
 ## 2.再者根据前二十高频词汇，也能尽量找到无用记录：
