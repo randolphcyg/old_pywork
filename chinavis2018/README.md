@@ -1,9 +1,9 @@
-# 20190314
 ## 0.参考资料
 * [Python + wordcloud + jieba 十分钟学会用任意中文文本生成词云](https://blog.csdn.net/fontthrone/article/details/72782971)
 * [Python词云 wordcloud 十五分钟入门与进阶](https://blog.csdn.net/fontthrone/article/details/72775865)
 * [Python中文分词 jieba 十五分钟入门与进阶](https://blog.csdn.net/fontthrone/article/details/72782499)
 * [jieba·PyPI](https://pypi.org/project/jieba/)
+# 1.数据预筛选和处理
 ## 1.将email.csv的subject绘制词云，观察文本分布情况，可以首先筛除垃圾邮件;
 看到包含“ALARM”，“RECOVER”，“互联网资产监控报警”，“安全邮件崩溃”字样的邮件主题，这些我们明显不需要：
 
@@ -77,4 +77,6 @@ api 0.15635222762432255
 
 ![](/chinavis2018/res/result1.png)
 
-## 5.将用户与主题词对应，初始化设置四个部门，进行分组
+# 2.邮件主题分类
+## 1.题目意思有三大部门：预定义了人力、财务、技术三个部门对主题初步分类；
+## 2.从收件人的角度建立分类的对应关键词表。我们采用 jieba 分词切分 subject 并与关键词表相匹配，得到每条 email 日志所对应的部门分类，为内部邮箱的收件地址打上部门大类的标签。
