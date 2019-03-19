@@ -45,7 +45,7 @@ def merge(path, csv_name, target_csv):
                                 reader = csv.reader(fr, dialect='excel', delimiter=',')  # 读取文件到list中
                                 try:
                                     for row in reader:
-                                        #print(row)
+                                        # print(row)
                                         if 'sport' in row:
                                             pass
                                         else:
@@ -68,7 +68,6 @@ def merge(path, csv_name, target_csv):
                                     sys.exit('file {}, line {}: {}'.format(csv_name, reader.line_num, e))
 def clean(target_csv, clean_csv):
     read_data = pd.read_csv(target_csv)  # 读取原始Email.csv
-    # print(read_data)
     read_data = read_data[~ read_data['subject'].str.contains('邮件')]  # 删除某列包含特殊字符的行
     read_data = read_data[~ read_data['subject'].str.contains('崩溃')]
     read_data = read_data[~ read_data['subject'].str.contains('HOST')]
@@ -79,21 +78,16 @@ def clean(target_csv, clean_csv):
     read_data = read_data[~ read_data['subject'].str.contains('澳門')]
     read_data = read_data[~ read_data['subject'].str.contains('38')]
     read_data = read_data[~ read_data['subject'].str.contains('群號')]
-    # print(read_data)
     read_data.to_csv(clean_csv, index=False)  # 将数据重新写入Email.csv
 def subject_to_txt(clean_txt, clean_csv):
-    f = open(clean_txt, 'w', encoding='utf_8')
+    f = open(clean_txt, 'w', encoding='utf_8')  # ’w' 覆盖写入模式，上次修改说明
 
     with open(clean_csv, encoding='utf_8', errors='ignore') as csvfile:
-        reader = csv.DictReader(csvfile)
+        reader = csv.DictReader(csvfile)    # 读成字典才能['subject']
         for row in reader:
-            # print(row['subject'])
-            # 将写入文件中
             f.write(row['subject'])
-            # 换行
             f.write("\n")
 def word_analysis(clean_txt):
-    # read_data = pd.read_csv(clean_csv_path)  # 读取清洗后的邮件数据
     with open(clean_txt, encoding='utf-8') as f:
         data = f.read()
     for keyword, weight in extract_tags(data, withWeight=True):
