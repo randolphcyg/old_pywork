@@ -27,5 +27,5 @@ Display和address字段都有可能反映人员信息，下面我们分别进行
 * [缺失值处理小例子](https://blog.csdn.net/u010924297/article/details/80060229)
 
 ## 20190319英文词云，观察词云处理数据
-![](/res/result.png)
+![](/chinavis2016/res/result.png)
 
