@@ -7,18 +7,27 @@
 
 import pandas as pd
 
-name1 = '../res/chinavis2016_data/a.bassi.csv'
+# name1 = '../res/chinavis2016_data/a.bassi.csv'
+name1 = '../res/a.bassi.csv'
 
 data = pd.read_csv(name1, encoding='ISO-8859-1')
-print(data['Subject'])
+print(data.columns)
 
-print(data['From (address)'])
+# data.fillna(0, inplace=True)
 
-result = data.loc[data['From (address)'].str.contains('O=HACKINGTEAM')]
-
+# print(data['From (display)']) # display
+# print(data['From (address)'])   # address
+# print(data['To (display)'])   # display
+# print(data['To (address)'])   # address
+# print(data['Cc (display)'])   # d就第一行不是空
+# print(data['Cc (address)'])   # 就第一行不是空
+# print(data['Bcc (display)'])
+# print(data['Bcc (address)'])
+# print(data['Attachment Names'])
+# 判断有缺失值的列 False的话就说明都赋值了
+print(data.isnull().any())
+data.dropna()
+result = data.loc[data['Subject'].str.contains('error')]
 print(result)
 
-# NAN的处理
-
-# 缺失值形成的原因：能否解决去读出来？？？
-# 读取不出来的话，会对计算结果产生影响么
+# NAN的处理：替换（改变文件）、删除（行或列）
