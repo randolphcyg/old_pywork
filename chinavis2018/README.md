@@ -7,7 +7,7 @@
 ## 1.将email.csv的subject绘制词云，观察文本分布情况，可以首先筛除垃圾邮件;
 看到包含“ALARM”，“RECOVER”，“互联网资产监控报警”，“安全邮件崩溃”字样的邮件主题，这些我们明显不需要：
 
-![](/chinavis2018/res/wrong_result1.png)
+![](/chinavis2018/res/wrong_result.png)
 
 ## 2.再者根据前二十高频词汇，也能尽量找到无用记录：
 ```
@@ -75,7 +75,7 @@ api 0.15635222762432255
 ```
 可以看到，借助词云和高频词我们已经基本剔除了无用数据，至此简单清洗数据工作完成
 
-![](/chinavis2018/res/result1.png)
+![](/chinavis2018/res/result.png)
 
 ## 5.补充说明 jiaba分词
 两点：使用邮件主题词txt（utf_8）、自定义词典subject_dict.txt（utf_8）
