@@ -7,11 +7,10 @@
 
 import pandas as pd
 
-# name1 = '../res/chinavis2016_data/a.bassi.csv'
-# name1 = '../res/test.csv'
-name1 = '../res/chinavis2016_data/a.capaldo.csv'
+name1 = '../res/chinavis2016_data/a.bassi.csv'
+# name1 = '../res/chinavis2016_data/a.capaldo.csv'
 
-data = pd.read_csv(name1, encoding='ISO-8859-1')
+data = pd.read_csv(name1, encoding='ISO-8859-1', error_bad_lines=False)
 # gbk gb18030   # ISO-8859-1编码会导致俄文符号错误显示
 data.fillna(value='0', inplace=True)
 
@@ -32,9 +31,9 @@ cc_set = set(cc_result['Cc (display)'])
 bcc_set = set(bcc_result['Bcc (display)'])  # 缺失值给字符串
 
 
-def getnamelist(set):
+def getnamelist(source_set):
     namelist = []
-    for name in set:
+    for name in source_set:
         list_name = name.split(';')
         for item in list_name:
             namelist.append(item)
@@ -77,7 +76,7 @@ for name in clear_resultlist:
     print(name)
 
 
-f = open('../res/display_list', 'w', encoding='utf_8', errors='ignore')
-for name in clear_resultlist:
-    pass
-f.close()
+# f = open('../res/display_list', 'w', encoding='utf_8', errors='ignore')
+# for name in clear_resultlist:
+#     pass
+# f.close()

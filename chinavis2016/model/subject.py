@@ -5,7 +5,6 @@
 # @File    : subject.py
 # @Software: PyCharm
 
-import pandas as pd
 import csv
 import jieba
 import imageio
@@ -17,36 +16,38 @@ font_path = 'C:/Windows/Fonts/simkai.ttf'
 back_coloring_path = "../res/bg.png"
 img = "../res/result.png"
 stopwords = '../res/stop_words_eng.txt'
-path = '../res/a.bassi.csv'
+path = '../res/convert_a.bassi.csv'
 text_path = '../res/subject.txt'
 
-# def subject_to_txt(subject_txt, path):
-#     f = open(subject_txt, 'w', encoding='utf_8')    # 保存的txt
-#     with open(path, encoding='utf_8', errors='ignore') as csvfile:  # 处理的csv
-#         reader = csv.DictReader(csvfile)    # 读成字典
-#         for row in reader:
-#             f.write(row['Subject'])
-#             f.write("\n")
-# subject_to_txt(subject_txt, path)
+
+def subject_to_txt(subject_txt, path):
+    f = open(subject_txt, 'w', encoding='utf_8')    # 保存的txt
+    with open(path, encoding='utf_8', errors='ignore') as csvFile:  # 处理的csv
+        reader = csv.DictReader(csvFile)    # 读成字典
+        for row in reader:
+            f.write(row['subject'])
+            f.write("\n")
+
 
 def clear(text_path, stopwords):
     # jieba.load_userdict(subject_dict)
-    mywordlist = []
+    words_list = []
     seg_list = jieba.cut(text_path, cut_all=False)
-    liststr = "/ ".join(seg_list)
-    print(liststr)
+    str_list = "/ ".join(seg_list)
+    print(str_list)
     f_stop = open(stopwords, encoding='utf_8', errors='ignore')
     try:
         f_stop_text = f_stop.read()
     finally:
         f_stop.close()
     f_stop_seg_list = f_stop_text.split('\n')
-    for myword in liststr.split('/'):
-        if not (myword.strip() in f_stop_seg_list) and len(myword.strip()) > 1:
-            mywordlist.append(myword)
-    # for row in mywordlist:
-    #     print(row)
-    return ''.join(mywordlist)
+    for word in str_list.split('/'):
+        if not (word.strip() in f_stop_seg_list) and len(word.strip()) > 1:
+            words_list.append(word)
+    for row in words_list:
+        print(row)
+    return ''.join(words_list)
+
 
 def subject_word_cloud():
     back_coloring = imageio.imread(back_coloring_path)
@@ -58,7 +59,7 @@ def subject_word_cloud():
                    max_font_size=80,
                    random_state=42,
                    width=1000, height=860, margin=2,
-    )
+                   )
     text = open(text_path, encoding='utf_8', errors='ignore').read()
     text = clear(text, stopwords)
 
@@ -70,5 +71,7 @@ def subject_word_cloud():
     plt.show()
     wc.to_file(img)
 
+
 if __name__ == "__main__":
+    subject_to_txt(text_path, path)
     subject_word_cloud()
