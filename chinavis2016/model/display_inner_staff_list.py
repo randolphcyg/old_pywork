@@ -7,28 +7,26 @@
 
 import pandas as pd
 
-name1 = '../res/chinavis2016_data/a.bassi.csv'
-# name1 = '../res/chinavis2016_data/a.capaldo.csv'
+name1 = '../res/chinavis2016_data/convert_a.bassi.csv'  # a.capaldo.csv
 
-data = pd.read_csv(name1, encoding='ISO-8859-1', error_bad_lines=False)
-# gbk gb18030   # ISO-8859-1编码会导致俄文符号错误显示
+data = pd.read_csv(name1, encoding='utf-8', error_bad_lines=False)
+
 data.fillna(value='0', inplace=True)
 
-# from的display  # , na=False给个缺失值标志
-from_result = data.loc[data['From (address)'].str.contains(
-    'O=HACKINGTEAM' or '@hackingteam.it' or '@hackingteam.com', na=False)]
-to_result = data.loc[data['To (address)'].str.contains(
-    'O=HACKINGTEAM' or '@hackingteam.it' or '@hackingteam.com', na=False)]
-cc_result = data.loc[data['Cc (address)'].str.contains(
-    'O=HACKINGTEAM' or '@hackingteam.it' or '@hackingteam.com', na=False)]
-bcc_result = data.loc[data['Bcc (address)'].str.contains(
-    'O=HACKINGTEAM' or '@hackingteam.it' or '@hackingteam.com', na=False)]
+from_result = data.loc[data['from (address)'].str.contains(
+    'o=hackingteam' or '@hackingteam.it' or '@hackingteam.com', na=False)]
+to_result = data.loc[data['to (address)'].str.contains(
+    'o=hackingteam' or '@hackingteam.it' or '@hackingteam.com', na=False)]
+cc_result = data.loc[data['cc (address)'].str.contains(
+    'o=hackingteam' or '@hackingteam.it' or '@hackingteam.com', na=False)]
+bcc_result = data.loc[data['bcc (address)'].str.contains(
+    'o=hackingteam' or '@hackingteam.it' or '@hackingteam.com', na=False)]
 
 # 集合去重得到每个address对应的display
-from_set = set(from_result['From (display)'])
-to_set = set(to_result['To (display)'])
-cc_set = set(cc_result['Cc (display)'])
-bcc_set = set(bcc_result['Bcc (display)'])  # 缺失值给字符串
+from_set = set(from_result['from (display)'])
+to_set = set(to_result['to (display)'])
+cc_set = set(cc_result['cc (display)'])
+bcc_set = set(bcc_result['bcc (display)'])  # 缺失值给字符串
 
 
 def getnamelist(source_set):
@@ -76,7 +74,7 @@ for name in clear_resultlist:
     print(name)
 
 
-# f = open('../res/display_list', 'w', encoding='utf_8', errors='ignore')
-# for name in clear_resultlist:
-#     pass
-# f.close()
+f = open('../res/display_list', 'w', encoding='utf_8', errors='ignore')
+for name in clear_resultlist:
+    pass
+f.close()
