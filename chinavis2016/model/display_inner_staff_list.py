@@ -68,9 +68,35 @@ def core():
         for name in clear_namelist:
             if name in employees:
                 pass
+            # elif name == "mauro.romeo hackingteam":
+            #     print('>>>>>>>>>>>>>>>>>>>', file, '<<<<<<<<<<<<<<<<<<')
             else:
                 employees.append(name)
         print(len(employees))
+
+    # if '.com' in name:
+    #     name = name.split(' ')[0]
+    #     employees.append(name)
+    # elif 'hackingteam' in name:
+    #     name = name.split(' ')[0]
+    #     employees.append(name)
+    # else:
+    #     name = ' '.join(name.split('.'))
+    #     employees.append(name)
+
+    ## 修正列表
+
+    # for employee in employees:
+    #     if '.com' in employees:
+    #             employee = employee.split(' ')[0]
+    #             open_save_file.write(employee + '\n')
+    #     elif 'hackingteam' in employees:
+    #         employee = employee.split(' ')[0]
+    #         open_save_file.write(employee + '\n')
+    #
+    #     ' '.join(employee.split('.'))
+    #     open_save_file.write(employee + '\n')
+
     for employee in employees:
         open_save_file.write(employee + '\n')
     open_save_file.close()
