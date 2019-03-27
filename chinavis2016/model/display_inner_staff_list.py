@@ -7,7 +7,7 @@
 
 import pandas as pd
 
-name1 = '../res/chinavis2016_data/convert_a.bassi.csv'  # a.capaldo.csv
+name1 = '../res/chinavis2016_data/convert_a.capaldo.csv'  # a.capaldo.csv
 
 data = pd.read_csv(name1, encoding='utf-8', error_bad_lines=False)
 
@@ -15,18 +15,18 @@ data.fillna(value='0', inplace=True)
 
 from_result = data.loc[data['from (address)'].str.contains(
     'o=hackingteam' or '@hackingteam.it' or '@hackingteam.com', na=False)]
-to_result = data.loc[data['to (address)'].str.contains(
-    'o=hackingteam' or '@hackingteam.it' or '@hackingteam.com', na=False)]
-cc_result = data.loc[data['cc (address)'].str.contains(
-    'o=hackingteam' or '@hackingteam.it' or '@hackingteam.com', na=False)]
-bcc_result = data.loc[data['bcc (address)'].str.contains(
-    'o=hackingteam' or '@hackingteam.it' or '@hackingteam.com', na=False)]
+# to_result = data.loc[data['to (address)'].str.contains(
+#     'o=hackingteam' or '@hackingteam.it' or '@hackingteam.com', na=False)]
+# cc_result = data.loc[data['cc (address)'].str.contains(
+#     'o=hackingteam' or '@hackingteam.it' or '@hackingteam.com', na=False)]
+# bcc_result = data.loc[data['bcc (address)'].str.contains(
+#     'o=hackingteam' or '@hackingteam.it' or '@hackingteam.com', na=False)]
 
 # 集合去重得到每个address对应的display
 from_set = set(from_result['from (display)'])
-to_set = set(to_result['to (display)'])
-cc_set = set(cc_result['cc (display)'])
-bcc_set = set(bcc_result['bcc (display)'])  # 缺失值给字符串
+# to_set = set(to_result['to (display)'])
+# cc_set = set(cc_result['cc (display)'])
+# bcc_set = set(bcc_result['bcc (display)'])  # 缺失值给字符串
 
 
 def getnamelist(source_set):
@@ -38,8 +38,10 @@ def getnamelist(source_set):
     return namelist
 
 
-resultlist0 = getnamelist(from_set) + getnamelist(to_set) + \
-    getnamelist(cc_set) + getnamelist(bcc_set)
+resultlist0 = getnamelist(from_set)# + \
+              # getnamelist(to_set) + \
+              # getnamelist(cc_set) + \
+              # getnamelist(bcc_set)
 resultlist0 = set(resultlist0)
 print(len(resultlist0))
 # for name in resultlist0:
@@ -74,7 +76,7 @@ for name in clear_resultlist:
     print(name)
 
 
-f = open('../res/display_list', 'w', encoding='utf_8', errors='ignore')
+f = open('../res/display_list.txt', 'w', encoding='utf_8', errors='ignore')
 for name in clear_resultlist:
-    pass
+    f.write(name+'\n')
 f.close()

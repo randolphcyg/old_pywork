@@ -1,81 +1,60 @@
-alessandro scarafile
-christian pozzi
-sergio solis
-philippe antoine vinci
-lorenzo invernizzi
-ask
-david vincenzetti
-lucia rana
-bruno muschitiello
-rsales
-kernel
-serge woon
-alex velasco
-media
-luca guerra
-alor
 emanuele placidi
-alessandro bassi
-ivan speziale
-daniele molteni
-elisabetta ciceri
-eduardo pardo carvajal
-massimiliano luppi
-vt
-walter furlan
-e.marcon
-matteo oliva
-eugene ho
-rosario armando viscardi
-marketing
-vt@seclab.it
-amministrazione
-ht
-marco losito
-andrea di pasquale
-alberto ornaghi
-staff
-giancarlo russo
-g.pavarani
-simonetta gallucci
-fae
-netsec
-enrico parentini
-rcs-support
-kamarul zamani
-g.russo
-fabrizio cornelli
-marco fontana
-cristian vardaro
-sergio rodriguez-sol¨ªs y guerrero
-fabio busatto
-antonio mazzeo
-alessandra mino
-emad shehata
-m.bettini
-daniel maglietta
-mauro romeo
-kiodo
-delivery
-eric rabe
+marco catino
 massimo chiodini
-fred dalessio
-topac
+eric rabe
+matteo oliva
 antonella capaldo
-giovanni cino
-eros marcon
-qa
-ornella-dev
-diego giubertoni
-davide romualdi
-kamarul zamani baharudin
-marco valleri
-marco bettini
-pavarang hackingteam
+lorenzo invernizzi
+eugene ho
+sara galvagna
+alessandro bassi
+luca guerra
 daniel martinez moreno
-sergeyun@gmail.com
-support
-l.rana
-daniele
+giovanni cino
+cristian vardaro
+rosario armando viscardi
+fulvio de giovanni
+pavarang hackingteam
+massimiliano luppi
+antonio mazzeo
+fulvio
+walter furlan
+alessandra mino
+alberto ornaghi
+diego giubertoni
+fabio busatto
+ivan speziale
+marco bettini
+sergio rodriguez-sol¨ªs y guerrero
+daniele molteni
+microsoft outlook
+mauro romeo
+andrea di pasquale
+amministrazione
+fabrizio cornelli
+valeriano bedeschi
+bruno muschitiello
+marco fontana
+alberto pelliccione
+stefania iannelli
+enrico parentini
+philippe antoine vinci
+alex velasco
 daniele milan
-zeno
+eduardo pardo carvajal
+lucia rana
+mostapha maanna
+serge woon
+marco valleri
+alessandro scarafile
+marco losito
+giancarlo russo
+elisabetta ciceri
+guido landi
+christian pozzi
+daniel maglietta
+simonetta gallucci
+emad shehata
+david vincenzetti
+davide romualdi
+eros marcon
