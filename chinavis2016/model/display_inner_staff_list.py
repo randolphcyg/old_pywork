@@ -6,27 +6,10 @@
 # @Software: PyCharm
 
 import pandas as pd
+import os.path
 
-name1 = '../res/chinavis2016_data/convert_a.capaldo.csv'  # a.capaldo.csv
-
-data = pd.read_csv(name1, encoding='utf-8', error_bad_lines=False)
-
-data.fillna(value='0', inplace=True)
-
-from_result = data.loc[data['from (address)'].str.contains(
-    'o=hackingteam' or '@hackingteam.it' or '@hackingteam.com', na=False)]
-# to_result = data.loc[data['to (address)'].str.contains(
-#     'o=hackingteam' or '@hackingteam.it' or '@hackingteam.com', na=False)]
-# cc_result = data.loc[data['cc (address)'].str.contains(
-#     'o=hackingteam' or '@hackingteam.it' or '@hackingteam.com', na=False)]
-# bcc_result = data.loc[data['bcc (address)'].str.contains(
-#     'o=hackingteam' or '@hackingteam.it' or '@hackingteam.com', na=False)]
-
-# 集合去重得到每个address对应的display
-from_set = set(from_result['from (display)'])
-# to_set = set(to_result['to (display)'])
-# cc_set = set(cc_result['cc (display)'])
-# bcc_set = set(bcc_result['bcc (display)'])  # 缺失值给字符串
+path = '../res/chinavis2016_data'
+save_file = '../res/display_list.txt'
 
 
 def getnamelist(source_set):
@@ -38,45 +21,58 @@ def getnamelist(source_set):
     return namelist
 
 
-resultlist0 = getnamelist(from_set)# + \
-              # getnamelist(to_set) + \
-              # getnamelist(cc_set) + \
-              # getnamelist(bcc_set)
-resultlist0 = set(resultlist0)
-print(len(resultlist0))
-# for name in resultlist0:
-#     print(name)
-resultlist = []
-for name in resultlist0:
-    name = name.replace('\'', '')
-    resultlist.append(name)
-    # print(name)
-resultlist = set(resultlist)
-print(len(resultlist))
-# for name in resultlist:
-#     print(name)
-clear_resultlist = []
-for name in resultlist:
-    if '@hackingteam.it' in name:
-        name = name.replace('@hackingteam.it', '')
-        clear_resultlist.append(name)
-    elif '@hackingteam.com' in name:
-        name = name.replace('@hackingteam.com', '')
-        clear_resultlist.append(name)
-    elif ' hackingteam.it' in name:
-        name = name.replace(' hackingteam.it', '')
-        clear_resultlist.append(name)
-    else:
-        clear_resultlist.append(name)
+def core():
+    open_save_file = open(save_file, 'w', encoding='utf_8', errors='ignore')
+    employees = []
+    for i, f in enumerate(os.listdir(path)):
+        file = os.path.join('../res/chinavis2016_data/', f)
+        print('正在处理第', i + 1, '个文件', file, '：')
+        data = pd.read_csv(file, encoding='utf-8', error_bad_lines=False)
+        data.fillna(value='0', inplace=True)
 
-clear_resultlist = set(clear_resultlist)
-print(len(clear_resultlist))
+        from_result = data.loc[data['from (address)'].str.contains(
+            'o=hackingteam' or '@hackingteam.it' or '@hackingteam.com', na=False)]
+        from_set = set(from_result['from (display)'])
 
-for name in clear_resultlist:
-    print(name)
+        fromlist = getnamelist(from_set)
+        fromlist = set(fromlist)
+        print(len(fromlist))
 
+        namelist = []
+        for name in fromlist:
+            name = name.replace('\'', '')
+            namelist.append(name)
+        namelist = set(namelist)
+        print(len(namelist))
 
-f = open('../res/display_list.txt', 'w', encoding='utf_8', errors='ignore')
-for name in clear_resultlist:
-    f.write(name+'\n')
-f.close()
+        clear_namelist = []
+        for name in namelist:
+            if '@hackingteam.it' in name:
+                name = name.replace('@hackingteam.it', '')
+                clear_namelist.append(name)
+            elif '@hackingteam.com' in name:
+                name = name.replace('@hackingteam.com', '')
+                clear_namelist.append(name)
+            elif ' hackingteam.it' in name:
+                name = name.replace(' hackingteam.it', '')
+                clear_namelist.append(name)
+            else:
+                clear_namelist.append(name)
+
+        clear_namelist = set(clear_namelist)
+        print(len(clear_namelist))
+
+        # for name in clear_namelist:
+        #     print(name)
+
+        for name in clear_namelist:
+            if name in employees:
+                pass
+            else:
+                employees.append(name)
+        print(len(employees))
+    for employee in employees:
+        open_save_file.write(employee + '\n')
+    open_save_file.close()
+if __name__ == "__main__":
+    core()
