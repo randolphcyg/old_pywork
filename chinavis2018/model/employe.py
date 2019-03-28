@@ -105,6 +105,7 @@ def word_analysis(clean_txt):
     with open(clean_txt, encoding='utf-8') as f:
         data = f.read()
     for keyword, weight in extract_tags(data, withWeight=True):
+        print(data)
         print('%s %s' % (keyword, weight))
 
 

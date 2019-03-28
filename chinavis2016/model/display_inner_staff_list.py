@@ -84,7 +84,7 @@ def core():
     #     name = ' '.join(name.split('.'))
     #     employees.append(name)
 
-    ## 修正列表
+    # 修正列表
 
     # for employee in employees:
     #     if '.com' in employees:
@@ -100,5 +100,7 @@ def core():
     for employee in employees:
         open_save_file.write(employee + '\n')
     open_save_file.close()
+
+
 if __name__ == "__main__":
     core()

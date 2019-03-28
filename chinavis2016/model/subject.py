@@ -10,6 +10,7 @@ import jieba
 import imageio
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud, ImageColorGenerator
+from jieba.analyse import *
 
 # subject_dict = ''
 font_path = 'C:/Windows/Fonts/simkai.ttf'
@@ -34,7 +35,7 @@ def clear(text_path, stopwords):
     words_list = []
     seg_list = jieba.cut(text_path, cut_all=False)
     str_list = "/ ".join(seg_list)
-    print(str_list)
+    # print(str_list)
     f_stop = open(stopwords, encoding='utf_8', errors='ignore')
     try:
         f_stop_text = f_stop.read()
@@ -44,8 +45,8 @@ def clear(text_path, stopwords):
     for word in str_list.split('/'):
         if not (word.strip() in f_stop_seg_list) and len(word.strip()) > 1:
             words_list.append(word)
-    for row in words_list:
-        print(row)
+    # for row in words_list:
+    #     print(row)
     return ''.join(words_list)
 
 
@@ -72,6 +73,14 @@ def subject_word_cloud():
     wc.to_file(img)
 
 
+def word_analysis():
+    text = open(text_path, encoding='utf_8', errors='ignore').read()
+    text = clear(text, stopwords)  # 送值，分词，去停用词，加载自定义词典
+    for keyword, weight in extract_tags(text, withWeight=True):
+        print('%s %s' % (keyword, weight))
+
+
 if __name__ == "__main__":
-    subject_to_txt(text_path, path)
-    subject_word_cloud()
+    # subject_to_txt(text_path, path)
+    # subject_word_cloud()
+    word_analysis()

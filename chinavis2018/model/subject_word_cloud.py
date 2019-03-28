@@ -10,6 +10,7 @@ import imageio
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud, ImageColorGenerator
 
+
 # 公共路径
 back_coloring_path = "../res/bg.png"  # 设置背景图片路径
 font_path = 'C:/Windows/Fonts/simkai.ttf'  # 为matplotlib设置中文字体路径
@@ -74,6 +75,7 @@ def subject_word_cloud():
     plt.axis("off")
     plt.show()  # 绘制词云
     wc.to_file(img)    # 保存图片
+
 
 
 if __name__ == "__main__":
