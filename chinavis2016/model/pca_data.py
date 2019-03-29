@@ -13,6 +13,7 @@ import imageio
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud, ImageColorGenerator
 from jieba.analyse import *
+from sklearn.feature_extraction.text import CountVectorizer
 
 
 file = '../res/convert_a.bassi.csv'
@@ -34,6 +35,7 @@ def core():
 
     for i, subject in enumerate(train_x_list):
         # 选择内部邮箱
+        mail_list = []
         subject_list = []
         f = open(text_path, 'a', encoding='utf_8')  # 保存的txt
         if 'o=hackingteam' in subject[:][:][2] or \
@@ -42,6 +44,9 @@ def core():
             # print(subject[:][:][2])   # 地址
             # print(subject[0][:][:])  # 主题
             # print(subject[:][1][:])  # 邮箱
+            mail = subject[:][1][:]
+            mail_list.append(mail)
+
             string = subject[0][:][:]
             if ']: ' in string:
                 string = string.split(']: ')[1]
@@ -58,10 +63,16 @@ def core():
         else:
             pass
         # 写入文件
-        for s in subject_list:
-            print('正在写入', s)
-            f.write(s + '\n')
-        f.close()
+        # for s in subject_list:
+        #     print('正在写入', s)
+        #     f.write(s + '\n')
+        # f.close()
+
+        print(mail_list)
+        print(subject_list)
+
+
+word_file = '../res/word_list.txt'
 
 
 def clear(text_path, stopwords):
@@ -81,6 +92,11 @@ def clear(text_path, stopwords):
             words_list.append(word)
     # for row in words_list:
     #     print(row)
+    print(''.join(words_list))  # 去停用次 词汇表
+    # print(type(''.join(words_list)))  # str
+    f = open(word_file, 'a', encoding='utf_8')  # 保存的txt
+    f.write(''.join(words_list))
+    f.close()
     return ''.join(words_list)
 
 
@@ -112,30 +128,55 @@ def select_subject():
     text = clear(text, stopwords)  # 送值，分词，去停用词，加载自定义词典
     for keyword, weight in extract_tags(text, withWeight=True):
         print('%s %s' % (keyword, weight))
-# # 加载数据集
-# from sklearn import datasets
-# digits = datasets.load_digits()
-#
-# print(digits)
-# x = digits.data
-#
-# print(x)
-# y = digits.target
-#
-# # 调用pca
-# from sklearn import decomposition
-# pca = decomposition.PCA()
-# pca.fit(x)
 
-# # 绘图
-# import matplotlib.pyplot as plt
-# plt.figure()
-# plt.plot(pca.explained_variance_, 'k', linewidth=2)
-# plt.xlabel('n_components', fontsize=16)
-# plt.ylabel('explained_variance_', fontsize=16)
-# plt.show()
+pca_data_path = '../res/pca_data.txt'
+def pca():
+    f = open(pca_data_path, 'a', encoding='utf_8')  # 保存的txt
+    # 加载数据集
+    from sklearn import datasets
+    digits = datasets.load_digits()
+    digits = list(digits.values())
+    for d in digits:
+        for data in d:
+            print(data)
+            # f.write(data)
+        # print(d)
+
+        # print(digits)
+    # print(type(digits))
+    # print(digits['data'])
+    # 五列： data target target_names images DESCR
+
+
+    f.close()
+
+
+
+    # x = digits.data
+    # print(type(x))  # <class 'numpy.ndarray'>
+    # print(x)
+    # y = digits.target
+    # print(y)
+    # 调用pca
+    # from sklearn import decomposition
+    # pca = decomposition.PCA()
+    # pca.fit(x)
+
+    # 绘图
+    # import matplotlib.pyplot as plt
+    # plt.figure()
+    # plt.plot(pca.explained_variance_, 'k', linewidth=2)
+    # plt.xlabel('n_components', fontsize=16)
+    # plt.ylabel('explained_variance_', fontsize=16)
+    # plt.show()
 
 
 if __name__ == "__main__":
-    # subject_word_cloud()
-    select_subject()
+    #　subject_word_cloud()
+    # select_subject()
+    # pca()
+    # core()
+
+    text = open(text_path, encoding='utf_8', errors='ignore').read()
+    text = clear(text, stopwords)
+

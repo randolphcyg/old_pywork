@@ -5,19 +5,30 @@
 # @File    : check.py
 # @Software: PyCharm
 
-# save_file = '../res/display_list.txt'
-# open_save_file = open(save_file, 'r', encoding='utf_8', errors='ignore')
-#
-# for i, line in enumerate(open_save_file):
-#     #print(i, line)
-#     if line in open_save_file:
-#         print(line, '已经存在')
-#     else:
-#         print(line)
+import pandas as pd
+import numpy as np
+from sklearn.feature_extraction.text import CountVectorizer
 
-# str1 = "emanuele.levi".split('.')
-# str2 = ' '.join(str1)
-# print(str2)
 
-str3 = 'jlejuez moorelandpartners.com'.split(' ')
-print(str3[0])
+text_path = '../res/word_list.txt'
+
+# 矢量对象<class 'sklearn.feature_extraction.text.CountVectorizer'>
+v = CountVectorizer(min_df=1e-5)    # 去低频词
+
+data = open(text_path, encoding='utf-8', errors='ignore').read()
+print(data)
+corpus = []
+corpus.append(data)
+print(type(corpus))
+print(corpus)
+print(type(data))
+
+X = v.fit_transform(corpus)
+print(type(X.toarray()))
+print(X.toarray())
+df = X.toarray()
+# 用numpy将datafarame转换成list
+train_data = np.array(df)  # np.ndarray()
+train_x_list = train_data.tolist()  # list
+for line in train_x_list:
+    print(line)
