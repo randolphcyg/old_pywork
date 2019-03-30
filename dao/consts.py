@@ -12,6 +12,12 @@ USERNAME = 'root'
 PASSWORD = '3588'
 CHARSET = 'utf8'
 
-DB_URI = 'mysql://{}:{}@{}/{}'.format(
-    USERNAME, PASSWORD, HOSTNAME, DATABASE, CHARSET
-)
+MYSQL_URI = 'mysql://{}:{}@{}/{}'.format(HOSTNAME,
+                                         DATABASE, USERNAME, PASSWORD)
+
+MONGODBPORT = 27017
+
+# 'mongodb://127.0.0.1:27017/'
+MONGODB_URI = 'mongodb://{}:{}'.format(HOSTNAME, MONGODBPORT)
+
+print(MONGODB_URI)

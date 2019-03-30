@@ -53,6 +53,6 @@ def modify_country(cursor, db):
 
 
 if __name__ == "__main__":
-    # find_country(cur)
+    find_country(cur)
     # modify_country(cur, con)  # 传全局游标
     con.close()  # 关闭数据库放在操作后
