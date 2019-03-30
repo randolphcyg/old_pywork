@@ -4,7 +4,9 @@
 # @Email   : cyg0504@outlook.com
 # @File    : check.py
 # @Software: PyCharm
+
 # https://www.jianshu.com/p/dc00a5d597ed
+
 from sklearn.ensemble import RandomForestClassifier
 from sklearn import preprocessing
 from sklearn.feature_extraction.text import TfidfTransformer
@@ -63,8 +65,6 @@ test_set = tfidf[1000:]
 
 
 # 载入随机森林分类器
-
-# 随机森林分类器
 
 
 # rf_model = RandomForestClassifier(n_estimators=200, random_state=1080)

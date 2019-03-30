@@ -5,13 +5,3 @@
 # @File    : test.py
 # @Software: PyCharm
 
-import numpy as np
-
-
-# str = '[!bja-272-30493]: issue'
-
-# print(str.split(']: ')[1])
-
-a = 1
-
-print(a)
