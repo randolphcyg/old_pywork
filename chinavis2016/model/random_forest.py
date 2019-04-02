@@ -51,7 +51,7 @@ print("tf-idf shape: ({0},{1})".format(tfidf.shape[0], tfidf.shape[1]))
 # 标签数字化，抽取数据
 
 
-# # encode label
+# encode label
 # corpus_label = tarin_label + val_label + test_label
 # encoder = preprocessing.LabelEncoder()
 # corpus_encode_label = encoder.fit_transform(corpus_label)
@@ -59,9 +59,9 @@ print("tf-idf shape: ({0},{1})".format(tfidf.shape[0], tfidf.shape[1]))
 # val_label = corpus_encode_label[50000:55000]
 # test_label = corpus_encode_label[55000:]
 # get tf-idf dataset
-train_set = tfidf[:500]
-val_set = tfidf[500:1000]
-test_set = tfidf[1000:]
+# train_set = tfidf[:500]
+# val_set = tfidf[500:1000]
+# test_set = tfidf[1000:]
 
 
 # 载入随机森林分类器
