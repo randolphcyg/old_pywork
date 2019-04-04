@@ -12,18 +12,19 @@ import os.path
 from collections import Counter
 
 path = '../res/chinavis2016_data'
-all_subject_txt = '../res/all_subject.txt'
 stopwords = '../res/stop_words_eng.txt'
-all_subject_txt_words = '../res/all_subject_words.txt'
-all_subject_txt_words2 = '../res/all_subject_words.txt'
+
+all_subject_txt = '../res/results/all_subject.txt'
+all_subject_txt_words = '../res/results/all_subject_words.txt'
+# all_subject_txt_words2 = '../res/results/all_subject_words2.txt'
 all_subject_txt_words_100 = '../res/all_subject_words_100.txt'
 
 
 def is_number(s):
     """
     判断是否为数字
-    :param s:
-    :return:
+    :param s:字符串
+    :return:T OR F
     """
     try:
         float(s)
@@ -42,24 +43,17 @@ def is_number(s):
 def manual_clear_subject(str):
     """
     传主题 反清洗过主题
-    :param str:
-    :return:
+    :param str:字符串
+    :return:字符串
     """
-    while 're: ' in str or 'r: ' in str:
+    while 're: ' in str or 'r: ' in str or 'i:' in str:
         str = ' '.join(str.split(' ')[1:])
-    # print('第一步，去掉re：' + str)
-
     if '[vtmis]' in str:
         str = ' '.join(str.split(' ')[1:])
-    #　print('第二步，去掉[vtmis]' + str)
-
-    if '[!' in str or '[!' in str:
+    if '[!' in str:
         str = ' '.join(str.split(' ')[1:])
-    # print('第三步，去掉[*]:' + str)
-    # print(str)
-    if str == 'r:':
-        pass
-    if is_number(str):
+    # 忽略空回复、空格、数字
+    if str == 'r:' or is_number(str):
         pass
     return str
 
@@ -72,7 +66,8 @@ def save_subject(save, content):
     :return:
     """
     f = open(save, 'a', encoding='utf_8')
-    f.write(content +' ')
+    # f.write(content + '\n')     # 拿主题，手清理
+    f.write(content + ' ')      # 主题分词，词汇空一格即可
     f.close()
 
 
@@ -84,9 +79,9 @@ def read_all_sub_csv(save_path):
     for i, source_file in enumerate(os.listdir(path)):
         print('正在读取第', i + 1, '个文件', source_file, '：')
         source_path = os.path.join(path, source_file)
-        f = open(save_path, 'a', encoding='utf_8')  # 保存的txt
-        with open(source_path, encoding='utf_8', errors='ignore') as csvFile:  # 处理的csv
-            reader = csv.DictReader(csvFile)  # 读成字典
+        f = open(save_path, 'a', encoding='utf_8')
+        with open(source_path, encoding='utf_8', errors='ignore') as csvFile:
+            reader = csv.DictReader(csvFile)
             for i, row in enumerate(reader):
                 subject = row['subject']
                 # 调用手动清理函数和文件写入函数
@@ -95,12 +90,10 @@ def read_all_sub_csv(save_path):
 
 
 def clear(text_path, stopwords, save_path):
-    # jieba.load_userdict(subject_dict)
     words_list = []
     seg_list = jieba.cut(text_path, cut_all=False)
     str_list = "/ ".join(seg_list)
-    # print(str_list)
-    f_stop = open(stopwords, encoding='utf_8', errors='ignore')
+    f_stop = open(stopwords, encoding='utf_8', errors='ignore')     # 停用词
     try:
         f_stop_text = f_stop.read()
     finally:
@@ -111,34 +104,38 @@ def clear(text_path, stopwords, save_path):
             words_list.append(word)
 
     for i, row in enumerate(words_list):
-        print(i, row)
+        # print(i, row)
         save_subject(save_path, row)
 
     return ''.join(words_list)
 
 
-def word_analysis():
-    word_dict = {}
-    words = open(all_subject_txt_words, encoding='utf_8', errors='ignore').read()
-    # print(words)
-    if words in word_dict:
-        word_dict[words] += 1
-    else:
-        word_dict[words] = 1
-
-    count = Counter(word_dict)
-    for l in count.most_common()[:10]:
-        # print(type(l))
-        for con in l:
-            print(count.most_common()[:10])
-        # save_subject(all_subject_txt_words_100, l)
-    # print(count.most_common()[:10])
+# def word_analysis():
+#     word_dict = {}
+#     words = open(
+#         all_subject_txt_words,
+#         encoding='utf_8',
+#         errors='ignore').read()
+#     # print(words)
+#     if words in word_dict:
+#         word_dict[words] += 1
+#     else:
+#         word_dict[words] = 1
+#
+#     count = Counter(word_dict)
+#     for l in count.most_common()[:10]:
+#         # print(type(l))
+#         for con in l:
+#             print(count.most_common()[:10])
+#         # save_subject(all_subject_txt_words_100, l)
+#     # print(count.most_common()[:10])
 
 
 if __name__ == "__main__":
     # 主题清洗保存 all_subject
-    # read_all_sub_csv(all_subject_txt)
+    read_all_sub_csv(all_subject_txt)
+
     # 主题分词 all_subject_words
-    text = open(all_subject_txt, encoding='utf_8', errors='ignore').read()
-    text = clear(text, stopwords, all_subject_txt_words)  # 送值，分词，去停用词，加载自定义词典
+    # text = open(all_subject_txt, encoding='utf_8', errors='ignore').read()
+    # text = clear(text, stopwords, all_subject_txt_words2)  # 送值，分词，去停用词，加载自定义词典
     # word_analysis()
