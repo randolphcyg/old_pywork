@@ -10,6 +10,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="100-Days-Of-ML-Code-master" />
     <orderEntry type="module" module-name="Email_Ana" />
+    <orderEntry type="module" module-name="chinese_text_classification-master" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="renderExternalDocumentation" value="true" />

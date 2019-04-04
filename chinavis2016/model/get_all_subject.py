@@ -7,16 +7,44 @@
 
 import csv
 import jieba
+from jieba.analyse import *
 import os.path
+from collections import Counter
 
 path = '../res/chinavis2016_data'
 all_subject_txt = '../res/all_subject.txt'
-# all_subject_txt = 'all_subject.txt'
 stopwords = '../res/stop_words_eng.txt'
-save_path = 'all_subject_words.txt'
+all_subject_txt_words = '../res/all_subject_words.txt'
+all_subject_txt_words2 = '../res/all_subject_words.txt'
+all_subject_txt_words_100 = '../res/all_subject_words_100.txt'
+
+
+def is_number(s):
+    """
+    判断是否为数字
+    :param s:
+    :return:
+    """
+    try:
+        float(s)
+        return True
+    except ValueError:
+        pass
+    try:
+        import unicodedata
+        unicodedata.numeric(s)
+        return True
+    except (TypeError, ValueError):
+        pass
+    return False
+
 
 def manual_clear_subject(str):
-
+    """
+    传主题 反清洗过主题
+    :param str:
+    :return:
+    """
     while 're: ' in str or 'r: ' in str:
         str = ' '.join(str.split(' ')[1:])
     # print('第一步，去掉re：' + str)
@@ -31,13 +59,20 @@ def manual_clear_subject(str):
     # print(str)
     if str == 'r:':
         pass
+    if is_number(str):
+        pass
     return str
 
 
-def save_subject(content):
-    f = open(all_subject_txt, 'a', encoding='utf_8')
-    f.write(content)
-    f.write('\n')
+def save_subject(save, content):
+    """
+    保存数据
+    :param save: 保存路径
+    :param content: 保存某字符串
+    :return:
+    """
+    f = open(save, 'a', encoding='utf_8')
+    f.write(content +' ')
     f.close()
 
 
@@ -56,7 +91,7 @@ def read_all_sub_csv(save_path):
                 subject = row['subject']
                 # 调用手动清理函数和文件写入函数
                 content = manual_clear_subject(subject)
-                save_subject(content)
+                save_subject(all_subject_txt, content)
 
 
 def clear(text_path, stopwords, save_path):
@@ -74,13 +109,36 @@ def clear(text_path, stopwords, save_path):
     for word in str_list.split('/'):
         if not (word.strip() in f_stop_seg_list) and len(word.strip()) > 1:
             words_list.append(word)
-    # f = open(save_path, 'w', encoding='utf_8')  # 保存的txt
+
     for i, row in enumerate(words_list):
         print(i, row)
+        save_subject(save_path, row)
+
     return ''.join(words_list)
 
 
+def word_analysis():
+    word_dict = {}
+    words = open(all_subject_txt_words, encoding='utf_8', errors='ignore').read()
+    # print(words)
+    if words in word_dict:
+        word_dict[words] += 1
+    else:
+        word_dict[words] = 1
+
+    count = Counter(word_dict)
+    for l in count.most_common()[:10]:
+        # print(type(l))
+        for con in l:
+            print(count.most_common()[:10])
+        # save_subject(all_subject_txt_words_100, l)
+    # print(count.most_common()[:10])
+
+
 if __name__ == "__main__":
-    read_all_sub_csv(all_subject_txt)
-    # text = open(all_subject_txt, encoding='utf_8', errors='ignore').read()
-    # text = clear(text, stopwords, save_path)  # 送值，分词，去停用词，加载自定义词典
+    # 主题清洗保存 all_subject
+    # read_all_sub_csv(all_subject_txt)
+    # 主题分词 all_subject_words
+    text = open(all_subject_txt, encoding='utf_8', errors='ignore').read()
+    text = clear(text, stopwords, all_subject_txt_words)  # 送值，分词，去停用词，加载自定义词典
+    # word_analysis()
