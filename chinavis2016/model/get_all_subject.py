@@ -16,7 +16,6 @@ stopwords = '../res/stop_words_eng.txt'
 
 all_subject_txt = '../res/results/all_subject.txt'
 all_subject_txt_words = '../res/results/all_subject_words.txt'
-# all_subject_txt_words2 = '../res/results/all_subject_words2.txt'
 all_subject_txt_words_100 = '../res/all_subject_words_100.txt'
 
 
@@ -27,6 +26,7 @@ def is_number(s):
     :return:T OR F
     """
     try:
+
         float(s)
         return True
     except ValueError:
@@ -52,10 +52,11 @@ def manual_clear_subject(str):
         str = ' '.join(str.split(' ')[1:])
     if '[!' in str:
         str = ' '.join(str.split(' ')[1:])
-    # 忽略空回复、空格、数字
-    if str == 'r:' or is_number(str):
+    # 忽略空回复、数字、空
+    if str == 'r:' or is_number(str) or str.isspace():
         pass
-    return str
+    else:
+        return str
 
 
 def save_subject(save, content):
@@ -66,8 +67,11 @@ def save_subject(save, content):
     :return:
     """
     f = open(save, 'a', encoding='utf_8')
-    # f.write(content + '\n')     # 拿主题，手清理
-    f.write(content + ' ')      # 主题分词，词汇空一格即可
+    if content is None:
+        pass
+    else:
+        f.write(content + '\n')     # 1.拿主题，手清理
+        # f.write(content + ' ')      # 2.主题分词，词汇空一格即可
     f.close()
 
 
@@ -137,5 +141,7 @@ if __name__ == "__main__":
 
     # 主题分词 all_subject_words
     # text = open(all_subject_txt, encoding='utf_8', errors='ignore').read()
-    # text = clear(text, stopwords, all_subject_txt_words2)  # 送值，分词，去停用词，加载自定义词典
+    # text = clear(text, stopwords, all_subject_txt_words)  # 送值，分词，去停用词，加载自定义词典
+
+
     # word_analysis()
