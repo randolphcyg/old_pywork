@@ -16,6 +16,7 @@ stopwords = '../res/stop_words_eng.txt'
 
 all_subject_txt = '../res/results/all_subject.txt'
 all_subject_txt_words = '../res/results/all_subject_words.txt'
+all_subject_txt_words_clear = '../res/results/all_subject_words_clear.txt'
 all_subject_txt_words_100 = '../res/all_subject_words_100.txt'
 
 
@@ -70,9 +71,10 @@ def save_subject(save, content):
     if content is None:
         pass
     else:
-        f.write(content + '\n')     # 1.拿主题，手清理
-        # f.write(content + ' ')      # 2.主题分词，词汇空一格即可
+        #　f.write(content + '\n')     # 1.拿主题，手清理
+        f.write(content + ' ')      # 2.主题分词，词汇空一格即可
     f.close()
+
 
 
 def read_all_sub_csv(save_path):
@@ -81,7 +83,7 @@ def read_all_sub_csv(save_path):
     :return:
     """
     for i, source_file in enumerate(os.listdir(path)):
-        print('正在读取第', i + 1, '个文件', source_file, '：')
+        print('正在处理第', i + 1, '个文件', source_file, '：')
         source_path = os.path.join(path, source_file)
         f = open(save_path, 'a', encoding='utf_8')
         with open(source_path, encoding='utf_8', errors='ignore') as csvFile:
@@ -96,7 +98,7 @@ def read_all_sub_csv(save_path):
 def clear(text_path, stopwords, save_path):
     words_list = []
     seg_list = jieba.cut(text_path, cut_all=False)
-    str_list = "/ ".join(seg_list)
+    str_list = '/'.join(seg_list)
     f_stop = open(stopwords, encoding='utf_8', errors='ignore')     # 停用词
     try:
         f_stop_text = f_stop.read()
@@ -108,7 +110,7 @@ def clear(text_path, stopwords, save_path):
             words_list.append(word)
 
     for i, row in enumerate(words_list):
-        # print(i, row)
+        print(i, row)
         save_subject(save_path, row)
 
     return ''.join(words_list)
@@ -136,12 +138,20 @@ def clear(text_path, stopwords, save_path):
 
 
 if __name__ == "__main__":
-    # 主题清洗保存 all_subject
-    read_all_sub_csv(all_subject_txt)
+    # 1.主题清洗保存 all_subject
+    # read_all_sub_csv(all_subject_txt)
 
-    # 主题分词 all_subject_words
+    # 2.主题分词 all_subject_words
     # text = open(all_subject_txt, encoding='utf_8', errors='ignore').read()
-    # text = clear(text, stopwords, all_subject_txt_words)  # 送值，分词，去停用词，加载自定义词典
+    # text = clear(text, stopwords, all_subject_txt_words)
 
+    # 3.清洗分词后的文件再次去数字等
+    # text = open(all_subject_txt_words, encoding='utf_8', errors='ignore').read()
+    # word_list = text.split(' ')
+    # print(word_list)
+    # for i, word in enumerate(word_list):
+    #     print(i, word)
+    #     save_subject(all_subject_txt_words_clear, manual_clear_subject(word))
 
+    pass
     # word_analysis()
