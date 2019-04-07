@@ -5,6 +5,8 @@
 # @File    : all_subject.py
 # @Software: PyCharm
 
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfTransformer
 import csv
 import jieba
 from jieba.analyse import *
@@ -17,7 +19,8 @@ stopwords = '../res/stop_words_eng.txt'
 all_subject_txt = '../res/results/all_subject.txt'
 all_subject_txt_words = '../res/results/all_subject_words.txt'
 all_subject_txt_words_clear = '../res/results/all_subject_words_clear.txt'
-all_subject_txt_words_100 = '../res/all_subject_words_100.txt'
+
+all_subject_txt_words_clear_100 = '../res/results/all_subject_words_clear_100.txt'
 
 
 def is_number(s):
@@ -76,7 +79,6 @@ def save_subject(save, content):
     f.close()
 
 
-
 def read_all_sub_csv(save_path):
     """a模式，拿到所有模板化csv主题，只可以运行一次
     :param save_path:保存路径
@@ -95,7 +97,7 @@ def read_all_sub_csv(save_path):
                 save_subject(all_subject_txt, content)
 
 
-def clear(text_path, stopwords, save_path):
+def clear(text_path, stopwords):    # , save_path
     words_list = []
     seg_list = jieba.cut(text_path, cut_all=False)
     str_list = '/'.join(seg_list)
@@ -108,33 +110,65 @@ def clear(text_path, stopwords, save_path):
     for word in str_list.split('/'):
         if not (word.strip() in f_stop_seg_list) and len(word.strip()) > 1:
             words_list.append(word)
-
-    for i, row in enumerate(words_list):
-        print(i, row)
-        save_subject(save_path, row)
+    # 保存
+    # for i, row in enumerate(words_list):
+    #     print(i, row)
+    #     save_subject(save_path, row)
 
     return ''.join(words_list)
 
 
-# def word_analysis():
-#     word_dict = {}
-#     words = open(
-#         all_subject_txt_words,
-#         encoding='utf_8',
-#         errors='ignore').read()
-#     # print(words)
-#     if words in word_dict:
-#         word_dict[words] += 1
-#     else:
-#         word_dict[words] = 1
-#
-#     count = Counter(word_dict)
-#     for l in count.most_common()[:10]:
-#         # print(type(l))
-#         for con in l:
-#             print(count.most_common()[:10])
-#         # save_subject(all_subject_txt_words_100, l)
-#     # print(count.most_common()[:10])
+txt = '../res/results/test.txt'
+txt_result = '../res/results/test_result.txt'
+
+
+def top_100_subject():
+    with open(all_subject_txt_words_clear, 'r') as fr:  # 读入已经去除停用词的文件
+        data = jieba.cut(fr.read())
+    data = dict(Counter(data))
+
+    with open(all_subject_txt_words_clear_100, 'a', encoding='utf_8') as fw:
+        # print(sorted(data.values(), reverse=True))
+        for i, (k, v) in enumerate(
+                sorted(data.items(), key=lambda data: data[1], reverse=True)):
+            if i < 100:
+                fw.write('%d,%s,%d\n' % (i + 1, k, v))
+            else:
+                pass
+        fw.close()
+
+
+def tf_idf():
+    # 计算tf-idf
+    # 矢量对象<class 'sklearn.feature_extraction.text.CountVectorizer'>
+    v = CountVectorizer(min_df=1)  # 去低频词
+    data = open(
+        all_subject_txt_words_clear,
+        encoding='utf-8',
+        errors='ignore').read()
+    # print(data)
+    corpus = []
+    corpus.append(data)
+    # print(type(corpus))
+    # print(corpus)
+    # print(type(data))
+    X = v.fit_transform(corpus)
+    print(type(X.toarray()))
+    print(X.toarray())
+    df = X.toarray()
+    # 用numpy将datafarame转换成list
+    # train_data = np.array(df)  # np.ndarray()
+    # train_x_list = train_data.tolist()  # list
+    # for line in train_x_list:
+    #     print(line)
+
+    transformer = TfidfTransformer()
+    words = v.get_feature_names()
+    tfidf = transformer.fit_transform(v.fit_transform(corpus))
+    print("共多少词汇: {0}".format(len(words)))
+    print("tf-idf shape: ({0},{1})".format(tfidf.shape[0], tfidf.shape[1]))
+
+    print(tfidf)
 
 
 if __name__ == "__main__":
@@ -153,5 +187,9 @@ if __name__ == "__main__":
     #     print(i, word)
     #     save_subject(all_subject_txt_words_clear, manual_clear_subject(word))
 
+    # 4.提取数据中频数最大的 100 个主题
+    # top_100_subject()
+
+    # 5.
+    # tf_idf()
     pass
-    # word_analysis()
