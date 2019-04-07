@@ -9,16 +9,16 @@ import pandas as pd
 import os.path
 
 path = '../res/chinavis2016_data'
-save_file = '../res/display_list.txt'
+save_file = '../res/results/display_list.txt'
 
-
-def getnamelist(source_set):
-    namelist = []
-    for name in source_set:
-        list_name = name.split(';')
-        for item in list_name:
-            namelist.append(item)
-    return namelist
+# 分离分号组成的名字元素
+# def getnamelist(source_set):
+#     namelist = []
+#     for name in source_set:
+#         list_name = name.split(';')
+#         for item in list_name:
+#             namelist.append(item)
+#     return namelist
 
 
 def core():
@@ -28,34 +28,41 @@ def core():
         file = os.path.join('../res/chinavis2016_data/', f)
         print('正在处理第', i + 1, '个文件', file, '：')
         data = pd.read_csv(file, encoding='utf-8', error_bad_lines=False)
-        data.fillna(value='0', inplace=True)
-
+        data.fillna(value='0', inplace=True)    # 缺失值处理
+        # 筛选发出邮箱
         from_result = data.loc[data['from (address)'].str.contains(
             'o=hackingteam' or '@hackingteam.it' or '@hackingteam.com', na=False)]
-        from_set = set(from_result['from (display)'])
 
-        fromlist = getnamelist(from_set)
-        fromlist = set(fromlist)
+        from_display = set(from_result['from (display)'])
+
+        # fromlist = getnamelist(from_display)  # 这个函数处理貌似用不上了
+        fromlist = set(from_display)
+
         print(len(fromlist))
-
+        # print(fromlist)
+        # 所有文件的名字都放到namelist，并去重
         namelist = []
         for name in fromlist:
             name = name.replace('\'', '')
             namelist.append(name)
         namelist = set(namelist)
         print(len(namelist))
-
+        # 做简单清理操作 去掉含有.com hackingteam support的名字
+        # 别忘记做重要度检验，别把重要任务给直接过滤掉了
         clear_namelist = []
         for name in namelist:
-            if '@hackingteam.it' in name:
-                name = name.replace('@hackingteam.it', '')
-                clear_namelist.append(name)
-            elif '@hackingteam.com' in name:
-                name = name.replace('@hackingteam.com', '')
-                clear_namelist.append(name)
-            elif ' hackingteam.it' in name:
-                name = name.replace(' hackingteam.it', '')
-                clear_namelist.append(name)
+            # clear_namelist.append(name)
+            if 'hackingteam' in name:
+                name = name.split(' ')[0]
+                for basic_name in namelist:
+                    if name in basic_name:
+                        pass
+            elif name.isalpha():
+                pass
+            elif '.com' in name:
+                pass
+            elif 'support' in name:
+                pass
             else:
                 clear_namelist.append(name)
 
@@ -68,34 +75,12 @@ def core():
         for name in clear_namelist:
             if name in employees:
                 pass
-            # elif name == "mauro.romeo hackingteam":
+            # 临时检验有问题的display来自哪个文件
+            # elif name == "fdalessio capitolmp.com":
             #     print('>>>>>>>>>>>>>>>>>>>', file, '<<<<<<<<<<<<<<<<<<')
             else:
                 employees.append(name)
         print(len(employees))
-
-    # if '.com' in name:
-    #     name = name.split(' ')[0]
-    #     employees.append(name)
-    # elif 'hackingteam' in name:
-    #     name = name.split(' ')[0]
-    #     employees.append(name)
-    # else:
-    #     name = ' '.join(name.split('.'))
-    #     employees.append(name)
-
-    # 修正列表
-
-    # for employee in employees:
-    #     if '.com' in employees:
-    #             employee = employee.split(' ')[0]
-    #             open_save_file.write(employee + '\n')
-    #     elif 'hackingteam' in employees:
-    #         employee = employee.split(' ')[0]
-    #         open_save_file.write(employee + '\n')
-    #
-    #     ' '.join(employee.split('.'))
-    #     open_save_file.write(employee + '\n')
 
     for employee in employees:
         open_save_file.write(employee + '\n')
