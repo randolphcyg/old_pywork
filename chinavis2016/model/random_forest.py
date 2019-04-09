@@ -16,7 +16,8 @@ import multiprocessing
 from sklearn.feature_extraction.text import CountVectorizer
 
 
-text_path = '../res/word_list.txt'
+# text_path = '../res/word_list.txt'
+text_path = '../res/results/all_subject_words_clear.txt'
 
 
 # 计算tf-idf
@@ -24,12 +25,12 @@ text_path = '../res/word_list.txt'
 # 矢量对象<class 'sklearn.feature_extraction.text.CountVectorizer'>
 v = CountVectorizer(min_df=1e-5)    # 去低频词
 data = open(text_path, encoding='utf-8', errors='ignore').read()
-print(data)
+# print(data)
 corpus = []
 corpus.append(data)
-print(type(corpus))
-print(corpus)
-print(type(data))
+# print(type(corpus))
+# print(corpus)
+# print(type(data))
 X = v.fit_transform(corpus)
 print(type(X.toarray()))
 print(X.toarray())

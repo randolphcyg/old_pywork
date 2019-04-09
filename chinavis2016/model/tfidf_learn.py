@@ -24,6 +24,16 @@ for word in word_list:
         clear_word_list.append(word)
 print(clear_word_list)
 
+
+def subject_to_txt(subject_txt, path):
+    f = open(subject_txt, 'w', encoding='utf_8')    # 保存的txt
+    with open(path, encoding='utf_8', errors='ignore') as csvFile:  # 处理的csv
+        reader = csv.DictReader(csvFile)    # 读成字典
+        for row in reader:
+            f.write(row['subject'])
+            f.write("\n")
+
+
 # 主题向量化
 vectorizer = CountVectorizer()  # min_df=0.005
 count = vectorizer.fit_transform(clear_word_list)   # 将文本中的词语转换为词频矩阵
