@@ -1,34 +1,101 @@
-# 0.说明
-# 1.目标：套用18年东北师范大学随机森林算法，处理16年挑战赛数据，将员工分配至各个部门，找到部门领导；
-## 1.根据答案，用pandas库读取筛选出87名内部员工及其多个邮箱地址：
+# 1.数据准备
+## 0源文件标准化
 
-1.	内部员工列表：
+输入：2016年挑战赛61个name.csv文件
 
-Display和address字段都有可能反映人员信息，下面我们分别进行讨论：
+处理：format_file_data.py（修改源csv文件为utf8，小写化处理）
 
-(1).以display字段为例，如果display对应的address字段中含有“o=hackingteam…”、“@hackingteam.it”、“@hackingteam.com”，则认为该display为内部员工的display。Path: final_Res/C2.1/inner_staff/display_inner_staff_list.txt
+输出：convert_name.csv
 
-(2).以address字段为例，如果address字段含有“o=hackingteam…”、“@hackingteam.it”、“@hackingteam.com”，则认为这是一个内部邮箱地址，可以初步将每个邮箱假设为一名员工。（答案的后续部分基于address字段进行分析）Path: final_Res/C2.1/inner_staff/hackingteam_mail_inner_staff.txt
+## 1.0主题数据清洗：
 
-(3).在address字段中有59个形如“o=hackingteam…”的地址可以还原成邮件地址，详见Path: final_Res/OHackingString2dotCom_format.txt
+输入：../res/chinavis2016_data/目录下所有convert_name.csv文件
 
-(4).每个员工可能有多个内部邮件地址。通过整理，可以初步确认共87个内部员工，见下表
+处理：get_all_subject.py
 
-## 20190318 今天务必筛选出正确的员工列表
-* [pandas找列中包含某数据](https://www.jianshu.com/p/805f20ac6e06)
-* [缺失值处理](https://blog.csdn.net/lwgkzl/article/details/80948548)
-* [缺失值处理思路](https://blog.csdn.net/silence2015/article/details/65643125 )
->用pandas来做csv的缺失值处理时候发现奇怪BUG，就是excel打开csv文件，明明有的格子没有任何东西，
->当然，我就想到用pandas的dropna()或者fillna()来处理缺失值。但是pandas读取csv文件后发现那个空的地方isnull()竟然是false，
->就是说那个地方有东西。。。后来经过排查发现看似什么都没有的地方有空字符串，故pandas认为那儿不是缺失值，所以就不能用dropna()或者fillna()来处理。
->解决思路：先用正则将空格匹配出来，然后全部替换为NULL，再在用pandas读取csv时候指定 read_csv（na_values='NULL'）
->就是将NULL认为是nan处理，接下来就可以用dropna()或者fillna()来处理了
+read_all_sub_csv()读取 
 
-* [缺失值处理小例子](https://blog.csdn.net/u010924297/article/details/80060229)
+manual_clear_subject() 去无用字符
 
-* [Ignoring NaNs with str.contains](https://stackoverflow.com/questions/28311655/ignoring-nans-with-str-contains) stackoverflow 处理缺失值
-，na=False 给个标志即可
+is_number()判断是否为数字 
 
-## 20190319英文词云，观察词云处理数据
-![](/chinavis2016/res/result.png)
+save_subject()保存 主题句子间保持一个换行
 
+输出：../res/results/all_subject.txt（36.0MB）
+
+## 1.1分词（只进行一次，运算需要半小时）
+
+输入：../res/results/all_subject.txt（36.0MB）
+
+处理：get_all_subject.py
+
+clear()用 jieba分词
+
+save_subject() 保存 词汇间保持一个空格
+
+输出：all_subject_words.txt（29.3MB）
+
+
+## 1.2 清理分词后数据再清理
+
+输入：all_subject_words.txt（29.3MB）
+
+处理：get_all_subject.py
+
+save_subject()
+
+manual_clear_subject()
+
+输出：../res/results/all_subject_words_clear.txt（27.5MB）
+
+
+
+# 2.0 所有主题清洗后根据人组成文章
+
+输入：../res/results/display_list.txt
+
+处理：display_per_subject_txt.py	每个人对应的主题文章
+
+输出：../res/corpus_file/name_subject.txt
+
+## 2.1 训练集与测试集分词
+
+输入：../res/train_corpus/	分词前 每个员工的主题清洗后文件
+
+处理：corpus2segment.py	(训练集分词处理)
+
+输出：../res/train_corpus_seg/	目录下的分词清理后文件
+
+## 2.2 bunch化操作，将数据塞入我们scikit的bunch化数据
+
+输入：../res/train_corpus_seg/	目录下的分词清理后文件
+
+处理：corpus2bunch.py		(Bunch化处理)
+
+输出：Scikit-Learn库的bunch类型数据
+
+Bunch和字典结构类似，也是由键值对组成，和字典区别：其键值可以被实例对象当作属性使用：
+
+## 2.3  tf-idf词向量空间实例创建
+
+输入：
+
+../res/train_word_bag/train_set.dat
+
+../res/train_word_bag/tfdifspace.dat
+
+../res/test_word_bag/test_set.dat
+
+../res/test_word_bag/testspace.dat
+
+../res/train_word_bag/tfdifspace.dat
+
+训练集测试的bunch数据
+
+处理：tfidf_space.py
+
+输出：
+
+## 2.4 喂入分类器
+
+这时候我们可以在此喂入各种分类器，计算召回率等
