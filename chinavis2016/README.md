@@ -99,3 +99,32 @@ Bunch和字典结构类似，也是由键值对组成，和字典区别：其键
 ## 2.4 喂入分类器
 
 这时候我们可以在此喂入各种分类器，计算召回率等
+
+输入：
+
+导入训练集bunch数据：trainpath = "../res/train_word_bag/tfdifspace.dat"
+
+导入测试集bunch数据：testpath = "../res/test_word_bag/testspace.dat"
+
+处理：NBayes_Predict.py  （多项式贝叶斯算法、随机森林算法）
+
+输出：控制台~
+
+name1_subject.txt : 实际类别: finacial  -->预测类别: finacial
+
+name2_subject.txt : 实际类别: technology  -->预测类别: technology
+
+name3_subject.txt : 实际类别: personel  -->预测类别: personel
+
+name4_subject.txt : 实际类别: personel  -->预测类别: technology   (假装错误)
+
+...
+
+预测完毕!!!
+
+精度:0.951
+
+召回:0.959
+
+f1-score:0.943
+
