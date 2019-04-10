@@ -17,7 +17,7 @@ def corpus2bunch(wordbag_path, seg_path):
     # 创建一个Bunch实例
     bunch = Bunch(target_name=[], label=[], filenames=[], contents=[])
     bunch.target_name.extend(catelist)
-    # print(bunch)
+    print(bunch)
     # extend(addlist)是python list中的函数，意思是用新的list（addlist）去扩充原来的list
 
     for mydir in catelist:

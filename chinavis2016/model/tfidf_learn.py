@@ -7,7 +7,7 @@
 
 # 文本向量化，将文本转换为向量形式
 # 两种方式TF词频方式、TF-IDF词频逆词频方式
-
+import csv
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer, TfidfTransformer
 
 word_file = '../res/word_list.txt'
