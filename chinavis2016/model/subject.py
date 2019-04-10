@@ -18,7 +18,7 @@ back_coloring_path = "../res/bg.png"
 img = "../res/result.png"
 stopwords = '../res/stop_words_eng.txt'
 path = '../res/convert_a.bassi.csv'
-text_path = '../res/subject.txt'
+text_path = '../res/test_corpus/david_vincenzetti_subject.txt'
 
 
 def subject_to_txt(subject_txt, path):

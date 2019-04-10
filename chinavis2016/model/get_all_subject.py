@@ -171,6 +171,40 @@ def tf_idf():
     print(tfidf)
 
 
+# 采用之前分词的开启文件目录的复用代码
+corpus_path = '../res/test_corpus/'
+# top100正式路径 'test_corpus_seg_top100sub'
+nametop100sub_path = '../res/test_corpus_seg_top100sub_onlysub/'
+
+
+def each_top_100_subject():
+
+    catelist = os.listdir(corpus_path)  # 获取corpus_path下的所有子目录
+    print("高频主题词提取中...")
+
+    # 获取每个目录（类别）下所有的文件
+    for i, mydir in enumerate(catelist):
+        class_path = corpus_path + mydir
+        seg_dir = nametop100sub_path + mydir
+        print('正在处理第', i + 1, '个文件', class_path)
+        newfilename = mydir.split('.')[0] + '_top100' + '.' + mydir.split('.')[1]
+        new_dir = nametop100sub_path + newfilename      # 拼接出待保存文件的路径
+
+        with open(class_path, 'r') as fr:  # 读入已经去除停用词的文件
+            data = jieba.cut(fr.read())
+        data = dict(Counter(data))
+
+        with open(new_dir, 'a', encoding='utf_8') as fw:    # 打开待存的文件路径
+            # print(sorted(data.values(), reverse=True))
+            for i, (k, v) in enumerate(
+                    sorted(data.items(), key=lambda data: data[1], reverse=True)):
+                if i < 100:
+                    fw.write('%s\n' % (k))
+                else:
+                    pass
+            fw.close()
+
+
 if __name__ == "__main__":
     # 1.主题清洗保存 all_subject
     # read_all_sub_csv(all_subject_txt)
@@ -189,6 +223,7 @@ if __name__ == "__main__":
 
     # 4.提取数据中频数最大的 100 个主题
     # top_100_subject()
+    each_top_100_subject()
 
     # 5.
     # tf_idf()
