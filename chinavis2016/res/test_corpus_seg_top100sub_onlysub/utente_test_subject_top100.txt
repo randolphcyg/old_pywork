@@ -1,14 +1,10 @@
  
 test
-.
 verso
 com
 mac
-da
 t2
 invio
-a
-7
 snapshots
 messaggio
 prova
@@ -19,21 +15,10 @@ bb
 vediamo
 se
 riesco
-far
 smettere
-di
 grandinare
-y
-10
-/
-u
-m
 romeo
 hackingteam
-it
-(
-)
 test3
-1
 test2
 bau

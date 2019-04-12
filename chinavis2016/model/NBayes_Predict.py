@@ -39,7 +39,7 @@ print("预测完毕!!!")
 def metrics_result(actual, predict):
     print('精度:{0:.3f}'.format(metrics.precision_score(actual, predict, average='weighted')))
     print('召回:{0:0.3f}'.format(metrics.recall_score(actual, predict, average='weighted')))
-    print('f1-score:{0:.3f}'.format(metrics.f1_score(actual, predict, average='weighted')))
+    print('F1-score:{0:.3f}'.format(metrics.f1_score(actual, predict, average='weighted')))
 
 
 metrics_result(test_set.label, predicted)

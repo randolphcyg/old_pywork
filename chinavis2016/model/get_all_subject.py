@@ -229,9 +229,8 @@ if __name__ == "__main__":
     #     save_subject(all_subject_txt_words_clear, manual_clear_subject(word))
 
     # 4.提取数据中频数最大的 100 个主题
-    # top_100_subject()
-    # each_top_100_subject()
-    top_100_subject()
+    # top_100_subject()     # 所有主题前一百
+    # each_top_100_subject()    # 每个人前一百
 
     # 5.
     # tf_idf()
