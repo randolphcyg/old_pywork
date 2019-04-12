@@ -118,21 +118,27 @@ def clear(text_path, stopwords):    # , save_path
     return ''.join(words_list)
 
 
-txt = '../res/results/test.txt'
-txt_result = '../res/results/test_result.txt'
+sub = '../res/results/all_subject_words_clear.txt'
+sub_result = '../res/results/all_subject_words_clear_top100.txt'
+# txt = '../res/results/test.txt'
+# txt_result = '../res/results/test_top100.txt'
 
 
 def top_100_subject():
-    with open(all_subject_txt_words_clear, 'r') as fr:  # 读入已经去除停用词的文件
+    with open(sub, 'r') as fr:  # 读入已经去除停用词的主题词文件
         data = jieba.cut(fr.read())
     data = dict(Counter(data))
 
-    with open(all_subject_txt_words_clear_100, 'a', encoding='utf_8') as fw:
-        # print(sorted(data.values(), reverse=True))
+    with open(sub_result, 'a', encoding='utf_8') as fw:  # 保存前100关键词
         for i, (k, v) in enumerate(
                 sorted(data.items(), key=lambda data: data[1], reverse=True)):
-            if i < 100:
-                fw.write('%d,%s,%d\n' % (i + 1, k, v))
+            # 利用匿名函数，根据K排序，逆序，从大到小
+            if i < 101:
+                if k == ' ' or k == '..' or k == '...':
+                    i += -1
+                else:
+                    print('写入第', i, '个主题关键词', k)
+                    fw.write('%s\n' % (k))
             else:
                 pass
         fw.close()
@@ -172,9 +178,9 @@ def tf_idf():
 
 
 # 采用之前分词的开启文件目录的复用代码
-corpus_path = '../res/test_corpus/'
+corpus_path = '../res/test_corpus_seg/'
 # top100正式路径 'test_corpus_seg_top100sub'
-nametop100sub_path = '../res/test_corpus_seg_top100sub_onlysub/'
+nametop100sub_path = '../res/test_corpus_seg_top100sub/'  # _top100sub_onlysub
 
 
 def each_top_100_subject():
@@ -187,7 +193,8 @@ def each_top_100_subject():
         class_path = corpus_path + mydir
         seg_dir = nametop100sub_path + mydir
         print('正在处理第', i + 1, '个文件', class_path)
-        newfilename = mydir.split('.')[0] + '_top100' + '.' + mydir.split('.')[1]
+        newfilename = mydir.split(
+            '.')[0] + '_top100' + '.' + mydir.split('.')[1]
         new_dir = nametop100sub_path + newfilename      # 拼接出待保存文件的路径
 
         with open(class_path, 'r') as fr:  # 读入已经去除停用词的文件
@@ -198,8 +205,8 @@ def each_top_100_subject():
             # print(sorted(data.values(), reverse=True))
             for i, (k, v) in enumerate(
                     sorted(data.items(), key=lambda data: data[1], reverse=True)):
-                if i < 100:
-                    fw.write('%s\n' % (k))
+                if i < 100:  # 选取前一百的关键词
+                    fw.write('%d,%s,%s\n' % (i + 1, k, v))
                 else:
                     pass
             fw.close()
@@ -223,7 +230,8 @@ if __name__ == "__main__":
 
     # 4.提取数据中频数最大的 100 个主题
     # top_100_subject()
-    each_top_100_subject()
+    # each_top_100_subject()
+    top_100_subject()
 
     # 5.
     # tf_idf()
