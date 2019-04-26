@@ -9,10 +9,13 @@
 import pandas as pd
 import numpy as np
 import os.path
+import re
 
 source_path = '../res/results/display_list.txt'
 path = '../res/chinavis2016_data'
 save_path = '../res/corpus_file/'
+top100 = '../res/results/test_top100.txt'
+path2 = '../res/test_corpus_seg'
 
 
 def is_number(s):
@@ -56,14 +59,15 @@ def manual_clear_subject(str):
 
 def get_display_subject(find_name):
     name = '_'.join(find_name.replace('\n', '').split(' ')) + '_subject.txt'
-    print(save_path+name)
+    print(save_path + name)
     for i, f in enumerate(os.listdir(path)):
         file = os.path.join('../res/chinavis2016_data/', f)
         print('正在处理第', i + 1, '个文件', file, '：')
         data = pd.read_csv(file, encoding='utf-8', error_bad_lines=False)
         data.fillna(value='0', inplace=True)    # 缺失值处理
         # 筛选发出邮箱
-        from_result = data.loc[data['from (display)'].str.contains(find_name, na=False)]
+        from_result = data.loc[data['from (display)'].str.contains(
+            find_name, na=False)]
 
         # 将from_result数据转换为list，用索引把主题切出来
         train_data = np.array(from_result)  # np.ndarray()
@@ -81,20 +85,41 @@ def get_display_subject(find_name):
             f.close()
 
 
-def test():
-    print(save_path)
-    with open(source_path, encoding='utf8', errors='ignore') as fw:
-        save_subject_txt_list = []  # 每个名字对应的txt名字
-        for i, row in enumerate(fw):
-            s_name = row.replace('\n', '')
-            print(i, s_name)
-            get_display_subject(s_name)
+def display_occur_to_array():
+    """这里我们打开分词后的内部员工名字对应的txt文档、top100关键词，
+    尝试遍历第一个文件中，各top100关键词出现的次数
+    :return:
+    """
+    for i, f in enumerate(os.listdir(path2)):
+        file = os.path.join('../res/test_corpus_seg/', f)
+        print('正在处理第', i + 1, '个文件', file, '：')
+        with open(top100, encoding='utf8', errors='ignore') as fw:
+            wordlist = fw.read().split('\n')  # top词汇表
+            aim_array = []
+            with open(file, encoding='utf8', errors='ignore') as fw2:
+                for content in fw2:
+                    for w in wordlist:
+                        count = len(re.findall(w, content))
+                        # print(w, '出现的次数是：', count)
+                        aim_array.append(count)
+            print(aim_array)
 
 
 if __name__ == "__main__":
     # get_display_subject()
-    test()
+
     # find_name = 'simonetta gallucci'
 
     # find_name = 'serge woon'
     # get_display_subject(find_name)
+
+    display_occur_to_array()
+
+    # with open(top100, encoding='utf8', errors='ignore') as fw:
+    #     wordlist = fw.read().split('\n')    # top词汇表
+    #
+    #     with open(source_txt, encoding='utf8', errors='ignore') as fw2:
+    #         for content in fw2:
+    #             for w in wordlist:
+    #                 count = len(re.findall(w, content))
+    #                 print(w, '出现的次数是：', count)
