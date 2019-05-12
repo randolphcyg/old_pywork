@@ -105,6 +105,26 @@ def display_occur_to_array():
             print(aim_array)
 
 
+def display_occur_to_array_single(filename):
+    """这里我们打开分词后的内部员工名字对应的txt文档、top100关键词，
+    尝试遍历第一个文件中，各top100关键词出现的次数
+    :return:
+    """
+    # for i, f in enumerate(os.listdir(path2)):
+    file = os.path.join('../res/test_corpus_seg/', filename)
+    print('正在处理文件', file, '：')
+    with open(top100, encoding='utf8', errors='ignore') as fw:
+        wordlist = fw.read().split('\n')  # top词汇表
+        aim_array = []
+        with open(file, encoding='utf8', errors='ignore') as fw2:
+            for content in fw2:
+                for w in wordlist:
+                    count = len(re.findall(w, content))
+                    # print(w, '出现的次数是：', count)
+                    aim_array.append(count)
+        print(aim_array)
+
+
 if __name__ == "__main__":
     # get_display_subject()
 
@@ -113,7 +133,9 @@ if __name__ == "__main__":
     # find_name = 'serge woon'
     # get_display_subject(find_name)
 
-    display_occur_to_array()
+    # display_occur_to_array()
+
+    display_occur_to_array_single(filename='alberto_ornaghi_subject.txt')
 
     # with open(top100, encoding='utf8', errors='ignore') as fw:
     #     wordlist = fw.read().split('\n')    # top词汇表

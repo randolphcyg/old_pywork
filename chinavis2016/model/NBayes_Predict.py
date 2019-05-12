@@ -19,11 +19,11 @@ test_set = readbunchobj(testpath)
 
 # 训练分类器：输入词袋向量和分类标签，alpha:0.001 alpha越小，迭代次数越多，精度越高
 print(train_set.label)
-clf = MultinomialNB(alpha=0.001).fit(train_set.tdm, train_set.label)
-print(clf)
+# clf = MultinomialNB(alpha=0.001).fit(train_set.tdm, train_set.label)
+# print(clf)
 # 随机森林分类器   # 这里我们替换成随机森林 也可以进行分类
-# from sklearn.linear_model import LogisticRegression
-# clf = LogisticRegression().fit(train_set.tdm, train_set.label)
+from sklearn.linear_model import LogisticRegression
+clf = LogisticRegression().fit(train_set.tdm, train_set.label)
 # 预测分类结果
 predicted = clf.predict(test_set.tdm)
 print(predicted)
@@ -31,6 +31,8 @@ print(predicted)
 for flabel, file_name, expct_cate in zip(test_set.label, test_set.filenames, predicted):
     if flabel != expct_cate:
         print(file_name, ": 实际类别:", flabel, " -->预测类别:", expct_cate)
+    else:
+        print(file_name, ": 666实际类别:", flabel, " -->预测类别:", expct_cate)
 
 print("预测完毕!!!")
 
