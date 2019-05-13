@@ -8,8 +8,10 @@
 import pandas as pd
 import numpy as np
 
-path1 = '../res/传感器布置表.csv'
-path2 = '../res/传感器日志数据/day1.csv'
+path0 = '../res/传感器布置表.csv'
+path1 = '../res/传感器日志数据/day1.csv'
+path2 = '../res/传感器日志数据/day2.csv'
+path3 = '../res/传感器日志数据/day3.csv'
 # 入口位置
 entrance_sid = [11300, 11502, 11504, 11507]
 # 出口位置
@@ -117,31 +119,75 @@ def seconds2current_time(t):
     return current_time
 
 
-def core():
-    # df1 = pd.read_csv(path1, encoding='utf-8', error_bad_lines=False)
+def writefile(path):
+    f = open(path, 'a', encoding='utf_8')  # 保存的txt
+    return f
+
+
+def core(path):
+    # df1 = pd.read_csv(path0, encoding='utf-8', error_bad_lines=False)
     # 读第一天的所有人经过的所有位置
-    df_y = pd.read_csv(path2, encoding='utf-8', error_bad_lines=False,
+    df_y = pd.read_csv(path, encoding='utf-8', error_bad_lines=False,
                        usecols=[0, 1, 2])  # pd.dataframe
     train_data = np.array(df_y)  # np.ndarray()
     train_x_list = train_data.tolist()  # list
     # print(train_x_list[0][1])
     # print(type(train_x_list))
+    return train_x_list
 
-    for i, sid in enumerate(train_x_list):
-        if sid[:][1] in entrance_sid:
-            print(i, '参会者', sid[:][0], seconds2current_time(sid[:][2]), '进入会场')
-        if sid[:][1] in exit_sid:
-            print(i, '参会者', sid[:][0], seconds2current_time(sid[:][2]), '出会场')
-        if sid[:][1] in check_in_desk:
-            print('参会者', sid[:][0], seconds2current_time(sid[:][2]), '签到')
-        if sid[:][1] in exhibition_hall:
-            print('参会者', sid[:][0], seconds2current_time(sid[:][2]), '进入展厅')
-        if sid[:][1] in main_venue:
-            print('参会者', sid[:][0], seconds2current_time(sid[:][2]), '主会场')
 
-        if sid[:][1] == '10225':
-            print('异常！')
+def analysis_place():
+    for i, sid in enumerate(core(path1)):
+
+        # if sid[:][1] in entrance_sid:
+        #     print(i, '参会者', sid[:][0], seconds2current_time(sid[:][2]), '进入会场')
+        # if sid[:][1] in exit_sid:
+        #     print(i, '参会者', sid[:][0], seconds2current_time(sid[:][2]), '出会场')
+        # if sid[:][1] in check_in_desk:
+        #     print('参会者', sid[:][0], seconds2current_time(sid[:][2]), '签到')
+        # if sid[:][1] in exhibition_hall:
+        #     print('参会者', sid[:][0], seconds2current_time(sid[:][2]), '进入展厅')
+
+        # # 主会场人员规律
+        # main_venue_path = '../res/main_venue.txt'
+        # if sid[:][1] in main_venue:
+        #     print('参会者', sid[:][0], seconds2current_time(sid[:][2]), '主会场')
+        #     content1 = str(sid[:][0])
+        #     content2 = str(seconds2current_time(sid[:][2]))
+        #     writefile(main_venue_path).write('参会者：' + content1 + ' 进出时间：' + content2 + '\n')
+
+        # # 餐厅人流规律
+        # restaurant_path = '../res/restaurant.txt'
+        # if sid[:][1] in restaurant:
+        #     print('参会者', sid[:][0], seconds2current_time(sid[:][2]), '餐厅')
+        #     content1 = str(sid[:][0])
+        #     content2 = str(seconds2current_time(sid[:][2]))
+        #     writefile(restaurant_path).write('参会者：' + content1 + ' 进出时间：' + content2 + '\n')
+
+        # # 厕所1
+        # toilet1_path = '../res/toilet1.txt'
+        # if sid[:][1] in toilet1:
+        #     print('参会者', sid[:][0], seconds2current_time(sid[:][2]), '厕所1')
+        #     content1 = str(sid[:][0])
+        #     content2 = str(seconds2current_time(sid[:][2]))
+        #     writefile(toilet1_path).write('参会者：' + content1 + ' 进出时间：' + content2 + '\n')
+
+        pass
+
+
+per16111_path = '../res/16111.txt'
+
+
+def analysis_person():
+    for i, sid in enumerate(core(path1)):
+        if sid[:][0] == 16111:
+            print(sid[:][1], seconds2current_time(sid[:][2]))
+            c1 = str(sid[:][1])
+            c2 = str(seconds2current_time(sid[:][2]))
+            writefile(per16111_path).write(c1 + ' ' + c2 + '\n')
+
 
 
 if __name__ == "__main__":
-    core()
+    # analysis_place()
+    analysis_person()
