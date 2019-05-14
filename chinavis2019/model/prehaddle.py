@@ -12,6 +12,7 @@ path0 = '../res/传感器布置表.csv'
 path1 = '../res/传感器日志数据/day1.csv'
 path2 = '../res/传感器日志数据/day2.csv'
 path3 = '../res/传感器日志数据/day3.csv'
+
 # 入口位置
 entrance_sid = [11300, 11502, 11504, 11507]
 # 出口位置
@@ -100,6 +101,18 @@ restaurant = [20202, 20203, 20204, 20205,
 lounge_area = [21300, 21301, 21302, 21303, 21304, 21305,
                21400, 21401, 21402, 21403, 21404, 21405,
                21500, 21501, 21502, 21503, 21504, 21505]
+place_all = {
+    # 'entrance_sid': entrance_sid,
+    # 'exit_sid': exit_sid,
+    'check_in_desk': check_in_desk,
+    'exhibition_hall': exhibition_hall,
+    'main_venue': main_venue,
+    'check_in_desk': check_in_desk,
+    'breakout_venue_a': breakout_venue_a,
+    'breakout_venue_b': breakout_venue_b,
+    'breakout_venue_c': breakout_venue_c,
+    'breakout_venue_d': breakout_venue_d,
+    'restaurant': restaurant}
 
 
 def seconds2current_time(t):
@@ -136,8 +149,15 @@ def core(path):
     return train_x_list
 
 
-def analysis_place():
+def analysis_place(place, place_name):
+    path = '../res/' + place_name + '.txt'
+    print(path)
     for i, sid in enumerate(core(path1)):
+        if sid[:][1] in place:
+            print(sid[:][0], seconds2current_time(sid[:][2]))
+            c1 = str(sid[:][0])
+            c2 = str(seconds2current_time(sid[:][2]))
+            writefile(path).write('参会者：' + c1 + ' 进出时间：' + c2 + '\n')
 
         # if sid[:][1] in entrance_sid:
         #     print(i, '参会者', sid[:][0], seconds2current_time(sid[:][2]), '进入会场')
@@ -148,46 +168,80 @@ def analysis_place():
         # if sid[:][1] in exhibition_hall:
         #     print('参会者', sid[:][0], seconds2current_time(sid[:][2]), '进入展厅')
 
-        # # 主会场人员规律
-        # main_venue_path = '../res/main_venue.txt'
-        # if sid[:][1] in main_venue:
-        #     print('参会者', sid[:][0], seconds2current_time(sid[:][2]), '主会场')
-        #     content1 = str(sid[:][0])
-        #     content2 = str(seconds2current_time(sid[:][2]))
-        #     writefile(main_venue_path).write('参会者：' + content1 + ' 进出时间：' + content2 + '\n')
-
-        # # 餐厅人流规律
-        # restaurant_path = '../res/restaurant.txt'
-        # if sid[:][1] in restaurant:
-        #     print('参会者', sid[:][0], seconds2current_time(sid[:][2]), '餐厅')
-        #     content1 = str(sid[:][0])
-        #     content2 = str(seconds2current_time(sid[:][2]))
-        #     writefile(restaurant_path).write('参会者：' + content1 + ' 进出时间：' + content2 + '\n')
-
-        # # 厕所1
-        # toilet1_path = '../res/toilet1.txt'
-        # if sid[:][1] in toilet1:
-        #     print('参会者', sid[:][0], seconds2current_time(sid[:][2]), '厕所1')
-        #     content1 = str(sid[:][0])
-        #     content2 = str(seconds2current_time(sid[:][2]))
-        #     writefile(toilet1_path).write('参会者：' + content1 + ' 进出时间：' + content2 + '\n')
-
         pass
 
 
-per16111_path = '../res/16111.txt'
+day1_per17704_path = '../res/1day17704.txt'
 
 
-def analysis_person():
+def analysis_person_day1():
     for i, sid in enumerate(core(path1)):
-        if sid[:][0] == 16111:
+        if sid[:][0] == 17704:
             print(sid[:][1], seconds2current_time(sid[:][2]))
             c1 = str(sid[:][1])
             c2 = str(seconds2current_time(sid[:][2]))
-            writefile(per16111_path).write(c1 + ' ' + c2 + '\n')
+            writefile(day1_per17704_path).write(c1 + ' ' + c2 + '\n')
 
+
+day2_per17704_path = '../res/2day17704.txt'
+
+
+def analysis_person_day2():
+    for i, sid in enumerate(core(path2)):
+        if sid[:][0] == 17704:
+            print(sid[:][1], seconds2current_time(sid[:][2]))
+            c1 = str(sid[:][1])
+            c2 = str(seconds2current_time(sid[:][2]))
+            writefile(day2_per17704_path).write(c1 + ' ' + c2 + '\n')
+
+
+day1_per16177_path = '../res/1day16177.txt'
+
+
+def analysis_person_day1():
+    for i, sid in enumerate(core(path1)):
+        if sid[:][0] == 16177:
+            print(sid[:][1], seconds2current_time(sid[:][2]))
+            c1 = str(sid[:][1])
+            c2 = str(seconds2current_time(sid[:][2]))
+            writefile(day1_per16177_path).write(c1 + ' ' + c2 + '\n')
+
+
+def error_stuff():
+    pass
 
 
 if __name__ == "__main__":
     # analysis_place()
-    analysis_person()
+    # analysis_person_day1()
+    # analysis_person_day2()
+    # error_stuff()
+
+    # 每个区域进出记录
+    # analysis_place(entrance_sid, 'entrance_sid')
+    # analysis_place(exit_sid, 'exit_sid')
+    # analysis_place(check_in_desk, 'check_in_desk')
+    # analysis_place(exhibition_hall, 'exhibition_hall')
+    # analysis_place(main_venue, 'main_venue')
+    # analysis_place(toilet1, 'toilet1')
+    # analysis_place(toilet2, 'toilet2')
+    # analysis_place(toilet3, 'toilet3')
+    # analysis_place(poster_area, 'poster_area')
+    # analysis_place(breakout_venue_a, 'breakout_venue_a')
+    # analysis_place(escalator_first_north, 'escalator_first_north')
+    # analysis_place(restaurant, 'restaurant')
+    # analysis_place(lounge_area, 'lounge_area')
+
+    # 会议进程安排 主要看主会场、四个分会场
+    for k, v in zip(place_all.keys(), place_all.values()):
+        print(k, v)
+        analysis_place(v, k)
+    # analysis_place()
+    # analysis_place(breakout_venue_a, 'breakout_venue_a')
+    # analysis_place(breakout_venue_b, 'breakout_venue_b')
+    # analysis_place(breakout_venue_c, 'breakout_venue_c')
+    # analysis_place(breakout_venue_d, 'breakout_venue_d')
+
+    # analysis_person_day1()
+
+    # print(place_all)
