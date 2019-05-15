@@ -101,6 +101,7 @@ restaurant = [20202, 20203, 20204, 20205,
 lounge_area = [21300, 21301, 21302, 21303, 21304, 21305,
                21400, 21401, 21402, 21403, 21404, 21405,
                21500, 21501, 21502, 21503, 21504, 21505]
+# 所有区域的name对应的sid
 place_all = {
     'entrance_port': entrance_port,
     'exit_port': exit_port,
@@ -158,8 +159,6 @@ def core(path):
     :param path:
     :return:
     """
-    # df1 = pd.read_csv(path0, encoding='utf-8', error_bad_lines=False)
-    # 读第一天的所有人经过的所有位置
     df_y = pd.read_csv(path, encoding='utf-8', error_bad_lines=False,
                        usecols=[0, 1, 2])  # pd.dataframe
     log_data = np.array(df_y)  # np.ndarray()
@@ -217,6 +216,23 @@ def analysis_person(person_id):
                 '\n')
 
 
+def analysis_place_person_count(place, place_name):
+    """
+    分析区域内部，当日人员停留总人数
+    :return:
+    """
+    countlist = []
+    for i, sid in enumerate(core(path1)):
+
+        if sid[:][1] in place and sid[:][0] not in countlist:
+            countlist.append(sid[:][0])
+
+            # print(sid[:][0], sid[:][1], s2t(sid[:][2]))
+    print(countlist)
+    print(str(place_name) + '人数：' + str(len(countlist)))
+    pass
+
+
 if __name__ == "__main__":
 
     # # 各区域内部的人员
@@ -225,4 +241,11 @@ if __name__ == "__main__":
     #     analysis_place(v, k)
 
     # 人员分析
-    analysis_person(person_id=16700)
+    # analysis_person(person_id=16700)
+
+    # 区域当日总人数
+    # analysis_place_person_count(toilet1, 'toilet1')
+    # analysis_place_person_count(toilet2, 'toilet2')
+    # analysis_place_person_count(toilet3, 'toilet3')
+
+    pass
