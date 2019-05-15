@@ -102,8 +102,8 @@ lounge_area = [21300, 21301, 21302, 21303, 21304, 21305,
                21400, 21401, 21402, 21403, 21404, 21405,
                21500, 21501, 21502, 21503, 21504, 21505]
 place_all = {
-    # 'entrance_sid': entrance_sid,
-    # 'exit_sid': exit_sid,
+    'entrance_sid': entrance_sid,
+    'exit_sid': exit_sid,
     'check_in_desk': check_in_desk,
     'exhibition_hall': exhibition_hall,
     'main_venue': main_venue,
@@ -112,24 +112,31 @@ place_all = {
     'breakout_venue_b': breakout_venue_b,
     'breakout_venue_c': breakout_venue_c,
     'breakout_venue_d': breakout_venue_d,
-    'restaurant': restaurant}
+    'restaurant': restaurant
+}
 
 
-def seconds2current_time(t):
-    hours = t // 3600
-    minutes = (t - t // 3600 * 3600) // 60
-    seconds = t % 3600 % 60
-    # print(hours,'时',minutes,'分',seconds,'秒')
-    if hours < 10:
-        hours = str('0' + str(hours))
-    if minutes < 10:
-        minutes = str('0' + str(minutes))
-    if seconds < 10:
-        seconds = str('0' + str(seconds))
+def s2t(second_time):
+    m, s = divmod(second_time, 60)
+    h, m = divmod(m, 60)
+    return ('%02d:%02d:%02d' % (h, m, s))
 
-    current_time = str(str(hours) + ':' + str(minutes) + ':' + str(seconds))
-    # print(current_time)
-    return current_time
+
+# def seconds2current_time(t):
+#     hours = t // 3600
+#     minutes = (t - t // 3600 * 3600) // 60
+#     seconds = t % 3600 % 60
+#     # print(hours,'时',minutes,'分',seconds,'秒')
+#     if hours < 10:
+#         hours = str('0' + str(hours))
+#     if minutes < 10:
+#         minutes = str('0' + str(minutes))
+#     if seconds < 10:
+#         seconds = str('0' + str(seconds))
+#
+#     current_time = str(str(hours) + ':' + str(minutes) + ':' + str(seconds))
+#     # print(current_time)
+#     return current_time
 
 
 def writefile(path):
@@ -154,19 +161,19 @@ def analysis_place(place, place_name):
     print(path)
     for i, sid in enumerate(core(path1)):
         if sid[:][1] in place:
-            print(sid[:][0], seconds2current_time(sid[:][2]))
+            print(sid[:][0], s2t(sid[:][2]))
             c1 = str(sid[:][0])
-            c2 = str(seconds2current_time(sid[:][2]))
+            c2 = str(s2t(sid[:][2]))
             writefile(path).write('参会者：' + c1 + ' 进出时间：' + c2 + '\n')
 
         # if sid[:][1] in entrance_sid:
-        #     print(i, '参会者', sid[:][0], seconds2current_time(sid[:][2]), '进入会场')
+        #     print(i, '参会者', sid[:][0], s2t(sid[:][2]), '进入会场')
         # if sid[:][1] in exit_sid:
-        #     print(i, '参会者', sid[:][0], seconds2current_time(sid[:][2]), '出会场')
+        #     print(i, '参会者', sid[:][0], s2t(sid[:][2]), '出会场')
         # if sid[:][1] in check_in_desk:
-        #     print('参会者', sid[:][0], seconds2current_time(sid[:][2]), '签到')
+        #     print('参会者', sid[:][0], s2t(sid[:][2]), '签到')
         # if sid[:][1] in exhibition_hall:
-        #     print('参会者', sid[:][0], seconds2current_time(sid[:][2]), '进入展厅')
+        #     print('参会者', sid[:][0], s2t(sid[:][2]), '进入展厅')
 
         pass
 
@@ -177,10 +184,22 @@ day1_per17704_path = '../res/1day17704.txt'
 def analysis_person_day1():
     for i, sid in enumerate(core(path1)):
         if sid[:][0] == 17704:
-            print(sid[:][1], seconds2current_time(sid[:][2]))
+            print(sid[:][1], s2t(sid[:][2]))
             c1 = str(sid[:][1])
-            c2 = str(seconds2current_time(sid[:][2]))
+            c2 = str(s2t(sid[:][2]))
             writefile(day1_per17704_path).write(c1 + ' ' + c2 + '\n')
+
+
+day1_per10638_path = '../res/1day10638.txt'
+
+
+def analysis_person_day1_10638():
+    for i, sid in enumerate(core(path1)):
+        if sid[:][0] == 10638:
+            print(sid[:][1], s2t(sid[:][2]))
+            c1 = str(sid[:][1])
+            c2 = str(s2t(sid[:][2]))
+            writefile(day1_per10638_path).write(c1 + ' ' + c2 + '\n')
 
 
 day2_per17704_path = '../res/2day17704.txt'
@@ -189,9 +208,9 @@ day2_per17704_path = '../res/2day17704.txt'
 def analysis_person_day2():
     for i, sid in enumerate(core(path2)):
         if sid[:][0] == 17704:
-            print(sid[:][1], seconds2current_time(sid[:][2]))
+            print(sid[:][1], s2t(sid[:][2]))
             c1 = str(sid[:][1])
-            c2 = str(seconds2current_time(sid[:][2]))
+            c2 = str(s2t(sid[:][2]))
             writefile(day2_per17704_path).write(c1 + ' ' + c2 + '\n')
 
 
@@ -201,14 +220,28 @@ day1_per16177_path = '../res/1day16177.txt'
 def analysis_person_day1():
     for i, sid in enumerate(core(path1)):
         if sid[:][0] == 16177:
-            print(sid[:][1], seconds2current_time(sid[:][2]))
+            print(sid[:][1], s2t(sid[:][2]))
             c1 = str(sid[:][1])
-            c2 = str(seconds2current_time(sid[:][2]))
+            c2 = str(s2t(sid[:][2]))
             writefile(day1_per16177_path).write(c1 + ' ' + c2 + '\n')
 
 
 def error_stuff():
     pass
+
+
+service_desk_person_path = '../res/service_desk_person_path.txt'
+
+
+def service_desk_person():
+    for i, sid in enumerate(core(path1)):
+        if sid[:][1] in service_desk:
+            print(sid[:][0], sid[:][1], s2t(sid[:][2]))
+            c1 = str(sid[:][0])
+            c2 = str(sid[:][1])
+            c3 = str(s2t(sid[:][2]))
+            writefile(service_desk_person_path).write(
+                c1 + ' ' + c2 + ' ' + c3 + '\n')
 
 
 if __name__ == "__main__":
@@ -233,9 +266,10 @@ if __name__ == "__main__":
     # analysis_place(lounge_area, 'lounge_area')
 
     # 会议进程安排 主要看主会场、四个分会场
-    for k, v in zip(place_all.keys(), place_all.values()):
-        print(k, v)
-        analysis_place(v, k)
+    # for k, v in zip(place_all.keys(), place_all.values()):
+    #     print(k, v)
+    #     analysis_place(v, k)
+
     # analysis_place()
     # analysis_place(breakout_venue_a, 'breakout_venue_a')
     # analysis_place(breakout_venue_b, 'breakout_venue_b')
@@ -245,3 +279,10 @@ if __name__ == "__main__":
     # analysis_person_day1()
 
     # print(place_all)
+
+    # analysis_person_day1_10638()
+
+    # service_desk_person()
+
+    # print(s2t(25240))
+    pass
