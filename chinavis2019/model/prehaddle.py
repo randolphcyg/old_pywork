@@ -14,9 +14,9 @@ path2 = '../res/传感器日志数据/day2.csv'
 path3 = '../res/传感器日志数据/day3.csv'
 
 # 入口位置
-entrance_sid = [11300, 11502, 11504, 11507]
+entrance_port = [11300, 11502, 11504, 11507]
 # 出口位置
-exit_sid = [10019, 11505, 11515, 11517]
+exit_port = [10019, 11505, 11515, 11517]
 # 签到处
 check_in_desk = [11202, 11203, 11204, 11205,
                  11302, 11303, 11304, 11305]
@@ -102,187 +102,127 @@ lounge_area = [21300, 21301, 21302, 21303, 21304, 21305,
                21400, 21401, 21402, 21403, 21404, 21405,
                21500, 21501, 21502, 21503, 21504, 21505]
 place_all = {
-    'entrance_sid': entrance_sid,
-    'exit_sid': exit_sid,
+    'entrance_port': entrance_port,
+    'exit_port': exit_port,
     'check_in_desk': check_in_desk,
     'exhibition_hall': exhibition_hall,
     'main_venue': main_venue,
-    'check_in_desk': check_in_desk,
+    'service_desk': service_desk,
+    'room1': room1,
+    'room2': room2,
+    'room3': room3,
+    'room4': room4,
+    'room5': room5,
+    'room6': room6,
+    'toilet1': toilet1,
+    'toilet2': toilet2,
+    'toilet3': toilet3,
+    'poster_area': poster_area,
     'breakout_venue_a': breakout_venue_a,
     'breakout_venue_b': breakout_venue_b,
     'breakout_venue_c': breakout_venue_c,
     'breakout_venue_d': breakout_venue_d,
-    'restaurant': restaurant
+    'escalator_first_north': escalator_first_north,
+    'escalator_first_south': escalator_first_south,
+    'escalator_second_north': escalator_second_north,
+    'escalator_second_south': escalator_second_south,
+    'restaurant': restaurant,
+    'lounge_area': lounge_area
 }
 
 
 def s2t(second_time):
+    """
+    秒数转时间函数
+    :param second_time: 25240
+    :return: 07:00:40
+    """
     m, s = divmod(second_time, 60)
     h, m = divmod(m, 60)
-    return ('%02d:%02d:%02d' % (h, m, s))
-
-
-# def seconds2current_time(t):
-#     hours = t // 3600
-#     minutes = (t - t // 3600 * 3600) // 60
-#     seconds = t % 3600 % 60
-#     # print(hours,'时',minutes,'分',seconds,'秒')
-#     if hours < 10:
-#         hours = str('0' + str(hours))
-#     if minutes < 10:
-#         minutes = str('0' + str(minutes))
-#     if seconds < 10:
-#         seconds = str('0' + str(seconds))
-#
-#     current_time = str(str(hours) + ':' + str(minutes) + ':' + str(seconds))
-#     # print(current_time)
-#     return current_time
+    return '%02d:%02d:%02d' % (h, m, s)
 
 
 def writefile(path):
+    """
+    数据存txt
+    :param path:
+    :return:
+    """
     f = open(path, 'a', encoding='utf_8')  # 保存的txt
     return f
 
 
 def core(path):
+    """
+    打开三天文件，转成np列表
+    :param path:
+    :return:
+    """
     # df1 = pd.read_csv(path0, encoding='utf-8', error_bad_lines=False)
     # 读第一天的所有人经过的所有位置
     df_y = pd.read_csv(path, encoding='utf-8', error_bad_lines=False,
                        usecols=[0, 1, 2])  # pd.dataframe
-    train_data = np.array(df_y)  # np.ndarray()
-    train_x_list = train_data.tolist()  # list
+    log_data = np.array(df_y)  # np.ndarray()
+    log_list = log_data.tolist()  # list
     # print(train_x_list[0][1])
     # print(type(train_x_list))
-    return train_x_list
+    return log_list
 
 
 def analysis_place(place, place_name):
-    path = '../res/' + place_name + '.txt'
+    """
+    分析各区域内部人员id，位置sid，时间time
+    :param place:
+    :param place_name:
+    :return:
+    """
+    path = '../res/results/' + place_name + '.txt'
     print(path)
     for i, sid in enumerate(core(path1)):
         if sid[:][1] in place:
-            print(sid[:][0], s2t(sid[:][2]))
-            c1 = str(sid[:][0])
-            c2 = str(s2t(sid[:][2]))
-            writefile(path).write('参会者：' + c1 + ' 进出时间：' + c2 + '\n')
-
-        # if sid[:][1] in entrance_sid:
-        #     print(i, '参会者', sid[:][0], s2t(sid[:][2]), '进入会场')
-        # if sid[:][1] in exit_sid:
-        #     print(i, '参会者', sid[:][0], s2t(sid[:][2]), '出会场')
-        # if sid[:][1] in check_in_desk:
-        #     print('参会者', sid[:][0], s2t(sid[:][2]), '签到')
-        # if sid[:][1] in exhibition_hall:
-        #     print('参会者', sid[:][0], s2t(sid[:][2]), '进入展厅')
-
-        pass
-
-
-day1_per17704_path = '../res/1day17704.txt'
-
-
-def analysis_person_day1():
-    for i, sid in enumerate(core(path1)):
-        if sid[:][0] == 17704:
-            print(sid[:][1], s2t(sid[:][2]))
-            c1 = str(sid[:][1])
-            c2 = str(s2t(sid[:][2]))
-            writefile(day1_per17704_path).write(c1 + ' ' + c2 + '\n')
-
-
-day1_per10638_path = '../res/1day10638.txt'
-
-
-def analysis_person_day1_10638():
-    for i, sid in enumerate(core(path1)):
-        if sid[:][0] == 10638:
-            print(sid[:][1], s2t(sid[:][2]))
-            c1 = str(sid[:][1])
-            c2 = str(s2t(sid[:][2]))
-            writefile(day1_per10638_path).write(c1 + ' ' + c2 + '\n')
-
-
-day2_per17704_path = '../res/2day17704.txt'
-
-
-def analysis_person_day2():
-    for i, sid in enumerate(core(path2)):
-        if sid[:][0] == 17704:
-            print(sid[:][1], s2t(sid[:][2]))
-            c1 = str(sid[:][1])
-            c2 = str(s2t(sid[:][2]))
-            writefile(day2_per17704_path).write(c1 + ' ' + c2 + '\n')
-
-
-day1_per16177_path = '../res/1day16177.txt'
-
-
-def analysis_person_day1():
-    for i, sid in enumerate(core(path1)):
-        if sid[:][0] == 16177:
-            print(sid[:][1], s2t(sid[:][2]))
-            c1 = str(sid[:][1])
-            c2 = str(s2t(sid[:][2]))
-            writefile(day1_per16177_path).write(c1 + ' ' + c2 + '\n')
-
-
-def error_stuff():
-    pass
-
-
-service_desk_person_path = '../res/service_desk_person_path.txt'
-
-
-def service_desk_person():
-    for i, sid in enumerate(core(path1)):
-        if sid[:][1] in service_desk:
             print(sid[:][0], sid[:][1], s2t(sid[:][2]))
-            c1 = str(sid[:][0])
-            c2 = str(sid[:][1])
-            c3 = str(s2t(sid[:][2]))
-            writefile(service_desk_person_path).write(
-                c1 + ' ' + c2 + ' ' + c3 + '\n')
+            c1 = sid[:][0]
+            c2 = sid[:][1]
+            c3 = s2t(sid[:][2])
+            writefile(path).write(
+                '参会者：' +
+                str(c1) +
+                ' 位置：' +
+                str(c2) +
+                ' 时间：' +
+                str(c3) +
+                '\n')
+
+
+def analysis_person(person_id):
+    """
+    分析某个人员行动轨迹
+    :param person_id:
+    :return:
+    """
+    path = '../res/person/' + str(person_id) + '.txt'
+    for i, sid in enumerate(core(path1)):
+        if sid[:][0] == person_id:
+            print(sid[:][0], sid[:][1], s2t(sid[:][2]))
+            c1 = sid[:][0]
+            c2 = sid[:][1]
+            c3 = s2t(sid[:][2])
+            writefile(path).write(
+                '参会者：' +
+                str(c1) +
+                ' 位置：' +
+                str(c2) +
+                ' 时间：' +
+                str(c3) +
+                '\n')
 
 
 if __name__ == "__main__":
-    # analysis_place()
-    # analysis_person_day1()
-    # analysis_person_day2()
-    # error_stuff()
 
-    # 每个区域进出记录
-    # analysis_place(entrance_sid, 'entrance_sid')
-    # analysis_place(exit_sid, 'exit_sid')
-    # analysis_place(check_in_desk, 'check_in_desk')
-    # analysis_place(exhibition_hall, 'exhibition_hall')
-    # analysis_place(main_venue, 'main_venue')
-    # analysis_place(toilet1, 'toilet1')
-    # analysis_place(toilet2, 'toilet2')
-    # analysis_place(toilet3, 'toilet3')
-    # analysis_place(poster_area, 'poster_area')
-    # analysis_place(breakout_venue_a, 'breakout_venue_a')
-    # analysis_place(escalator_first_north, 'escalator_first_north')
-    # analysis_place(restaurant, 'restaurant')
-    # analysis_place(lounge_area, 'lounge_area')
-
-    # 会议进程安排 主要看主会场、四个分会场
+    # # 各区域内部的人员
     # for k, v in zip(place_all.keys(), place_all.values()):
     #     print(k, v)
     #     analysis_place(v, k)
 
-    # analysis_place()
-    # analysis_place(breakout_venue_a, 'breakout_venue_a')
-    # analysis_place(breakout_venue_b, 'breakout_venue_b')
-    # analysis_place(breakout_venue_c, 'breakout_venue_c')
-    # analysis_place(breakout_venue_d, 'breakout_venue_d')
-
-    # analysis_person_day1()
-
-    # print(place_all)
-
-    # analysis_person_day1_10638()
-
-    # service_desk_person()
-
-    # print(s2t(25240))
-    pass
+    # 人员分析
+    analysis_person(person_id=16700)
