@@ -244,7 +244,7 @@ if __name__ == "__main__":
     # analysis_person(person_id=16700)
 
     # 区域当日总人数
-    # analysis_place_person_count(toilet1, 'toilet1')
+    analysis_place_person_count(toilet1, 'toilet1')
     # analysis_place_person_count(toilet2, 'toilet2')
     # analysis_place_person_count(toilet3, 'toilet3')
 
