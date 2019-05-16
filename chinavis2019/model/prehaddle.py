@@ -7,6 +7,7 @@
 
 import pandas as pd
 import numpy as np
+import os.path
 
 path0 = '../res/传感器布置表.csv'
 path1 = '../res/传感器日志数据/day1.csv'
@@ -122,10 +123,16 @@ def writefile(path):
     return f
 
 
+def write(save_path, c1, c2, c3):
+    with open(save_path, 'a', newline='') as f:
+        df = pd.DataFrame({'id': [c1], 'sid': [c2], 'time': [c3]})
+        df.to_csv(f, index=False, sep=',', header=None)
+
+
 def core(path):
     """
     打开三天文件，转成np列表
-    :param path:
+    :param path:三天的日志
     :return:
     """
     df_y = pd.read_csv(path, encoding='utf-8', error_bad_lines=False,
@@ -145,7 +152,6 @@ def analysis_place(path, place, place_name):
     :return:
     """
     save_path = '../res/results/' + place_name + '.txt'
-    print(path)
     for i, sid in enumerate(core(path)):
         if sid[:][1] in place:
             print(sid[:][0], sid[:][1], s2t(sid[:][2]))
@@ -168,21 +174,14 @@ def analysis_person(path, person_id):
     :param person_id:
     :return:
     """
-    save_path = '../res/person/' + str(person_id) + '.txt'
+    save_path = '../res/person/' + str(person_id) + '.csv'
     for i, sid in enumerate(core(path)):
         if sid[:][0] == person_id:
-            print(sid[:][0], sid[:][1], s2t(sid[:][2]))
-            c1 = sid[:][0]
-            c2 = sid[:][1]
-            c3 = s2t(sid[:][2])
-            writefile(save_path).write(
-                '参会者：' +
-                str(c1) +
-                ' 位置：' +
-                str(c2) +
-                ' 时间：' +
-                str(c3) +
-                '\n')
+            # print(sid[:][0], sid[:][1], s2t(sid[:][2]))
+            col1 = sid[:][0]
+            col2 = sid[:][1]
+            col3 = s2t(sid[:][2])
+            write(save_path, col1, col2, col3)
 
 
 def analysis_place_person_count(path, place, place_name):
@@ -205,6 +204,16 @@ def analysis_place_person_count(path, place, place_name):
     return p_list
 
 
+def analysis_person_stay():
+
+    path = '../res/person/'
+    for i, f in enumerate(os.listdir(path)):
+        handle_path = '../res/person/' + f
+        print(i, handle_path)
+
+
+
+
 if __name__ == "__main__":
 
     # # 各区域内部的人员
@@ -213,13 +222,13 @@ if __name__ == "__main__":
     #     analysis_place(path1, v, k)
 
     # 人员分析
-    # analysis_person(path1, person_id=16700)
+    # analysis_person(path1, person_id=11396)
 
     # 区域当日总人数
     # analysis_place_person_count(path1, toilet1, 'toilet1')
     # analysis_place_person_count(path1, toilet2, 'toilet2')
     # analysis_place_person_count(path1, toilet3, 'toilet3')
-    # 第一天各区域人数
+
     print('第一天各区域人数:')
     day1_num = analysis_place_person_count(path1, entrance_port, 'entrance_port')
     day1_checkin_num = analysis_place_person_count(path1, check_in_desk, 'check_in_desk')
@@ -227,7 +236,7 @@ if __name__ == "__main__":
     day1_no_need_check_in_list = set(day1_num).difference(set(day1_checkin_num))  # 进了门没有签到的人
     print(day1_no_need_check_in_list)
     print(len(day1_no_need_check_in_list))
-    # 第二天各区域人数
+
     print('第二天各区域人数:')
     day2_num = analysis_place_person_count(path2, entrance_port, 'entrance_port')
     day2_checkin_num = analysis_place_person_count(path2, check_in_desk, 'check_in_desk')
@@ -241,8 +250,12 @@ if __name__ == "__main__":
     print('前两天未签到人员的交集', len(two_day_no_need_check_in_num_joint_list))
 
     print('分析有可能是内部服务人员的所有人员：')
+    print('分析人员待的时间：')
     for i, p_id in enumerate(two_day_no_need_check_in_num_joint_list):
         print('处理id中：', p_id)
         analysis_person(path1, p_id)
+        # analysis_person_stay(path1, p_id)
+
+    # analysis_person_stay()
 
     pass
