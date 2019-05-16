@@ -137,22 +137,22 @@ def core(path):
     return log_list
 
 
-def analysis_place(place, place_name):
+def analysis_place(path, place, place_name):
     """
     分析各区域内部人员id，位置sid，时间time
     :param place:
     :param place_name:
     :return:
     """
-    path = '../res/results/' + place_name + '.txt'
+    save_path = '../res/results/' + place_name + '.txt'
     print(path)
-    for i, sid in enumerate(core(path1)):
+    for i, sid in enumerate(core(path)):
         if sid[:][1] in place:
             print(sid[:][0], sid[:][1], s2t(sid[:][2]))
             c1 = sid[:][0]
             c2 = sid[:][1]
             c3 = s2t(sid[:][2])
-            writefile(path).write(
+            writefile(save_path).write(
                 '参会者：' +
                 str(c1) +
                 ' 位置：' +
@@ -162,20 +162,20 @@ def analysis_place(place, place_name):
                 '\n')
 
 
-def analysis_person(person_id):
+def analysis_person(path, person_id):
     """
     分析某个人员行动轨迹
     :param person_id:
     :return:
     """
-    path = '../res/person/' + str(person_id) + '.txt'
-    for i, sid in enumerate(core(path1)):
+    save_path = '../res/person/' + str(person_id) + '.txt'
+    for i, sid in enumerate(core(path)):
         if sid[:][0] == person_id:
             print(sid[:][0], sid[:][1], s2t(sid[:][2]))
             c1 = sid[:][0]
             c2 = sid[:][1]
             c3 = s2t(sid[:][2])
-            writefile(path).write(
+            writefile(save_path).write(
                 '参会者：' +
                 str(c1) +
                 ' 位置：' +
@@ -185,13 +185,16 @@ def analysis_person(person_id):
                 '\n')
 
 
-def analysis_place_person_count(place, place_name):
+def analysis_place_person_count(path, place, place_name):
     """
     分析区域内部，当日人员停留总人数
+    :param path: 三天日志数据路径
+    :param place: 待分析的区域
+    :param place_name: 待分析的区域名字
     :return:
     """
     countlist = []
-    for i, sid in enumerate(core(path1)):
+    for i, sid in enumerate(core(path)):
 
         if sid[:][1] in place and sid[:][0] not in countlist:
             countlist.append(sid[:][0])
@@ -199,7 +202,7 @@ def analysis_place_person_count(place, place_name):
             # print(sid[:][0], sid[:][1], s2t(sid[:][2]))
     print(countlist)
     print(str(place_name) + '人数：' + str(len(countlist)))
-    pass
+    return countlist
 
 
 if __name__ == "__main__":
@@ -207,14 +210,39 @@ if __name__ == "__main__":
     # # 各区域内部的人员
     # for k, v in zip(place_all.keys(), place_all.values()):
     #     print(k, v)
-    #     analysis_place(v, k)
+    #     analysis_place(path1, v, k)
 
     # 人员分析
-    # analysis_person(person_id=16700)
+    # analysis_person(path1, person_id=16700)
 
     # 区域当日总人数
-    analysis_place_person_count(toilet1, 'toilet1')
-    # analysis_place_person_count(toilet2, 'toilet2')
-    # analysis_place_person_count(toilet3, 'toilet3')
+    # analysis_place_person_count(path1, toilet1, 'toilet1')
+    # analysis_place_person_count(path1, toilet2, 'toilet2')
+    # analysis_place_person_count(path1, toilet3, 'toilet3')
+    # 第一天各区域人数
+    print('第一天各区域人数:')
+    day1_num = analysis_place_person_count(path1, entrance_port, 'entrance_port')
+    day1_checkin_num = analysis_place_person_count(path1, check_in_desk, 'check_in_desk')
+    day1_main_venue_num = analysis_place_person_count(path1, main_venue, 'main_venue')
+    day1_no_need_check_in_list = set(day1_num).difference(set(day1_checkin_num))  # 进了门没有签到的人
+    print(day1_no_need_check_in_list)
+    print(len(day1_no_need_check_in_list))
+    # 第二天各区域人数
+    print('第二天各区域人数:')
+    day2_num = analysis_place_person_count(path2, entrance_port, 'entrance_port')
+    day2_checkin_num = analysis_place_person_count(path2, check_in_desk, 'check_in_desk')
+    day2_main_venue_num = analysis_place_person_count(path2, main_venue, 'main_venue')
+    day2_no_need_check_in_list = set(day2_num).difference(set(day2_checkin_num))  # 进了门没有签到的人
+    print(day2_no_need_check_in_list)
+    print(len(day2_no_need_check_in_list))
+
+    two_day_no_need_check_in_num_joint_list = list(set(day1_no_need_check_in_list).intersection(set(day2_no_need_check_in_list)))
+    print(two_day_no_need_check_in_num_joint_list)
+    print('前两天未签到人员的交集', len(two_day_no_need_check_in_num_joint_list))
+
+    print('分析有可能是内部服务人员的所有人员：')
+    for i, id in enumerate(two_day_no_need_check_in_num_joint_list):
+        print('处理id中：', id)
+        analysis_person(path1, id)
 
     pass
