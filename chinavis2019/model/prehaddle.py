@@ -193,16 +193,16 @@ def analysis_place_person_count(path, place, place_name):
     :param place_name: 待分析的区域名字
     :return:
     """
-    countlist = []
+    p_list = []
     for i, sid in enumerate(core(path)):
 
-        if sid[:][1] in place and sid[:][0] not in countlist:
-            countlist.append(sid[:][0])
+        if sid[:][1] in place and sid[:][0] not in p_list:
+            p_list.append(sid[:][0])
 
             # print(sid[:][0], sid[:][1], s2t(sid[:][2]))
-    print(countlist)
-    print(str(place_name) + '人数：' + str(len(countlist)))
-    return countlist
+    print(p_list)
+    print(str(place_name) + '人数：' + str(len(p_list)))
+    return p_list
 
 
 if __name__ == "__main__":
@@ -241,8 +241,8 @@ if __name__ == "__main__":
     print('前两天未签到人员的交集', len(two_day_no_need_check_in_num_joint_list))
 
     print('分析有可能是内部服务人员的所有人员：')
-    for i, id in enumerate(two_day_no_need_check_in_num_joint_list):
-        print('处理id中：', id)
-        analysis_person(path1, id)
+    for i, p_id in enumerate(two_day_no_need_check_in_num_joint_list):
+        print('处理id中：', p_id)
+        analysis_person(path1, p_id)
 
     pass
