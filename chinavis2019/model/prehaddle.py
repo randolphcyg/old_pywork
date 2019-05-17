@@ -155,13 +155,13 @@ def analysis_person(path, person_id):
     :param person_id:
     :return:
     """
-    save_path = '../res/person/' + str(person_id) + '.csv'
+    save_path = '../res/test/' + str(person_id) + '.csv'
     go_list = []
     for i, sid in enumerate(core(path)):
         if sid[:][0] == person_id:
-            # print(sid[:][0], sid[:][1], s2t(sid[:][2]))
-            go_list.append(sid[:][:])
-    write(save_path, go_list)
+            print(sid[:][0], sid[:][1], s2t(sid[:][2]))
+    #         go_list.append(sid[:][:])
+    # write(save_path, go_list)
 
 
 def analysis_place_person_count(path, place, place_name):
@@ -189,28 +189,51 @@ def analysis_person_stay():
     判断每个人停留时间长度较长的点
     :return:
     """
+    take_part_in_person_list = []
     read_path = '../res/person/'
-    save_path = '../res/stay/'
-    handle_path = '../res/10019.csv'
-    # for i, f in enumerate(os.listdir(read_path)):
-    #     handle_path = '../res/person/' + f
-    #     print(i, handle_path)
-    with open(handle_path, 'r') as f:
-        data = pd.read_csv(f)
+    for i, f in enumerate(os.listdir(read_path)):
+        handle_path = '../res/person/' + f
+        print(i, handle_path)
+
+        with open(handle_path, 'r') as file:
+            data = pd.read_csv(file)
+            for i in range(len(data)):
+                if i + 1 < len(data):   # 错误处理，防止i+1超过迭代数目
+                    if data['time'].iloc[i + 1] - data['time'].iloc[i] > 600:    # 两时间类型数据可以相减
+                        for k, v in zip(place_all.keys(), place_all.values()):
+                            if data['sid'].iloc[i] in v:    # 判断停留所在的地点, 停留时间
+                                print(k, data['sid'].iloc[i], s2t(data['time'].iloc[i + 1] - data['time'].iloc[i]))
+
+                                # 主会场分析
+                                if k == 'main_venue':
+                                    print(data['id'].iloc[i], '与会人员', data['sid'].iloc[i])
+                                    if data['id'].iloc[i] not in take_part_in_person_list:
+                                        take_part_in_person_list.append(data['id'].iloc[i])
+
+    print(len(take_part_in_person_list))
+
+
+def analysis_some_person_stay(person_id):
+    """
+    判断mou个人停留时间长度较长的点
+    :return:
+    """
+    handle_path = '../res/person/' + str(person_id) + '.csv'
+    print(handle_path)
+    with open(handle_path, 'r') as file:
+        data = pd.read_csv(file)
+        # print(type(data['time'].iloc[5]))
         for i in range(len(data)):
             if i + 1 < len(data):   # 错误处理，防止i+1超过迭代数目
-                if data['time'].iloc[i + 1] - data['time'].iloc[i] > 600:
-                    print(data['time'].iloc[i], '~', data['time'].iloc[i + 1])
-                    print(data['id'].iloc[i], data['sid'].iloc[i], data['time'].iloc[i])
-                    # 接下来判断 sid所在的区域，打印一下在区域X待了时间
-
+                if data['time'].iloc[i + 1] - data['time'].iloc[i] > 60:
                     for k, v in zip(place_all.keys(), place_all.values()):
-                        # print(k, v)
-                        if data['sid'].iloc[i] in v:    # 判断停留所在的地点
-                            print(k)
+                        if data['sid'].iloc[i] in v:    # 判断停留所在的地点, 停留时间
+                            print(k, data['sid'].iloc[i], s2t(data['time'].iloc[i + 1] - data['time'].iloc[i]))
 
 
 if __name__ == "__main__":
+    # analysis_person(path1, 11778)
+    # analysis_some_person_stay(11778)
 
     # 各区域内部的人员
     # for k, v in zip(place_all.keys(), place_all.values()):
@@ -218,7 +241,8 @@ if __name__ == "__main__":
     #     analysis_place(path1, v, k)
 
     # 人员分析
-    # analysis_person(path1, person_id=11396)
+    # analysis_person(path1, 10638)
+    # analysis_some_person_stay(person_id=10638)
 
 
     # print('第一天各区域人数:')
@@ -248,7 +272,7 @@ if __name__ == "__main__":
     #     analysis_person(path1, p_id)
 
     #     # analysis_person_stay(path1, p_id)
-    #
+
+    # 分析person文件夹内所有人停留时间规律
     analysis_person_stay()
-    #
-    # pass
+    pass
