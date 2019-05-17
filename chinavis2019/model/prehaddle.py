@@ -44,7 +44,7 @@ room2 = [11010, 11011, 11110, 11111]
 room3 = [11421, 11422, 11423, 11424, 11521, 11522, 11523, 11524]
 room4 = [11425, 11426, 11525, 11526]
 room5 = [21001, 21002, 21003, 21004, 21101, 21102, 21103, 21104]
-room6 = [20610, 20611]
+room6 = [20610, 20611, 20710, 20711]
 # 厕所
 toilet1 = [10410, 10411, 10510, 10511]
 toilet2 = [11427, 11428, 11527, 11528]
@@ -113,20 +113,10 @@ def s2t(second_time):
     return '%02d:%02d:%02d' % (h, m, s)
 
 
-def writefile(path):
-    """
-    数据存txt
-    :param path:
-    :return:
-    """
-    f = open(path, 'a', encoding='utf_8')  # 保存的txt
-    return f
-
-
-def write(save_path, c1, c2, c3):
+def write(save_path, save_content):
     with open(save_path, 'a', newline='') as f:
-        df = pd.DataFrame({'id': [c1], 'sid': [c2], 'time': [c3]})
-        df.to_csv(f, index=False, sep=',', header=None)
+        df = pd.DataFrame(save_content)
+        df.to_csv(f, index=False, sep=',', header=['id', 'sid', 'time'])
 
 
 def core(path):
@@ -151,21 +141,12 @@ def analysis_place(path, place, place_name):
     :param place_name:
     :return:
     """
-    save_path = '../res/results/' + place_name + '.txt'
+    save_path = '../res/place/' + place_name + '.csv'
+    sensor_list = []
     for i, sid in enumerate(core(path)):
         if sid[:][1] in place:
-            print(sid[:][0], sid[:][1], s2t(sid[:][2]))
-            c1 = sid[:][0]
-            c2 = sid[:][1]
-            c3 = s2t(sid[:][2])
-            writefile(save_path).write(
-                '参会者：' +
-                str(c1) +
-                ' 位置：' +
-                str(c2) +
-                ' 时间：' +
-                str(c3) +
-                '\n')
+            sensor_list.append(sid[:][:])
+    write(save_path, sensor_list)
 
 
 def analysis_person(path, person_id):
@@ -175,13 +156,12 @@ def analysis_person(path, person_id):
     :return:
     """
     save_path = '../res/person/' + str(person_id) + '.csv'
+    go_list = []
     for i, sid in enumerate(core(path)):
         if sid[:][0] == person_id:
             # print(sid[:][0], sid[:][1], s2t(sid[:][2]))
-            col1 = sid[:][0]
-            col2 = sid[:][1]
-            col3 = s2t(sid[:][2])
-            write(save_path, col1, col2, col3)
+            go_list.append(sid[:][:])
+    write(save_path, go_list)
 
 
 def analysis_place_person_count(path, place, place_name):
@@ -205,18 +185,34 @@ def analysis_place_person_count(path, place, place_name):
 
 
 def analysis_person_stay():
+    """
+    判断每个人停留时间长度较长的点
+    :return:
+    """
+    read_path = '../res/person/'
+    save_path = '../res/stay/'
+    handle_path = '../res/10019.csv'
+    # for i, f in enumerate(os.listdir(read_path)):
+    #     handle_path = '../res/person/' + f
+    #     print(i, handle_path)
+    with open(handle_path, 'r') as f:
+        data = pd.read_csv(f)
+        for i in range(len(data)):
+            if i + 1 < len(data):   # 错误处理，防止i+1超过迭代数目
+                if data['time'].iloc[i + 1] - data['time'].iloc[i] > 600:
+                    print(data['time'].iloc[i], '~', data['time'].iloc[i + 1])
+                    print(data['id'].iloc[i], data['sid'].iloc[i], data['time'].iloc[i])
+                    # 接下来判断 sid所在的区域，打印一下在区域X待了时间
 
-    path = '../res/person/'
-    for i, f in enumerate(os.listdir(path)):
-        handle_path = '../res/person/' + f
-        print(i, handle_path)
-
-
+                    for k, v in zip(place_all.keys(), place_all.values()):
+                        # print(k, v)
+                        if data['sid'].iloc[i] in v:    # 判断停留所在的地点
+                            print(k)
 
 
 if __name__ == "__main__":
 
-    # # 各区域内部的人员
+    # 各区域内部的人员
     # for k, v in zip(place_all.keys(), place_all.values()):
     #     print(k, v)
     #     analysis_place(path1, v, k)
@@ -224,38 +220,35 @@ if __name__ == "__main__":
     # 人员分析
     # analysis_person(path1, person_id=11396)
 
-    # 区域当日总人数
-    # analysis_place_person_count(path1, toilet1, 'toilet1')
-    # analysis_place_person_count(path1, toilet2, 'toilet2')
-    # analysis_place_person_count(path1, toilet3, 'toilet3')
 
-    print('第一天各区域人数:')
-    day1_num = analysis_place_person_count(path1, entrance_port, 'entrance_port')
-    day1_checkin_num = analysis_place_person_count(path1, check_in_desk, 'check_in_desk')
-    day1_main_venue_num = analysis_place_person_count(path1, main_venue, 'main_venue')
-    day1_no_need_check_in_list = set(day1_num).difference(set(day1_checkin_num))  # 进了门没有签到的人
-    print(day1_no_need_check_in_list)
-    print(len(day1_no_need_check_in_list))
+    # print('第一天各区域人数:')
+    # day1_num = analysis_place_person_count(path1, entrance_port, 'entrance_port')
+    # day1_checkin_num = analysis_place_person_count(path1, check_in_desk, 'check_in_desk')
+    # day1_main_venue_num = analysis_place_person_count(path1, main_venue, 'main_venue')
+    # day1_no_need_check_in_list = set(day1_num).difference(set(day1_checkin_num))  # 进了门没有签到的人
+    # print(day1_no_need_check_in_list)
+    # print(len(day1_no_need_check_in_list))
+    #
+    # print('第二天各区域人数:')
+    # day2_num = analysis_place_person_count(path2, entrance_port, 'entrance_port')
+    # day2_checkin_num = analysis_place_person_count(path2, check_in_desk, 'check_in_desk')
+    # day2_main_venue_num = analysis_place_person_count(path2, main_venue, 'main_venue')
+    # day2_no_need_check_in_list = set(day2_num).difference(set(day2_checkin_num))  # 进了门没有签到的人
+    # print(day2_no_need_check_in_list)
+    # print(len(day2_no_need_check_in_list))
+    #
+    # two_day_no_need_check_in_num_joint_list = list(set(day1_no_need_check_in_list).intersection(set(day2_no_need_check_in_list)))
+    # print(two_day_no_need_check_in_num_joint_list)
+    # print('前两天未签到人员的交集', len(two_day_no_need_check_in_num_joint_list))
+    #
+    # print('分析有可能是内部服务人员的所有人员：')
+    # print('分析人员待的时间：')
+    # for i, p_id in enumerate(two_day_no_need_check_in_num_joint_list):
+    #     print('处理id中：', p_id)
+    #     analysis_person(path1, p_id)
 
-    print('第二天各区域人数:')
-    day2_num = analysis_place_person_count(path2, entrance_port, 'entrance_port')
-    day2_checkin_num = analysis_place_person_count(path2, check_in_desk, 'check_in_desk')
-    day2_main_venue_num = analysis_place_person_count(path2, main_venue, 'main_venue')
-    day2_no_need_check_in_list = set(day2_num).difference(set(day2_checkin_num))  # 进了门没有签到的人
-    print(day2_no_need_check_in_list)
-    print(len(day2_no_need_check_in_list))
-
-    two_day_no_need_check_in_num_joint_list = list(set(day1_no_need_check_in_list).intersection(set(day2_no_need_check_in_list)))
-    print(two_day_no_need_check_in_num_joint_list)
-    print('前两天未签到人员的交集', len(two_day_no_need_check_in_num_joint_list))
-
-    print('分析有可能是内部服务人员的所有人员：')
-    print('分析人员待的时间：')
-    for i, p_id in enumerate(two_day_no_need_check_in_num_joint_list):
-        print('处理id中：', p_id)
-        analysis_person(path1, p_id)
-        # analysis_person_stay(path1, p_id)
-
-    # analysis_person_stay()
-
-    pass
+    #     # analysis_person_stay(path1, p_id)
+    #
+    analysis_person_stay()
+    #
+    # pass
