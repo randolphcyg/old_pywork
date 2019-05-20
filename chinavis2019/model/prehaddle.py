@@ -8,6 +8,7 @@
 import pandas as pd
 import numpy as np
 import os.path
+import json
 
 path0 = '../res/传感器布置表.csv'
 path1 = '../res/传感器日志数据/day1.csv'
@@ -51,7 +52,7 @@ toilet2 = [11427, 11428, 11527, 11528]
 toilet3 = [20410, 20411, 20510, 20511]
 # 海报区
 poster_area = [10307, 10308, 10407, 10408, 10507, 10508, 10607,
-               10608, 10707, 10708, 10807, 10808,10907, 10908]
+               10608, 10707, 10708, 10807, 10808, 10907, 10908]
 # 分会场
 breakout_venue_a = [10201, 10202, 10203, 10204, 10301, 10302, 10303, 10304]
 breakout_venue_b = [10401, 10402, 10403, 10404, 10501, 10502, 10503, 10504]
@@ -164,7 +165,7 @@ def analysis_person(path, person_id):
     # write(save_path, go_list)
 
 
-def analysis_place_person_count(path, place, place_name):
+def analysis_place_person_count(path, place, place_name, test_dict):
     """
     分析区域内部，当日人员停留总人数
     :param path: 三天日志数据路径
@@ -173,6 +174,7 @@ def analysis_place_person_count(path, place, place_name):
     :return:
     """
     p_list = []
+    test_dict = {}
     for i, sid in enumerate(core(path)):
 
         if sid[:][1] in place and sid[:][0] not in p_list:
@@ -181,7 +183,13 @@ def analysis_place_person_count(path, place, place_name):
             # print(sid[:][0], sid[:][1], s2t(sid[:][2]))
     print(p_list)
     print(str(place_name) + '人数：' + str(len(p_list)))
-    return p_list
+
+    # 添加区域对应的时间及人数数据进 字典
+    which_day = path.split('/')[3].split('.')[0]
+    test_dict[place_name] = {which_day: [['6-12'], [len(p_list)]]}
+    print(test_dict)
+
+    return p_list, test_dict
 
 
 def analysis_person_stay():
@@ -199,16 +207,20 @@ def analysis_person_stay():
             data = pd.read_csv(file)
             for i in range(len(data)):
                 if i + 1 < len(data):   # 错误处理，防止i+1超过迭代数目
-                    if data['time'].iloc[i + 1] - data['time'].iloc[i] > 600:    # 两时间类型数据可以相减
+                    if data['time'].iloc[i + 1] - \
+                            data['time'].iloc[i] > 600:    # 两时间类型数据可以相减
                         for k, v in zip(place_all.keys(), place_all.values()):
                             if data['sid'].iloc[i] in v:    # 判断停留所在的地点, 停留时间
-                                print(k, data['sid'].iloc[i], s2t(data['time'].iloc[i + 1] - data['time'].iloc[i]))
+                                print(k, data['sid'].iloc[i], s2t(
+                                    data['time'].iloc[i + 1] - data['time'].iloc[i]))
 
                                 # 主会场分析
                                 if k == 'main_venue':
-                                    print(data['id'].iloc[i], '与会人员', data['sid'].iloc[i])
+                                    print(
+                                        data['id'].iloc[i], '与会人员', data['sid'].iloc[i])
                                     if data['id'].iloc[i] not in take_part_in_person_list:
-                                        take_part_in_person_list.append(data['id'].iloc[i])
+                                        take_part_in_person_list.append(
+                                            data['id'].iloc[i])
 
     print(len(take_part_in_person_list))
 
@@ -228,10 +240,17 @@ def analysis_some_person_stay(person_id):
                 if data['time'].iloc[i + 1] - data['time'].iloc[i] > 60:
                     for k, v in zip(place_all.keys(), place_all.values()):
                         if data['sid'].iloc[i] in v:    # 判断停留所在的地点, 停留时间
-                            print(k, data['sid'].iloc[i], s2t(data['time'].iloc[i + 1] - data['time'].iloc[i]))
+                            print(k, data['sid'].iloc[i], s2t(
+                                data['time'].iloc[i + 1] - data['time'].iloc[i]))
 
 
 if __name__ == "__main__":
+    # 天数自定义，接着是字典的自动添加，每一次遍历运行筛选写入函数就添加一个地点对象
+    data_dict = {}
+    for k, v in zip(place_all.keys(), place_all.values()):
+        analysis_place_person_count(path2, v, k, data_dict)
+    print(data_dict)
+
     # analysis_person(path1, 11778)
     # analysis_some_person_stay(11778)
 
@@ -244,9 +263,13 @@ if __name__ == "__main__":
     # analysis_person(path1, 10638)
     # analysis_some_person_stay(person_id=10638)
 
-
     # print('第一天各区域人数:')
-    # day1_num = analysis_place_person_count(path1, entrance_port, 'entrance_port')
+
+    # data2json
+    # day1_num = analysis_place_person_count(path1, main_venue, 'main_venue')
+    # day2_num = analysis_place_person_count(path2, main_venue, 'main_venue')
+    # day3_num = analysis_place_person_count(path3, main_venue, 'main_venue')
+
     # day1_checkin_num = analysis_place_person_count(path1, check_in_desk, 'check_in_desk')
     # day1_main_venue_num = analysis_place_person_count(path1, main_venue, 'main_venue')
     # day1_no_need_check_in_list = set(day1_num).difference(set(day1_checkin_num))  # 进了门没有签到的人
@@ -274,5 +297,60 @@ if __name__ == "__main__":
     #     # analysis_person_stay(path1, p_id)
 
     # 分析person文件夹内所有人停留时间规律
-    analysis_person_stay()
-    pass
+    # analysis_person_stay()
+
+    # 构建json
+    # analysis_place_person_count(path1, main_venue, 'main_venue')
+    # with open("test2.json", "w") as f:
+    #     s = json.loads(
+    #         '{"entrance_port":{'
+    #         '"day1":[["0-24"],["3564"]],'
+    #         '"day2":[["0-24"],["4434"]],'
+    #         '"day3":[["0-24"],["2930"]]},'
+    #
+    #         '"main_venue":{'
+    #         '"day1":[["0-24"],["2383"]],'
+    #         '"day2":[["0-24"],["2648"]],'
+    #         '"day3":[["0-24"],["1787"]]}}')
+    #     json.dump(s, f)
+    #
+    # with open("test2.json", "r") as f:
+    #     s = json.load(f)
+    # for k, v in s.keys(), s.values():
+    #     print(k, v)
+    # place_name = 'entrance_port'
+    # ddd = {"entrance_port": {"day1": [["6-12"], ["3564"]], "day2": [["6-12"], ["4434"]], "day3": [["6-12"], ["2930"]]}, "main_venue":{"day1":[["6-12"],["2383"]],"day2":[["6-12"],["2648"]],"day3":[["6-12"],["1787"]]}}
+    # # print(type(ddd))
+    #
+    # # 字典添加
+    # # 伪代码
+    # ttt = {}
+    # for i, p in enumerate(place_all):
+    #     ttt[p] = {'day1': [['6-12'], [len(p_list)]]}
+    # ddd['test_place'] = {"day1": [["6-12"], ["3564"]]}
+    # print(ddd)
+    # print(ddd['entrance_port']['day1'])
+    # for k in ddd.keys():
+    #     if k == place_name:
+    #         print(type(ddd[place_name]))
+    #         for kkk in ddd[place_name].keys():
+    #             if kkk == 'day1':
+    #                 print(ddd[place_name].values())
+    # with open("test.json", "w") as f:
+    #     s = json.loads(
+    #         '{"entrance_port":{"day1":[["0-24"],["3564"]],"day2":[["0-24"],["4434"]],"day3":[["0-24"],["2930"]]},"main_venue":{"day1":[["0-24"],["2383"]],"day2":[["0-24"],["2648"]],"day3":[["0-24"],["1787"]]}}')
+    #     json.dump(s, f)
+
+
+"""
+    {   "entrance_port":{       # 一个区域一个对象，键名是区域名
+            "day1":[["0-24",...],["3564",...]],     # 这是一个二维数组，有两项数据，第一项是时刻，第二项是时刻对应的人数
+            "day2":[["0-24"],["4434"]],
+            "day3":[["0-24"],["2930"]]},
+        "main_venue":{
+            "day1":[["0-24"],["2383"]],
+            "day2":[["0-24"],["2648"]],
+            "day3":[["0-24"],["1787"]]}
+    },
+    ...
+"""
