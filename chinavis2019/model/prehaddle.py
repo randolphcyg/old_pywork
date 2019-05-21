@@ -165,7 +165,7 @@ def analysis_person(path, person_id):
     # write(save_path, go_list)
 
 
-def analysis_place_person_count(path, place, place_name, data_dict):
+def analysis_place_person_count(path, place, place_name):
     """
     分析区域内部，当日人员停留总人数
     :param path: 三天日志数据路径
@@ -303,25 +303,33 @@ def analysis_some_person_stay(person_id):
 
 
 if __name__ == "__main__":
+    # for k, v in zip(place_all.keys(), place_all.values()):
+    #     print(k, v)
+    #     print(analysis_place_person_count(path1, v, k))
+
     # 天数自定义，接着是字典的自动添加，每一次遍历运行筛选写入函数就添加一个地点对象
     data_dict = {}
-    result_list = {}
+
     rrrr = {}
     for k, v in zip(place_all.keys(), place_all.values()):
+
         print(k, v)
-        result_list1 = analysis_place_person_count(path1, v, k, data_dict)
+        result_list_day1 = analysis_place_person_count(path1, v, k)
         # print(result_list1)
-        result_list2 = analysis_place_person_count(path2, v, k, data_dict)
+        result_list_day2 = analysis_place_person_count(path2, v, k)
         # print(result_list2)
-        result_list3 = analysis_place_person_count(path3, v, k, data_dict)
+        result_list_day3 = analysis_place_person_count(path3, v, k)
         # print(result_list3)
-        result_list.update(result_list1)
-        result_list.update(result_list2)
-        result_list.update(result_list3)
+        result_list = {}    # 位置写错了
+        result_list.update(result_list_day1)
+        result_list.update(result_list_day2)
+        result_list.update(result_list_day3)
         # # print(analysis_place_person_count(path1, v, k, data_dict))
+        print(result_list)
         rrr = {k: result_list}
         rrrr.update(rrr)
         print(rrrr)
+        # break
         # print(str(print(rrrr)))
 
 
