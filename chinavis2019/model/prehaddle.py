@@ -165,7 +165,7 @@ def analysis_person(path, person_id):
     # write(save_path, go_list)
 
 
-def analysis_place_person_count(path, place, place_name, test_dict):
+def analysis_place_person_count(path, place, place_name, data_dict):
     """
     分析区域内部，当日人员停留总人数
     :param path: 三天日志数据路径
@@ -173,23 +173,81 @@ def analysis_place_person_count(path, place, place_name, test_dict):
     :param place_name: 待分析的区域名字
     :return:
     """
-    p_list = []
-    test_dict = {}
-    for i, sid in enumerate(core(path)):
+    time_range = []
+    for i in range(68):
+        time_split = i * 600 + 25200
+        time_range.append(time_split)
 
-        if sid[:][1] in place and sid[:][0] not in p_list:
-            p_list.append(sid[:][0])
+    person_list = []
+    time_list = []
 
-            # print(sid[:][0], sid[:][1], s2t(sid[:][2]))
-    print(p_list)
-    print(str(place_name) + '人数：' + str(len(p_list)))
-
-    # 添加区域对应的时间及人数数据进 字典
+    # 塞东西
     which_day = path.split('/')[3].split('.')[0]
-    test_dict[place_name] = {which_day: [['6-12'], [len(p_list)]]}
-    print(test_dict)
+    day_stat = which_day
+    t_p_list = []
+    # place_stat = {day_stat: t_p_list}
+    # test_dict = {place_name:place_stat}
+    for i, sid in enumerate(core(path)):
+        if sid[:][1] in place and sid[:][0] not in person_list:
+            person_list.append(sid[:][0])
+            time_list.append(sid[:][2])
 
-    return p_list, test_dict
+    # print(person_list)
+    # print(time_list)
+    # print(str(place_name) + '人数：' + str(len(person_list)))
+    # print(str(place_name) + '时间点：' + str(len(time_list)))
+
+
+    # for m, tt in enumerate(time_list):
+    #     for n, time in enumerate(time_range):
+    #         if tt < time:
+    #             print(time, tt)
+    #             print(time_list[n])
+    #             break
+
+    t_range_list = []
+    num_list = []
+    for m in range(len(time_range)):
+        if m + 1 < len(time_range):     # 防止迭代溢出
+            # print(m)
+            # print(time_range[m], time_range[m + 1])
+            len_list = []
+            count_time_list = []
+
+            for n in range(len(time_list)):
+                if time_list[n] > time_range[m] and time_list[n] < time_range[m + 1]:
+                    count_time_list.append(time_list[n])
+                    # print(s2t(time_range[m]), s2t(time_list[n]), s2t(time_range[m + 1]))
+                    len_list.append(len(count_time_list))
+                    # print(len(count_time_list))
+                    # print(s2t(time_range[m]), s2t(time_range[m + 1]))
+                    # print(str(s2t(time_range[m])) + '~' + str(s2t(time_range[m + 1])))
+                    t_range = str(s2t(time_range[m])) + '~' + str(s2t(time_range[m + 1]))
+
+            if (len_list):
+                t_range_list.append(t_range)
+                # print(list(reversed(len_list))[0])
+                num_list.append(list(reversed(len_list))[0])
+    # print(t_range_list)
+    # print(len(t_range_list))
+    # print(num_list)
+    # print(len(num_list))
+
+    # 遍历存储时间段与人数的列表，解包后塞到
+    # for cc1, cc2 in zip(t_range_list, num_list):
+    #     t_p_list.append([cc1, cc2])
+    # t_p_list.append(t_range_list, num_list)
+
+    # print(test_dict)
+    t_p_list = [t_range_list, num_list]
+    # data_dict = test_dict
+
+    place_stat = {day_stat: t_p_list}
+    data_dict = place_stat
+
+    # print(data_dict)
+
+    return data_dict
 
 
 def analysis_person_stay():
@@ -247,9 +305,35 @@ def analysis_some_person_stay(person_id):
 if __name__ == "__main__":
     # 天数自定义，接着是字典的自动添加，每一次遍历运行筛选写入函数就添加一个地点对象
     data_dict = {}
+    result_list = {}
+    rrrr = {}
     for k, v in zip(place_all.keys(), place_all.values()):
-        analysis_place_person_count(path2, v, k, data_dict)
-    print(data_dict)
+        print(k, v)
+        result_list1 = analysis_place_person_count(path1, v, k, data_dict)
+        # print(result_list1)
+        result_list2 = analysis_place_person_count(path2, v, k, data_dict)
+        # print(result_list2)
+        result_list3 = analysis_place_person_count(path3, v, k, data_dict)
+        # print(result_list3)
+        result_list.update(result_list1)
+        result_list.update(result_list2)
+        result_list.update(result_list3)
+        # # print(analysis_place_person_count(path1, v, k, data_dict))
+        rrr = {k: result_list}
+        rrrr.update(rrr)
+        print(rrrr)
+        # print(str(print(rrrr)))
+
+
+    # with open("place_time_person_num.json", "w") as f:
+    #     s = json.loads(str(rrrr))
+    #     json.dump(s, f)
+
+    with open("place_time_person_num.json", 'a') as outfile:
+        json.dump(rrrr, outfile, ensure_ascii=False)
+        outfile.write('\n')
+
+
 
     # analysis_person(path1, 11778)
     # analysis_some_person_stay(11778)
