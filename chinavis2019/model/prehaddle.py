@@ -168,11 +168,12 @@ def analysis_person(path, person_id):
 def analysis_place_person_count(path, place, place_name):
     """
     分析区域内部，当日人员停留总人数，再将区域内部每隔十分钟的人数存进json文件
-    :param path: 三天日志数据路径
+    :param path: 三天日志数据路径待发到core()处理
     :param place: 待分析的区域
     :param place_name: 待分析的区域名字
     :return:
     """
+    # 分割时间
     time_range = []
     for i in range(68):
         time_split = i * 600 + 25200
@@ -189,7 +190,6 @@ def analysis_place_person_count(path, place, place_name):
         if sid[:][1] in place and sid[:][0] not in person_list:
             person_list.append(sid[:][0])
             time_list.append(sid[:][2])
-
     print(str(place_name) + '人数：' + str(len(person_list)))
     # print(str(place_name) + '时间点：' + str(len(time_list)))
 
@@ -203,7 +203,7 @@ def analysis_place_person_count(path, place, place_name):
             count_time_list = []
 
             for n in range(len(time_list)):
-                if time_list[n] >= time_range[m] and time_list[n] < time_range[m + 1]:
+                if time_range[m] <= time_list[n] < time_range[m + 1]:
                     count_time_list.append(time_list[n])
                     # print(s2t(time_range[m]), s2t(time_list[n]), s2t(time_range[m + 1]))
                     len_list.append(len(count_time_list))
@@ -212,21 +212,11 @@ def analysis_place_person_count(path, place, place_name):
                     # print(str(s2t(time_range[m])) + '~' + str(s2t(time_range[m + 1])))
                     t_range = str(s2t(time_range[m])) + '~' + str(s2t(time_range[m + 1]))
 
-            if (len_list):
+            if len_list:
                 t_range_list.append(t_range)
                 # print(list(reversed(len_list))[0])
                 num_list.append(list(reversed(len_list))[0])
-    # print(t_range_list)
-    # print(len(t_range_list))
-    # print(num_list)
-    # print(len(num_list))
 
-    # 遍历存储时间段与人数的列表，解包后塞到
-    # for cc1, cc2 in zip(t_range_list, num_list):
-    #     t_p_list.append([cc1, cc2])
-    # t_p_list.append(t_range_list, num_list)
-
-    # print(test_dict)
     t_p_list = [t_range_list, num_list]
 
     place_stat = {day_stat: t_p_list}
@@ -264,7 +254,6 @@ def analysis_person_stay():
                                     if data['id'].iloc[i] not in take_part_in_person_list:
                                         take_part_in_person_list.append(
                                             data['id'].iloc[i])
-
     print(len(take_part_in_person_list))
 
 
@@ -288,40 +277,26 @@ def analysis_some_person_stay(person_id):
 
 
 if __name__ == "__main__":
-    # for k, v in zip(place_all.keys(), place_all.values()):
-    #     print(k, v)
-    #     print(analysis_place_person_count(path1, v, k))
-
-    # 天数自定义，接着是字典的自动添加，每一次遍历运行筛选写入函数就添加一个地点对象
-    data_dict = {}
-    rrrr = {}
+    all_results = {}
     for k, v in zip(place_all.keys(), place_all.values()):
-        print(k, v)
-        result_list_day1 = analysis_place_person_count(path1, v, k)
-        # print(result_list1)
+        print(k, v)  # 遍历区域，计算每十分钟该区域扫描到的信号（信号筛选掉就是人数）数目，存成json文件
+        result_list_day1 = analysis_place_person_count(path1, v, k)  # {'day1': [['07:00:00~07:10:00', ...], [8, ...]]}
         result_list_day2 = analysis_place_person_count(path2, v, k)
-        # print(result_list2)
         result_list_day3 = analysis_place_person_count(path3, v, k)
-        # print(result_list3)
-        result_list = {}    # 位置写错了
+        result_list = {}
         result_list.update(result_list_day1)
         result_list.update(result_list_day2)
-        result_list.update(result_list_day3)
-        # # print(analysis_place_person_count(path1, v, k, data_dict))
-        # print(result_list)
-        rrr = {k: result_list}
-        rrrr.update(rrr)
-        print(rrrr)
+        result_list.update(result_list_day3)    # {'day1': [[][]], 'day2': [[][]], 'day3': [[][]]}
+        single_results = {k: result_list}   # {'entrance_port': {'day1': [[][]], 'day2': [[][]], 'day3': [[][]]}}
+        all_results.update(single_results)  # {'entrance_port': V1, 'place2': V2, ...}
         # break
-
-    with open("place_split_time_person_num.json", 'a') as outfile:
-        json.dump(rrrr, outfile, ensure_ascii=False)
+    # 写入json
+    with open("../res/results/place_split_time_person_num.json", 'a') as outfile:
+        json.dump(all_results, outfile, ensure_ascii=False)
         outfile.write('\n')
 
-
-
     # analysis_person(path1, 11778)
-    # analysis_some_person_stay(11778)
+    # analysis_some_person_stay(10019)
 
     # 各区域内部的人员
     # for k, v in zip(place_all.keys(), place_all.values()):
@@ -364,17 +339,3 @@ if __name__ == "__main__":
     #     analysis_person(path1, p_id)
 
     #     # analysis_person_stay(path1, p_id)
-
-
-"""
-    {   "entrance_port":{       # 一个区域一个对象，键名是区域名
-            "day1":[["0-24",...],["3564",...]],     # 这是一个二维数组，有两项数据，第一项是时刻，第二项是时刻对应的人数
-            "day2":[["0-24"],["4434"]],
-            "day3":[["0-24"],["2930"]]},
-        "main_venue":{
-            "day1":[["0-24"],["2383"]],
-            "day2":[["0-24"],["2648"]],
-            "day3":[["0-24"],["1787"]]}
-    },
-    ...
-"""
