@@ -175,9 +175,16 @@ def analysis_place_person_count(path, place, place_name):
     """
     # 分割时间
     time_range = []
-    for i in range(68):
-        time_split = i * 600 + 25200
+    # for i in range(68):
+    #     time_split = i * 600 + 25200
+    #     time_range.append(time_split)
+
+    # 65400 6.10
+    # 25200 7
+    for i in range(671):
+        time_split = i * 60 + 25200
         time_range.append(time_split)
+    print(time_range)
 
     person_list = []
     time_list = []
@@ -241,7 +248,7 @@ def analysis_person_stay():
             for i in range(len(data)):
                 if i + 1 < len(data):   # 错误处理，防止i+1超过迭代数目
                     if data['time'].iloc[i + 1] - \
-                            data['time'].iloc[i] > 600:    # 两时间类型数据可以相减
+                            data['time'].iloc[i] > 60:    # 两时间类型数据可以相减
                         for k, v in zip(place_all.keys(), place_all.values()):
                             if data['sid'].iloc[i] in v:    # 判断停留所在的地点, 停留时间
                                 print(k, data['sid'].iloc[i], s2t(
@@ -277,23 +284,26 @@ def analysis_some_person_stay(person_id):
 
 
 if __name__ == "__main__":
-    all_results = {}
-    for k, v in zip(place_all.keys(), place_all.values()):
-        print(k, v)  # 遍历区域，计算每十分钟该区域扫描到的信号（信号筛选掉就是人数）数目，存成json文件
-        result_list_day1 = analysis_place_person_count(path1, v, k)  # {'day1': [['07:00:00~07:10:00', ...], [8, ...]]}
-        result_list_day2 = analysis_place_person_count(path2, v, k)
-        result_list_day3 = analysis_place_person_count(path3, v, k)
-        result_list = {}
-        result_list.update(result_list_day1)
-        result_list.update(result_list_day2)
-        result_list.update(result_list_day3)    # {'day1': [[][]], 'day2': [[][]], 'day3': [[][]]}
-        single_results = {k: result_list}   # {'entrance_port': {'day1': [[][]], 'day2': [[][]], 'day3': [[][]]}}
-        all_results.update(single_results)  # {'entrance_port': V1, 'place2': V2, ...}
-        # break
+    m_dict = analysis_place_person_count(path1, toilet1, 'toilet1')
+    print(m_dict)
+
+    # all_results = {}
+    # for k, v in zip(place_all.keys(), place_all.values()):
+    #     print(k, v)  # 遍历区域，计算每十分钟该区域扫描到的信号（信号筛选掉就是人数）数目，存成json文件
+    #     result_list_day1 = analysis_place_person_count(path1, v, k)  # {'day1': [['07:00:00~07:10:00', ...], [8, ...]]}
+    #     result_list_day2 = analysis_place_person_count(path2, v, k)
+    #     result_list_day3 = analysis_place_person_count(path3, v, k)
+    #     result_list = {}
+    #     result_list.update(result_list_day1)
+    #     result_list.update(result_list_day2)
+    #     result_list.update(result_list_day3)    # {'day1': [[][]], 'day2': [[][]], 'day3': [[][]]}
+    #     single_results = {k: result_list}   # {'entrance_port': {'day1': [[][]], 'day2': [[][]], 'day3': [[][]]}}
+    #     all_results.update(single_results)  # {'entrance_port': V1, 'place2': V2, ...}
+    #     break
     # 写入json
-    with open("../res/results/place_split_time_person_num.json", 'a') as outfile:
-        json.dump(all_results, outfile, ensure_ascii=False)
-        outfile.write('\n')
+    # with open("../res/results/place_split_time_person_num.json", 'a') as outfile:
+    #     json.dump(all_results, outfile, ensure_ascii=False)
+    #     outfile.write('\n')
 
     # analysis_person(path1, 11778)
     # analysis_some_person_stay(10019)
