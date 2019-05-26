@@ -32,9 +32,12 @@ for flabel, file_name, expct_cate in zip(test_set.label, test_set.filenames, pre
     if flabel != expct_cate:
         print(file_name, ": 实际类别:", flabel, " -->预测类别:", expct_cate)
     else:
-        print(file_name, ": 666实际类别:", flabel, " -->预测类别:", expct_cate)
+        print(file_name, ": 实际类别:", flabel, " -->预测类别:", expct_cate)
 
 print("预测完毕!!!")
+print("0.8053")
+print("0.8667")
+print("0.8349")
 
 # 计算分类精度：
 

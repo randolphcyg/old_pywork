@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 import os.path
 import json
+from collections import Counter
 
 path0 = '../res/传感器布置表.csv'
 path1 = '../res/传感器日志数据/day1.csv'
@@ -114,6 +115,23 @@ def s2t(second_time):
     return '%02d:%02d:%02d' % (h, m, s)
 
 
+def split_time(n):
+    """
+    设置从07:00:00 18:10:00
+    即使是卫生间以秒为划分看到的效果也是很差的，
+    结论就是没有必要以秒区划分，这样我们尽量将划分时间划为1~10分钟的整数分钟即可
+    :param n:几分钟统计一次,给整数
+    :return:
+    """
+    time_slice = n * 60
+    time_index = (65400 - 25200) // time_slice
+    time_range = []
+    for i in range(time_index + 1):
+        moment = 25200 + i * time_slice
+        time_range.append(moment)
+    return time_range
+
+
 def write(save_path, save_content):
     with open(save_path, 'a', newline='') as f:
         df = pd.DataFrame(save_content)
@@ -168,67 +186,55 @@ def analysis_person(path, person_id):
 def analysis_place_person_count(path, place, place_name):
     """
     分析区域内部，当日人员停留总人数，再将区域内部每隔十分钟的人数存进json文件
+    如何计算区域内部实时人数？？————如何判断出入 根据出入情况计算当前区域的人员id总数目
+    我们的传感器只会记录发生变化时候的人员ID的记录，也就是必须算一下积分
+    人员id在该区域第一次检测到的时候，人员id存一个列表以记录该区域实时人数，不断地拿该列表去遍历
+    当该列表中的人员ID在门口的位置出现第二次的时候，开始减去即可
+    （奇数检测到+，偶数时-即可，然后统计列表长度即实时人数）
     :param path: 三天日志数据路径待发到core()处理
     :param place: 待分析的区域
     :param place_name: 待分析的区域名字
     :return:
     """
-    # 分割时间
-    time_range = []
-    # for i in range(68):
-    #     time_split = i * 600 + 25200
-    #     time_range.append(time_split)
-
-    # 65400 6.10
-    # 25200 7
-    for i in range(671):
-        time_split = i * 60 + 25200
-        time_range.append(time_split)
-    print(time_range)
-
+    time_range = split_time(5)  # 给定划分时间的分钟数目，10则代表十分钟计算一次
     person_list = []
     time_list = []
 
-    # 塞东西
     which_day = path.split('/')[3].split('.')[0]
-    day_stat = which_day
 
     for i, sid in enumerate(core(path)):
-        if sid[:][1] in place and sid[:][0] not in person_list:
-            person_list.append(sid[:][0])
-            time_list.append(sid[:][2])
+        if sid[:][1] in place:      #  and sid[:][0] not in person_list:
+            if sid[:][0] not in person_list:
+                person_list.append(sid[:][0])
+                time_list.append(sid[:][2])
+            # else:
+            #     print('第二次及以上在门口出现的人员：', sid[:][0])
     print(str(place_name) + '人数：' + str(len(person_list)))
+    # 这里想到一个比较好的处理方法，将数据类型改成集合，可以用集合的相关操作计算
     # print(str(place_name) + '时间点：' + str(len(time_list)))
 
-    t_range_list = []
+    exist_time_range_list = []
     num_list = []
     for m in range(len(time_range)):
         if m + 1 < len(time_range):     # 防止迭代溢出
-            # print(m)
-            # print(time_range[m], time_range[m + 1])
             len_list = []
             count_time_list = []
 
             for n in range(len(time_list)):
                 if time_range[m] <= time_list[n] < time_range[m + 1]:
                     count_time_list.append(time_list[n])
-                    # print(s2t(time_range[m]), s2t(time_list[n]), s2t(time_range[m + 1]))
                     len_list.append(len(count_time_list))
-                    # print(len(count_time_list))
-                    # print(s2t(time_range[m]), s2t(time_range[m + 1]))
-                    # print(str(s2t(time_range[m])) + '~' + str(s2t(time_range[m + 1])))
-                    t_range = str(s2t(time_range[m])) + '~' + str(s2t(time_range[m + 1]))
+                    exist_time_range = str(s2t(time_range[m])) + '~' + str(s2t(time_range[m + 1]))
 
-            if len_list:
-                t_range_list.append(t_range)
+            if len_list:    # 当时间段内有记录
+                exist_time_range_list.append(exist_time_range)
                 # print(list(reversed(len_list))[0])
                 num_list.append(list(reversed(len_list))[0])
 
-    t_p_list = [t_range_list, num_list]
+    t_p_list = [exist_time_range_list, num_list]
 
-    place_stat = {day_stat: t_p_list}
+    place_stat = {which_day: t_p_list}
     data_dict = place_stat
-    # print(data_dict)
     return data_dict
 
 
@@ -286,6 +292,8 @@ def analysis_some_person_stay(person_id):
 if __name__ == "__main__":
     m_dict = analysis_place_person_count(path1, toilet1, 'toilet1')
     print(m_dict)
+
+    # split_time(time_slice3)
 
     # all_results = {}
     # for k, v in zip(place_all.keys(), place_all.values()):
