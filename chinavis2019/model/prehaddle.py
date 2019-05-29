@@ -38,8 +38,8 @@ main_venue = [10219, 10220, 10221, 10222, 10223, 10224,
               10919, 10920, 10921, 10922, 10923, 10924, 10925, 10926, 10927,
               11019, 11020, 11021, 11022, 10423, 11024, 11025, 11026, 11027,
               11119, 11120, 11121, 11122, 10423, 11124, 11125, 11126, 11127]
-main_venue_plus = [11121, 11123, 11125,
-                   11221, 11223, 11225]
+main_venue_plus = [[11121, 11123, 11125, 10218, 10219],
+                   [11221, 11223, 11225, 10119, 10119]]
 # 服务台
 service_desk = [11419, 11420, 11519, 11520]
 # 房间
@@ -57,10 +57,10 @@ toilet3 = [20410, 20411, 20510, 20511]
 poster_area = [10307, 10308, 10407, 10408, 10507, 10508, 10607,
                10608, 10707, 10708, 10807, 10808, 10907, 10908]
 # 分会场
-breakout_venue_a = [10201, 10202, 10203, 10204, 10301, 10302, 10303, 10304]
-breakout_venue_b = [10401, 10402, 10403, 10404, 10501, 10502, 10503, 10504]
-breakout_venue_c = [10601, 10602, 10603, 10604, 10701, 10702, 10703, 10704]
-breakout_venue_d = [10801, 10802, 10803, 10804, 10901, 10902, 10903, 10904]
+venue_a = [10201, 10202, 10203, 10204, 10301, 10302, 10303, 10304]
+venue_b = [10401, 10402, 10403, 10404, 10501, 10502, 10503, 10504]
+venue_c = [10601, 10602, 10603, 10604, 10701, 10702, 10703, 10704]
+venue_d = [10801, 10802, 10803, 10804, 10901, 10902, 10903, 10904]
 # 扶梯
 escalator_first_north = [10110, 10111]
 escalator_first_south = [11410, 11411]
@@ -93,10 +93,10 @@ place_all = {
     'toilet2': toilet2,
     'toilet3': toilet3,
     'poster_area': poster_area,
-    'breakout_venue_a': breakout_venue_a,
-    'breakout_venue_b': breakout_venue_b,
-    'breakout_venue_c': breakout_venue_c,
-    'breakout_venue_d': breakout_venue_d,
+    'venue_a': venue_a,
+    'venue_b': venue_b,
+    'venue_c': venue_c,
+    'venue_d': venue_d,
     'escalator_first_north': escalator_first_north,
     'escalator_first_south': escalator_first_south,
     'escalator_second_north': escalator_second_north,
@@ -104,40 +104,6 @@ place_all = {
     'restaurant': restaurant,
     'lounge_area': lounge_area
 }
-
-
-def s2t(second_time):
-    """
-    秒数转时间函数
-    :param second_time: 25240
-    :return: 07:00:40
-    """
-    m, s = divmod(second_time, 60)
-    h, m = divmod(m, 60)
-    return '%02d:%02d:%02d' % (h, m, s)
-
-
-def split_time(n):
-    """
-    设置从07:00:00 18:10:00
-    即使是卫生间以秒为划分看到的效果也是很差的，
-    结论就是没有必要以秒区划分，这样我们尽量将划分时间划为1~10分钟的整数分钟即可
-    :param n:几分钟统计一次,给整数
-    :return:
-    """
-    time_slice = n * 60
-    time_index = (65400 - 25200) // time_slice
-    time_range = []
-    for i in range(time_index + 1):
-        moment = 25200 + i * time_slice
-        time_range.append(moment)
-    return time_range
-
-
-def write(save_path, save_content):
-    with open(save_path, 'a', newline='') as f:
-        df = pd.DataFrame(save_content)
-        df.to_csv(f, index=False, sep=',', header=['id', 'sid', 'time'])
 
 
 def core(path):
@@ -155,19 +121,36 @@ def core(path):
     return log_list
 
 
-def analysis_place(path, place, place_name):
+def write(save_path, save_content):
+    with open(save_path, 'a', newline='') as f:
+        df = pd.DataFrame(save_content)
+        df.to_csv(f, index=False, sep=',', header=['id', 'sid', 'time'])
+
+
+def s2t(second_time):
     """
-    分析各区域内部人员id，位置sid，时间time
-    :param place:
-    :param place_name:
+    秒数转时间函数
+    :param second_time: 25240
+    :return: 07:00:40
+    """
+    m, s = divmod(second_time, 60)
+    h, m = divmod(m, 60)
+    return '%02d:%02d:%02d' % (h, m, s)
+
+
+def split_time(n):
+    """
+    设置从07:00:00 18:10:00
+    :param n:几分钟统计一次,给整数
     :return:
     """
-    save_path = '../res/place/' + place_name + '.csv'
-    sensor_list = []
-    for i, sid in enumerate(core(path)):
-        if sid[:][1] in place:
-            sensor_list.append(sid[:][:])
-    write(save_path, sensor_list)
+    time_slice = n * 60
+    time_index = (65400 - 25200) // time_slice
+    time_range = []
+    for i in range(time_index + 1):
+        moment = 25200 + i * time_slice
+        time_range.append(moment)
+    return time_range
 
 
 def analysis_person(path, person_id):
@@ -185,60 +168,139 @@ def analysis_person(path, person_id):
     # write(save_path, go_list)
 
 
-def analysis_main_venue_person_count(path, place, place_name):
-    ana_list = core(path)       # 待分析三元组列表
+def analysis_place(path, place, place_name):
+    """
+    分析各区域内部人员id，位置sid，时间time
+    :param place:
+    :param place_name:
+    :return:
+    """
+    save_path = '../res/place/' + place_name + '.csv'
+    sensor_list = []
+    for i, sid in enumerate(core(path)):
+        if sid[:][1] in place:
+            sensor_list.append(sid[:][:])
+    write(save_path, sensor_list)
 
-    a_id = [id[0] for id in core(path)]
-    a_sid = [sid[1] for sid in ana_list]
-    a_time = [time[2] for time in core(path)]
-    c_a_id = []
-    c_a_sid = []
-    c_a_time = []
-    for c1, c2, c3 in zip(a_id, a_sid, a_time):
-        if c2 in place:     # 只分析在带分析区域（进出口）位置的数据
-            c_a_id.append(c1)
-            c_a_sid.append(c2)
-            c_a_time.append(c3)
-        else:
-            pass
-    print(len(c_a_id))     # 24257条记录
-    print(len(c_a_sid))
-    print(len(c_a_time))
+
+def analysis_main_venue_person_count(path, place, place_name):
+    """
+
+    :param path:
+    :param place:
+    :param place_name:
+    :return:
+    """
+    all_list = core(path)       # 待分析三元组列表
+    clear_list = []
+    for c in all_list:
+        if c[1] in place[0] + place[1]:
+            clear_list.append(c)
+    print(clear_list)
+    sort_clear_list = sorted(clear_list, key=lambda x: x[0])
+    a_id = [id[0] for id in sort_clear_list]
+    a_sid = [sid[1] for sid in sort_clear_list]
+    a_time = [time[2] for time in sort_clear_list]
+
+    print(sort_clear_list)
+    # 数据筛选准备完成
+    ana_id_list = sorted(list(set(a_id)))
+
+    # for con in ana_id_list:
+    #     print(con)      # 10003
+    con = 10003
+    for conn in sort_clear_list:
+        print(conn[0])
+        if conn[0] == con:
+            front = a_id.index(conn[0])
+            print(sort_clear_list[front])
+            print(a_sid[front])
+            print(a_sid[front + 1])
+
+
+            if a_sid[front] == 11221:
+                if a_sid[front + 1] == 11121:
+                    print(con, '进入')
+            if a_sid[front] == 11121:
+                if a_sid[front + 1] == 11221:
+                    print(con, '出门')
+
+            if a_sid[front] == 11223:
+                if a_sid[front + 1] == 11123:
+                    print(con, '进入')
+            if a_sid[front] == 11123:
+                if a_sid[front + 1] == 11223:
+                    print(con, '出门')
+
+            if a_sid[front] == 11225:
+                if a_sid[front + 1] == 11125:
+                    print(con, '进入')
+            if a_sid[front] == 11125:
+                if a_sid[front + 1] == 11225:
+                    print(con, '出门')
+
+            if a_sid[front] == 10119:
+                if a_sid[front + 1] == 10219:
+                    print(con, '进入')
+            if a_sid[front] == 10219:
+                if a_sid[front + 1] == 10119:
+                    print(con, '出门')
+
+            if a_sid[front] == 10119:
+                if a_sid[front + 1] == 10218:
+                    print(con, '进入')
+            if a_sid[front] == 10218:
+                if a_sid[front + 1] == 10119:
+                    print(con, '出门')
+
+            sort_clear_list.pop(front)
+            a_sid.pop(front)
+
+
+
+
+
+
+
+
 
     area_person_list = []
     area_time_list = []
-    # for c1, c2, c3 in zip(c_a_id, c_a_sid, c_a_time):
-    for c in range(c_a_sid.count(10119)):
-        # print(c1, c2, c3)
-        first = c_a_sid.index(10119)
-        if first + 1 < len(c_a_sid) and c_a_sid[first + 1] == 10219:    # c_a_sid[first] == c_a_sid[first + 1] and
-            area_person_list.append(c_a_id[first])
-            area_time_list.append(c_a_time[first])
-            print(c_a_id[first], '进入主会场')
-        else:
-            pass
 
-        c_a_id.pop(first)
-        c_a_sid.pop(first)
-        c_a_time.pop(first)
+    # a_id = [1, 1, 1, 2, 2, 3]
+    #
+    # c_a_id = sorted(list(set(a_id)))
+    # for ccc in a_id:
+    #     print(a_id.index(ccc))
+    #     a_id.pop(a_id.index(ccc))
+    #     print(a_id)
 
-    print(area_person_list)
-    print(len(area_person_list))
-    print(area_time_list)
-    print(len(area_time_list))
-    # 1       3       5
-    # 2261 + 218 + 654 = 3133
-    # 2237 + 221 + 655 = 3113
+
+    # area_person_list = []
+    # area_time_list = []
+    # for inside, outside in zip(main_venue_plus[0], main_venue_plus[1]):
+    #     for c in range(a_sid.count(inside)):
+    #         first = a_sid.index(inside)
+    #         if first + 1 < len(a_sid) and a_sid[first + 1] == outside:    #  and a_id[first] == a_id[first + 1]
+    #             area_person_list.append(a_id[first])
+    #             area_time_list.append(a_time[first])
+    #             print(a_id[first], '进入', place_name)
+    #         else:
+    #             pass
+    #
+    #         a_id.pop(first)
+    #         a_sid.pop(first)
+    #         a_time.pop(first)
+    #
+    # print(area_person_list)
+    # print(len(area_person_list))
+    # print(area_time_list)
+    # print(len(area_time_list))
 
 
 def analysis_place_person_count(path, place, place_name):
     """
     分析区域内部，当日人员停留总人数，再将区域内部每隔十分钟的人数存进json文件
-    如何计算区域内部实时人数？？————如何判断出入 根据出入情况计算当前区域的人员id总数目
-    我们的传感器只会记录发生变化时候的人员ID的记录，也就是必须算一下积分
-    人员id在该区域第一次检测到的时候，人员id存一个列表以记录该区域实时人数，不断地拿该列表去遍历
-    当该列表中的人员ID在门口的位置出现第二次的时候，开始减去即可
-    （奇数检测到+，偶数时-即可，然后统计列表长度即实时人数）
     :param path: 三天日志数据路径待发到core()处理
     :param place: 待分析的区域
     :param place_name: 待分析的区域名字
@@ -248,7 +310,6 @@ def analysis_place_person_count(path, place, place_name):
     person_list = []
     time_list = []
     for i, sid in enumerate(core(path)):
-        # 规则有问题，需要先找到该区域是否独立且进出必须通过的位置！！！！！！！！！！！！！！！才能去接着算
         # 人类视觉系统观察的是变化，而不是绝对值，并且容易被边界吸引（理论）
         if sid[:][1] in place:  # 出现在待分析区域的传感器记录全部都加进来
             c0 = sid[:][0]
@@ -286,8 +347,6 @@ def analysis_place_person_count(path, place, place_name):
     #         # elif Counter(person_list)[c] == 1:
     #         #     print('偶数次——进来，人员列表去除此ID', c, Counter(person_list)[c])
     #         #     person_list.append(c)
-
-
 
 
 
@@ -422,7 +481,7 @@ if __name__ == "__main__":
     #     analysis_place(path1, v, k)
 
     # 人员分析
-    # analysis_person(path1, 12842)
+    # analysis_person(path1, 10003)
     # analysis_some_person_stay(person_id=12842)
 
     # print('第一天各区域人数:')
