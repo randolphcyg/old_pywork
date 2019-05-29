@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$USER_HOME$/Desktop/100-Days-Of-ML-Code-master/.idea/100-Days-Of-ML-Code-master.iml" filepath="$USER_HOME$/Desktop/100-Days-Of-ML-Code-master/.idea/100-Days-Of-ML-Code-master.iml" />
-      <module fileurl="file://$USER_HOME$/Desktop/chinese_text_classification-master/.idea/chinese_text_classification-master.iml" filepath="$USER_HOME$/Desktop/chinese_text_classification-master/.idea/chinese_text_classification-master.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/pyworkspace.iml" filepath="$PROJECT_DIR$/.idea/pyworkspace.iml" />
     </modules>
   </component>
