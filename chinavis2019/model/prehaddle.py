@@ -38,8 +38,8 @@ main_venue = [10219, 10220, 10221, 10222, 10223, 10224,
               10919, 10920, 10921, 10922, 10923, 10924, 10925, 10926, 10927,
               11019, 11020, 11021, 11022, 10423, 11024, 11025, 11026, 11027,
               11119, 11120, 11121, 11122, 10423, 11124, 11125, 11126, 11127]
-main_venue_plus = [[11121, 11123, 11125, 10218, 10219],
-                   [11221, 11223, 11225, 10119, 10119]]
+# 门的结构是进出口俩方块对应：里外方块
+main_venue_door = [[11121,11221],[11123,11223],[11125,11225],[10218,10119],[10219,10119]]
 # 服务台
 service_desk = [11419, 11420, 11519, 11520]
 # 房间
@@ -196,106 +196,31 @@ def analysis_main_venue_person_count(path, place, place_name):
     for c in all_list:
         if c[1] in place[0] + place[1]:
             clear_list.append(c)
-    print(clear_list)
+
     sort_clear_list = sorted(clear_list, key=lambda x: x[0])
+    # clear_list = [[10003, 11221, 33099], [10003, 11121, 33106], [10003, 11121, 35117], [10003, 11221, 35129],
+    #                    [10012, 11221, 30671], [10012, 11121, 30680], [10012, 11125, 38093], [10012, 11225, 38136]]
+    # sort_clear_list = sorted(clear_list, key=lambda x: x[0])
+    # print(sort_clear_list)
     a_id = [id[0] for id in sort_clear_list]
     a_sid = [sid[1] for sid in sort_clear_list]
     a_time = [time[2] for time in sort_clear_list]
-
-    print(sort_clear_list)
-    # 数据筛选准备完成
     ana_id_list = sorted(list(set(a_id)))
+    # 数据筛选准备完成
+    for con in ana_id_list:     # con 10003, 10012
+        print('分析人员：', con)
 
-    # for con in ana_id_list:
-    #     print(con)      # 10003
-    con = 10003
-    for conn in sort_clear_list:
-        print(conn[0])
-        if conn[0] == con:
-            front = a_id.index(conn[0])
-            print(sort_clear_list[front])
-            print(a_sid[front])
-            print(a_sid[front + 1])
+        for i, conn in enumerate(a_id):
+            if conn == con and i + 1 < len(a_sid):
+                print(conn)
+                print(a_sid[i], a_sid[i + 1])
+                front = a_sid[i]
+                back = a_sid[i + 1]
 
-
-            if a_sid[front] == 11221:
-                if a_sid[front + 1] == 11121:
-                    print(con, '进入')
-            if a_sid[front] == 11121:
-                if a_sid[front + 1] == 11221:
-                    print(con, '出门')
-
-            if a_sid[front] == 11223:
-                if a_sid[front + 1] == 11123:
-                    print(con, '进入')
-            if a_sid[front] == 11123:
-                if a_sid[front + 1] == 11223:
-                    print(con, '出门')
-
-            if a_sid[front] == 11225:
-                if a_sid[front + 1] == 11125:
-                    print(con, '进入')
-            if a_sid[front] == 11125:
-                if a_sid[front + 1] == 11225:
-                    print(con, '出门')
-
-            if a_sid[front] == 10119:
-                if a_sid[front + 1] == 10219:
-                    print(con, '进入')
-            if a_sid[front] == 10219:
-                if a_sid[front + 1] == 10119:
-                    print(con, '出门')
-
-            if a_sid[front] == 10119:
-                if a_sid[front + 1] == 10218:
-                    print(con, '进入')
-            if a_sid[front] == 10218:
-                if a_sid[front + 1] == 10119:
-                    print(con, '出门')
-
-            sort_clear_list.pop(front)
-            a_sid.pop(front)
-
-
-
-
-
-
-
-
-
-    area_person_list = []
-    area_time_list = []
-
-    # a_id = [1, 1, 1, 2, 2, 3]
-    #
-    # c_a_id = sorted(list(set(a_id)))
-    # for ccc in a_id:
-    #     print(a_id.index(ccc))
-    #     a_id.pop(a_id.index(ccc))
-    #     print(a_id)
-
-
-    # area_person_list = []
-    # area_time_list = []
-    # for inside, outside in zip(main_venue_plus[0], main_venue_plus[1]):
-    #     for c in range(a_sid.count(inside)):
-    #         first = a_sid.index(inside)
-    #         if first + 1 < len(a_sid) and a_sid[first + 1] == outside:    #  and a_id[first] == a_id[first + 1]
-    #             area_person_list.append(a_id[first])
-    #             area_time_list.append(a_time[first])
-    #             print(a_id[first], '进入', place_name)
-    #         else:
-    #             pass
-    #
-    #         a_id.pop(first)
-    #         a_sid.pop(first)
-    #         a_time.pop(first)
-    #
-    # print(area_person_list)
-    # print(len(area_person_list))
-    # print(area_time_list)
-    # print(len(area_time_list))
+                if [front, back] in place:
+                    print('出')
+                if [back, front] in place:
+                    print('进')
 
 
 def analysis_place_person_count(path, place, place_name):
@@ -446,7 +371,8 @@ def analysis_some_person_stay(person_id):
 
 if __name__ == "__main__":
     # 在算区域实时人数的时候 很有意思的是有人进出卫生间十四次
-    analysis_main_venue_person_count(path1, main_venue_plus, 'main_venue_plus')
+    analysis_main_venue_person_count(path1, main_venue_door, 'main_venue_door')
+
     # analysis_place_person_count(path1, main_venue, 'main_venue')
     # m_dict = analysis_place_person_count(path1, toilet1, 'toilet1')
     # print(m_dict)
