@@ -39,7 +39,7 @@ main_venue = [10219, 10220, 10221, 10222, 10223, 10224,
               11019, 11020, 11021, 11022, 10423, 11024, 11025, 11026, 11027,
               11119, 11120, 11121, 11122, 10423, 11124, 11125, 11126, 11127]
 # 门的结构是进出口俩方块对应：里外方块
-main_venue_door = [[11121,11221],[11123,11223],[11125,11225],[10218,10119],[10219,10119]]
+main_venue_door = [[11121, 11221], [11123, 11223], [11125, 11225], [11125, 11226], [10219, 10218], [10219, 10119]]
 # 服务台
 service_desk = [11419, 11420, 11519, 11520]
 # 房间
@@ -191,10 +191,14 @@ def analysis_main_venue_person_count(path, place, place_name):
     :param place_name:
     :return:
     """
+    import itertools
+
+    new_merged_list = list(itertools.chain(*place))
+
     all_list = core(path)       # 待分析三元组列表
     clear_list = []
     for c in all_list:
-        if c[1] in place[0] + place[1]:
+        if c[1] in new_merged_list:
             clear_list.append(c)
 
     sort_clear_list = sorted(clear_list, key=lambda x: x[0])
@@ -207,6 +211,8 @@ def analysis_main_venue_person_count(path, place, place_name):
     a_time = [time[2] for time in sort_clear_list]
     ana_id_list = sorted(list(set(a_id)))
     # 数据筛选准备完成
+    area_in_person_list = []
+    area_out_person_list = []
     for con in ana_id_list:     # con 10003, 10012
         print('分析人员：', con)
 
@@ -215,13 +221,20 @@ def analysis_main_venue_person_count(path, place, place_name):
                 print(conn)
                 print(a_sid[i], a_sid[i + 1])
                 front = a_sid[i]
+                f_time = a_time[i]
                 back = a_sid[i + 1]
+                b_time = a_time[i + 1]
 
                 if [front, back] in place:
                     print('出')
+                    area_out_person_list.append([front, f_time])
                 if [back, front] in place:
                     print('进')
-
+                    area_in_person_list.append([front, f_time])
+    print(area_out_person_list)
+    print(len(area_out_person_list))
+    print(area_in_person_list)
+    print(len(area_in_person_list))
 
 def analysis_place_person_count(path, place, place_name):
     """
@@ -372,7 +385,7 @@ def analysis_some_person_stay(person_id):
 if __name__ == "__main__":
     # 在算区域实时人数的时候 很有意思的是有人进出卫生间十四次
     analysis_main_venue_person_count(path1, main_venue_door, 'main_venue_door')
-
+    # analysis_person(path1, 10003)
     # analysis_place_person_count(path1, main_venue, 'main_venue')
     # m_dict = analysis_place_person_count(path1, toilet1, 'toilet1')
     # print(m_dict)
