@@ -41,12 +41,20 @@ main_venue = [10219, 10220, 10221, 10222, 10223, 10224,
               11019, 11020, 11021, 11022, 10423, 11024, 11025, 11026, 11027,
               11119, 11120, 11121, 11122, 10423, 11124, 11125, 11126, 11127]
 # 主会场门
-main_venue_door = [[11121, 11221], [11123, 11223], [11125, 11225], [10219, 10218], [10219, 10119]]
+main_venue_door = [[11121, 11221], [11123, 11223],
+                   [11125, 11225], [10219, 10218], [10219, 10119]]
 # 服务台
 service_desk = [11419, 11420, 11519, 11520]
 # 服务台门
-service_desk_door = [[11419, 11418], [11419, 11318], [11419, 11319], [11419, 11320],
-                     [11420, 11319], [11420, 11320], [11420, 11321]]
+service_desk_door = [
+    [
+        11419, 11418], [
+            11419, 11318], [
+                11419, 11319], [
+                    11419, 11320], [
+                        11420, 11319], [
+                            11420, 11320], [
+                                11420, 11321]]
 # 房间
 room1 = [10610, 10611, 10710, 10711, 10810, 10811, 10910, 10911]
 room1_door = [[10710, 10709], [10910, 10909]]
@@ -206,13 +214,17 @@ def analysis_place(path, place, place_name):
 def area_realtime_num():
     # 两个函数传入待处理的数据，一个是时间按整数分割出的时间列表；第二个是区域进出列表（id:time）
     time_list = split_time(1)
-    (in_list, out_list) = area_in_out_count(path1, service_desk_door, 'service_desk_door')
+    (in_list, out_list) = area_in_out_count(
+        path1, venue_b_door, 'venue_b_door')
     sorted_in_list = sorted(in_list, key=lambda x: x[1])    # 改为时间排序
     sorted_out_list = sorted(out_list, key=lambda x: x[1])
-
+    print(len(sorted_in_list))
+    print(sorted_in_list)
+    # for ii in sorted_in_list:
+    #     print(ii[1])
     # time_list = [50000, 53000, 56000, 59000, 62000, 65000]
     # in_list = [[10020, 50526], [10019, 54981], [10019, 59851], [10062, 59491], [10091, 55701]]
-    # out_list = [[10019, 53945], [10019, 58429], [10019, 63013], [10062, 62439], [10091, 57781]]
+    # out_list = [[10020, 53945], [10019, 58429], [10019, 63013], [10062, 62439], [10091, 57781]]
     # sorted_in_list = sorted(in_list, key=lambda x: x[1])  # 改为时间排序
     # sorted_out_list = sorted(out_list, key=lambda x: x[1])
 
@@ -223,7 +235,8 @@ def area_realtime_num():
         # print(content)
         for front, back in zip(time_list[::1], time_list[1::1]):
             # print(front, back)
-            if front < content[1] < back:
+            if front <= content[1] < back:
+                # print(content[1])
                 time_range.append(str(s2t(front)) + '-' + str(s2t(back)))
                 id_list.append(content[0])
             # else:
@@ -243,6 +256,7 @@ def area_realtime_num():
         # test = {str(t_point): per_range_person_list}
         in_dict[t_point] = per_range_person_list
     print(in_dict)
+    print(len(in_dict))
 
     # 还没想好出入处理如何放在一起 一个in_dict,out_dict
     time_range1 = []
@@ -251,7 +265,7 @@ def area_realtime_num():
         # print(content)
         for front, back in zip(time_list[::1], time_list[1::1]):
             # print(front, back)
-            if front < content[1] < back:
+            if front <= content[1] < back:
                 # print(content[1], '在', front, back, '区间内，此时间区间列表加入content[0]')
                 time_range1.append(str(s2t(front)) + '-' + str(s2t(back)))
                 id_list1.append(content[0])
@@ -272,6 +286,7 @@ def area_realtime_num():
         # test = {str(t_point): per_range_person_list}
         out_dict[t_point] = per_range_person_list1
     print(out_dict)
+    print(len(out_dict))
     # 生成分割时间的字符串，用来遍历进出字典的keys
     ttt = []
     for front, back in zip(time_list[::1], time_list[1::1]):
@@ -296,16 +311,15 @@ def area_realtime_num():
     # 将出入字典合并成计数字典
     mount_dict = {}
     for a in ttt:
-       if a in mount_in_dict.keys() and a in mount_out_dict.keys():
-           mount_dict[a] = mount_in_dict[a] + mount_out_dict[a]
-       elif a in mount_in_dict.keys() and a not in mount_out_dict.keys():
-           mount_dict[a] = mount_in_dict[a]
-       elif a not in mount_in_dict.keys() and a in mount_out_dict.keys():
-           mount_dict[a] = mount_out_dict[a]
+        if a in mount_in_dict.keys() and a in mount_out_dict.keys():
+            mount_dict[a] = mount_in_dict[a] + mount_out_dict[a]
+        elif a in mount_in_dict.keys() and a not in mount_out_dict.keys():
+            mount_dict[a] = mount_in_dict[a]
+        elif a not in mount_in_dict.keys() and a in mount_out_dict.keys():
+            mount_dict[a] = mount_out_dict[a]
     print(len(mount_dict))
     print(mount_dict)
     print(sum(mount_dict.values()))
-
 
     # 叠加每个时间段的人数变量的到每个时间段的人数
     count_sum = []
@@ -315,7 +329,6 @@ def area_realtime_num():
     for i, con in enumerate(count_sum):
         count_sum_num.append(sum(count_sum[:i + 1]))
     print(count_sum_num)
-
 
 
 def area_in_out_count(path, place, place_name):
