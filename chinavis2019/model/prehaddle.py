@@ -132,6 +132,26 @@ place_all = {
     'restaurant': restaurant,
     'lounge_area': lounge_area
 }
+place_door_all = {
+    'exhibition_hall_door': exhibition_hall_door,
+    'main_venue_door': main_venue_door,
+    'service_desk_door': service_desk_door,
+    'room1_door': room1_door,
+    'room2_door': room2_door,
+    'room3_door': room3_door,
+    'room4_door': room4_door,
+    'room5_door': room5_door,
+    'room6_door': room6_door,
+    'toilet1_door': toilet1_door,
+    'toilet2_door': toilet2_door,
+    'toilet3_door': toilet3_door,
+    'venue_a_door': venue_a_door,
+    'venue_b_door': venue_b_door,
+    'venue_c_door': venue_c_door,
+    'venue_d_door': venue_d_door,
+    'restaurant_door': restaurant_door,
+    'lounge_area_door': lounge_area_door
+}
 
 
 def core(path):
@@ -211,15 +231,15 @@ def analysis_place(path, place, place_name):
     write(save_path, sensor_list)
 
 
-def area_realtime_num():
+def area_realtime_num(day, n, k, v):
     # 两个函数传入待处理的数据，一个是时间按整数分割出的时间列表；第二个是区域进出列表（id:time）
-    time_list = split_time(1)
+    time_list = split_time(n)
     (in_list, out_list) = area_in_out_count(
-        path1, venue_b_door, 'venue_b_door')
+        day, v, k)
     sorted_in_list = sorted(in_list, key=lambda x: x[1])    # 改为时间排序
     sorted_out_list = sorted(out_list, key=lambda x: x[1])
-    print(len(sorted_in_list))
-    print(sorted_in_list)
+    # print(len(sorted_in_list))
+    # print(sorted_in_list)
     # for ii in sorted_in_list:
     #     print(ii[1])
     # time_list = [50000, 53000, 56000, 59000, 62000, 65000]
@@ -239,11 +259,9 @@ def area_realtime_num():
                 # print(content[1])
                 time_range.append(str(s2t(front)) + '-' + str(s2t(back)))
                 id_list.append(content[0])
-            # else:
-            #     print(content[1], 'bu在', front, back, '区间内')
+
     sorted_time_range = sorted(list(set(time_range)))
-    # print(time_range)
-    # print(sorted_time_range)
+
     in_dict = {}
     for t_point in sorted_time_range:
         per_range_person_list = []
@@ -255,8 +273,8 @@ def area_realtime_num():
         # print(per_range_person_list)
         # test = {str(t_point): per_range_person_list}
         in_dict[t_point] = per_range_person_list
-    print(in_dict)
-    print(len(in_dict))
+    # print(in_dict)
+    # print(len(in_dict))
 
     # 还没想好出入处理如何放在一起 一个in_dict,out_dict
     time_range1 = []
@@ -269,8 +287,7 @@ def area_realtime_num():
                 # print(content[1], '在', front, back, '区间内，此时间区间列表加入content[0]')
                 time_range1.append(str(s2t(front)) + '-' + str(s2t(back)))
                 id_list1.append(content[0])
-            # else:
-            #     print(content[1], 'bu在', front, back, '区间内')
+
     sorted_time_range1 = sorted(list(set(time_range1)))
     # print(time_range1)
     # print(sorted_time_range1)
@@ -285,29 +302,29 @@ def area_realtime_num():
         # print(per_range_person_list)
         # test = {str(t_point): per_range_person_list}
         out_dict[t_point] = per_range_person_list1
-    print(out_dict)
-    print(len(out_dict))
+    # print(out_dict)
+    # print(len(out_dict))
     # 生成分割时间的字符串，用来遍历进出字典的keys
     ttt = []
     for front, back in zip(time_list[::1], time_list[1::1]):
         ttt.append(str(s2t(front)) + '-' + str(s2t(back)))
 
-    print(in_dict)
-    print(len(in_dict))
-    print(out_dict)
-    print(len(out_dict))
+    # print(in_dict)
+    # print(len(in_dict))
+    # print(out_dict)
+    # print(len(out_dict))
     # 将进出的字典中每个时间段记录的人员id替换成数目，出来的人加-号
     mount_in_dict = {}
     mount_out_dict = {}
     for ccc, ddd in zip(in_dict.keys(), in_dict.values()):
         mount_in_dict[ccc] = len(ddd)
-    print(mount_in_dict)
-    print(len(mount_in_dict))
+    # print(mount_in_dict)
+    # print(len(mount_in_dict))
 
     for ccc, ddd in zip(out_dict.keys(), out_dict.values()):
         mount_out_dict[ccc] = -len(ddd)
-    print(mount_out_dict)
-    print(len(mount_out_dict))
+    # print(mount_out_dict)
+    # print(len(mount_out_dict))
     # 将出入字典合并成计数字典
     mount_dict = {}
     for a in ttt:
@@ -317,18 +334,32 @@ def area_realtime_num():
             mount_dict[a] = mount_in_dict[a]
         elif a not in mount_in_dict.keys() and a in mount_out_dict.keys():
             mount_dict[a] = mount_out_dict[a]
-    print(len(mount_dict))
-    print(mount_dict)
+    # print(len(mount_dict))
+    # print(mount_dict)
     print(sum(mount_dict.values()))
 
     # 叠加每个时间段的人数变量的到每个时间段的人数
     count_sum = []
-    for c in mount_dict.values():
+    count_sum_time = []
+    for t, c in zip(mount_dict.keys(), mount_dict.values()):
         count_sum.append(c)
+        count_sum_time.append(t)
     count_sum_num = []
     for i, con in enumerate(count_sum):
         count_sum_num.append(sum(count_sum[:i + 1]))
-    print(count_sum_num)
+    # print(len(count_sum_num))
+    # print(count_sum_num)
+    # print(count_sum_time)
+    # result = {}
+    # for a, b in zip(count_sum_time, count_sum_num):
+    #     result[a] = b
+    result = [count_sum_time, count_sum_num]
+    print(result)
+    which_day = day.split('/')[3].split('.')[0]
+    resultbla = {which_day: result}
+    print(resultbla)
+    return resultbla
+
 
 
 def area_in_out_count(path, place, place_name):
@@ -438,7 +469,25 @@ def analysis_some_person_stay(person_id):
 
 if __name__ == "__main__":
     # 在算区域实时人数的时候 很有意思的是有人进出卫生间十四次
-    area_realtime_num()
+    for k, v in zip(place_door_all.keys(), place_door_all.values()):
+        print(k, v)
+        all_results = {}
+        result_list_day1 = area_realtime_num(day=path1, n=1, k=k, v=v)
+        result_list_day2 = area_realtime_num(day=path2, n=1, k=k, v=v)
+        result_list_day3 = area_realtime_num(day=path3, n=1, k=k, v=v)
+        result_list = {}
+        result_list.update(result_list_day1)
+        result_list.update(result_list_day2)
+        result_list.update(result_list_day3)
+        single_results = {k: result_list}
+        all_results.update(single_results)
+        print(all_results)
+        break
+
+    # 写入json
+    with open("../res/results/place_real_time_person_num.json", 'a') as outfile:
+        json.dump(all_results, outfile, ensure_ascii=False)
+        outfile.write('\n')
 
     # analysis_person(path1, 19965)
     # analysis_place_person_count(path1, main_venue, 'main_venue')
