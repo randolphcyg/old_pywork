@@ -27,6 +27,7 @@ exhibition_hall = [10215, 10216, 10217, 10218, 10315, 10316, 10317, 10318,
                    10615, 10616, 10617, 10618, 10715, 10716, 10717, 10718,
                    10815, 10816, 10817, 10818, 10915, 10916, 10917, 10918,
                    11015, 11016, 11017, 11018, 11115, 11116, 11117, 11118]
+# 展厅门
 exhibition_hall_door = [[11116, 11216], [11117, 11217], [10218, 10219]]
 # 主会场
 main_venue = [10219, 10220, 10221, 10222, 10223, 10224,
@@ -39,39 +40,31 @@ main_venue = [10219, 10220, 10221, 10222, 10223, 10224,
               10919, 10920, 10921, 10922, 10923, 10924, 10925, 10926, 10927,
               11019, 11020, 11021, 11022, 10423, 11024, 11025, 11026, 11027,
               11119, 11120, 11121, 11122, 10423, 11124, 11125, 11126, 11127]
-# 门的结构是进出口俩方块对应：里外方块
-main_venue_door1 = [[11121, 11221],
-                    [11123, 11223],
-                    [11125, 11225], [11125, 11226],
-                    [10219, 10218], [10219, 10119]]
-main_venue_door = [[11121, 11220]]
+# 主会场门
+main_venue_door = [[11121, 11221], [11123, 11223], [11125, 11225], [10219, 10218], [10219, 10119]]
 # 服务台
 service_desk = [11419, 11420, 11519, 11520]
-# ???服务台数据不对啊，总数据比每个进出口数据统计起来小啊
+# 服务台门
 service_desk_door = [[11419, 11418], [11419, 11318], [11419, 11319], [11419, 11320],
-                     [11420, 11319], [11420, 11320], [11420, 11321], [11420, 11421],
-                     [11520, 11421], [11520, 11521]]
+                     [11420, 11319], [11420, 11320], [11420, 11321]]
 # 房间
 room1 = [10610, 10611, 10710, 10711, 10810, 10811, 10910, 10911]
+room1_door = [[10710, 10709], [10910, 10909]]
 room2 = [11010, 11011, 11110, 11111]
-room1_door = [[10611, 10511]]
-room1_door1 = [[10611, 10510]]
+room2_door = [[11110, 11109]]
 room3 = [11421, 11422, 11423, 11424, 11521, 11522, 11523, 11524]
-
-room3_door = [[11521, 11520], [11521, 11420],
-              [11421, 11420], [11421, 11321], [11421, 11322],
-              [11422, 11321], [11422, 11322], [11422, 11323],
-              [11423, 11322], [11423, 11323], [11423, 11324],
-              [11424, 11323], [11424, 11324], [11424, 11325], [11424, 11425], [11424, 11525],
-              [11524, 11425], [11524, 11525]]
+room3_door = [[11422, 11322], [11424, 11324]]
 room4 = [11425, 11426, 11525, 11526]
+room4_door = [[11425, 11325]]
 room5 = [21001, 21002, 21003, 21004, 21101, 21102, 21103, 21104]
 room5_door = [[21005, 21006], [21105, 21106]]
 room6 = [20610, 20611, 20710, 20711]
 room6_door = [[20610, 20609], [20710, 20709]]
 # 厕所
 toilet1 = [10410, 10411, 10510, 10511]
+toilet1_door = [[10410, 10409], [10510, 10509]]
 toilet2 = [11427, 11428, 11527, 11528]
+toilet2_door = [[11427, 11327], [11428, 11328]]
 toilet3 = [20410, 20411, 20510, 20511]
 toilet3_door = [[20410, 20409], [20510, 20509]]
 # 海报区
@@ -79,7 +72,7 @@ poster_area = [10307, 10308, 10407, 10408, 10507, 10508, 10607,
                10608, 10707, 10708, 10807, 10808, 10907, 10908]
 # 分会场
 venue_a = [10201, 10202, 10203, 10204, 10301, 10302, 10303, 10304]
-venue_a_door = [[10205, 10206], [10205, 10306], [10305, 10306], [10305, 10406]]
+venue_a_door = [[10205, 10206], [10305, 10306]]
 venue_b = [10401, 10402, 10403, 10404, 10501, 10502, 10503, 10504]
 venue_b_door = [[10405, 10406], [10505, 10506]]
 venue_c = [10601, 10602, 10603, 10604, 10701, 10702, 10703, 10704]
@@ -210,9 +203,90 @@ def analysis_place(path, place, place_name):
     write(save_path, sensor_list)
 
 
-def area_person_count(path, place, place_name):
-    """
+def area_realtime_num():
+    # time_list = split_time(1)
+    # (in_list, out_list) = area_in_out_count(path1, venue_a_door, 'venue_a_door')
+    # print(in_list)
+    # print(out_list)
+    time_list = [50000, 53000, 56000, 59000, 62000, 65000]
+    in_list = [[10019, 50525], [10019, 54981], [10019, 59851], [10062, 59491], [10091, 55701]]
+    out_list = [[10019, 53945], [10019, 58429], [10019, 63013], [10062, 62439], [10091, 57781]]
+    # 两个函数传入待处理的数据
+    # print(time_list[::1])
+    # print(time_list[1::1])
 
+    for content in in_list:
+        print(content)
+        for front, back in zip(time_list[::1], time_list[1::1]):
+            # print(front, back)
+            if front < content[1] < back:
+                print(content[1], '在', front, back, '区间内，此时间区间列表加入content[0]')
+            # else:
+            #     print(content[1], 'bu在', front, back, '区间内')
+
+
+    in_id = [id[0] for id in in_list]
+    in_time = [time[1] for time in in_list]
+
+
+
+
+    in_out_list = sorted(in_list + out_list, key=lambda x: x[0])
+    time_list = [time[1] for time in in_list]
+
+    # result = {timestamp: person_list}
+    # result = {'25200-25260': [01, 02, 03], '25260-25320': [5, 8, 12]}
+
+
+
+    # exist_time_range_list = []
+    # num_list = []
+    # for m in range(len(time_range)):
+    #     if m + 1 < len(time_range):
+    #         len_list = []
+    #         count_time_list = []
+    #
+    #         for n in range(len(time_list)):
+    #             if time_range[m] <= time_list[n] < time_range[m + 1]:
+    #                 count_time_list.append(time_list[n])
+    #                 len_list.append(len(count_time_list))
+    #                 exist_time_range = str(s2t(time_range[m])) + '~' + str(s2t(time_range[m + 1]))
+    #
+    #         if len_list:    # 当时间段内有记录
+    #             exist_time_range_list.append(exist_time_range)
+    #             # print(list(reversed(len_list))[0])
+    #             num_list.append(list(reversed(len_list))[0])
+    #
+    # t_p_list = [exist_time_range_list, num_list]
+
+    # exist_time_range_list = []
+    # num_list = []
+    # for m in range(len(time_range)):
+    #     if m + 1 < len(time_range):     # 防止迭代溢出
+    #         len_list = []
+    #         count_time_list = []
+    #
+    #         for n in range(len(time_list)):
+    #             if time_range[m] <= time_list[n] < time_range[m + 1]:
+    #                 count_time_list.append(time_list[n])
+    #                 len_list.append(len(count_time_list))
+    #                 exist_time_range = str(s2t(time_range[m])) + '~' + str(s2t(time_range[m + 1]))
+    #
+    #         if len_list:    # 当时间段内有记录
+    #             exist_time_range_list.append(exist_time_range)
+    #             # print(list(reversed(len_list))[0])
+    #             num_list.append(list(reversed(len_list))[0])
+    #
+    # t_p_list = [exist_time_range_list, num_list]
+    # print(t_p_list)
+
+
+
+
+
+
+def area_in_out_count(path, place, place_name):
+    """
     :param path:
     :param place:
     :param place_name:
@@ -225,10 +299,10 @@ def area_person_count(path, place, place_name):
     for c in all_list:
         if c[1] in new_merged_list:
             clear_list.append(c)
-
     sort_clear_list = sorted(clear_list, key=lambda x: x[0])
 
-    # clear_list = [[10018, 11418, 38312], [10018, 11419, 38320], [10018, 11318, 38409]]
+    # clear_list = [[10001, 11121, 1], [10001, 11221, 2], [10001, 11121, 3],
+    #               [10002, 11223, 4], [10002, 11123, 5], [10002, 11223, 6]]
     # sort_clear_list = sorted(clear_list, key=lambda x: x[0])
 
     # print(sort_clear_list)
@@ -240,12 +314,12 @@ def area_person_count(path, place, place_name):
     area_in_person_list = []
     area_out_person_list = []
     for con in ana_id_list:
-        print('分析人员：', con)
+        # print('分析人员：', con)
 
         for i, conn in enumerate(a_id):
             if conn == con and i + 1 < len(a_sid):
-                print(conn)
-                print(a_sid[i], a_sid[i + 1])
+                # print(conn)
+                # print(a_sid[i], a_sid[i + 1])
                 front = a_sid[i]
                 f_id = a_id[i]
                 f_time = a_time[i]
@@ -254,15 +328,16 @@ def area_person_count(path, place, place_name):
                 b_id = a_id[i + 1]
 
                 if [back, front] in place:
-                    print('进')
+                    # print('进')
                     area_in_person_list.append([f_id, f_time])
                 if [front, back] in place:
-                    print('出')
+                    # print('出')
                     area_out_person_list.append([b_id, b_time])
-    print(area_in_person_list)
-    print(len(area_in_person_list))
-    print(area_out_person_list)
-    print(len(area_out_person_list))
+    # print(area_in_person_list)
+    # print(len(area_in_person_list))
+    # print(area_out_person_list)
+    # print(len(area_out_person_list))
+    return area_in_person_list, area_out_person_list
 
 
 def analysis_person_stay():
@@ -317,8 +392,9 @@ def analysis_some_person_stay(person_id):
 
 if __name__ == "__main__":
     # 在算区域实时人数的时候 很有意思的是有人进出卫生间十四次
-    area_person_count(path1, main_venue_door, 'main_venue_door')
-    # analysis_person(path1, 10018)
+    area_realtime_num()
+
+    # analysis_person(path1, 19965)
     # analysis_place_person_count(path1, main_venue, 'main_venue')
     # m_dict = analysis_place_person_count(path1, toilet1, 'toilet1')
     # print(m_dict)
