@@ -204,84 +204,117 @@ def analysis_place(path, place, place_name):
 
 
 def area_realtime_num():
-    # time_list = split_time(1)
-    # (in_list, out_list) = area_in_out_count(path1, venue_a_door, 'venue_a_door')
-    # print(in_list)
-    # print(out_list)
-    time_list = [50000, 53000, 56000, 59000, 62000, 65000]
-    in_list = [[10019, 50525], [10019, 54981], [10019, 59851], [10062, 59491], [10091, 55701]]
-    out_list = [[10019, 53945], [10019, 58429], [10019, 63013], [10062, 62439], [10091, 57781]]
-    # 两个函数传入待处理的数据
-    # print(time_list[::1])
-    # print(time_list[1::1])
+    # 两个函数传入待处理的数据，一个是时间按整数分割出的时间列表；第二个是区域进出列表（id:time）
+    time_list = split_time(1)
+    (in_list, out_list) = area_in_out_count(path1, service_desk_door, 'service_desk_door')
+    sorted_in_list = sorted(in_list, key=lambda x: x[1])    # 改为时间排序
+    sorted_out_list = sorted(out_list, key=lambda x: x[1])
 
-    for content in in_list:
-        print(content)
+    # time_list = [50000, 53000, 56000, 59000, 62000, 65000]
+    # in_list = [[10020, 50526], [10019, 54981], [10019, 59851], [10062, 59491], [10091, 55701]]
+    # out_list = [[10019, 53945], [10019, 58429], [10019, 63013], [10062, 62439], [10091, 57781]]
+    # sorted_in_list = sorted(in_list, key=lambda x: x[1])  # 改为时间排序
+    # sorted_out_list = sorted(out_list, key=lambda x: x[1])
+
+    # 处理进出列表，将数据整理为{time_range：[id1, id2]，...}
+    time_range = []
+    id_list = []
+    for content in sorted_in_list:
+        # print(content)
         for front, back in zip(time_list[::1], time_list[1::1]):
             # print(front, back)
             if front < content[1] < back:
-                print(content[1], '在', front, back, '区间内，此时间区间列表加入content[0]')
+                time_range.append(str(s2t(front)) + '-' + str(s2t(back)))
+                id_list.append(content[0])
             # else:
             #     print(content[1], 'bu在', front, back, '区间内')
+    sorted_time_range = sorted(list(set(time_range)))
+    # print(time_range)
+    # print(sorted_time_range)
+    in_dict = {}
+    for t_point in sorted_time_range:
+        per_range_person_list = []
+        for a, b in zip(time_range, id_list):
+            # print(a, b)
+            if a == t_point:
+                # print(a)
+                per_range_person_list.append(b)
+        # print(per_range_person_list)
+        # test = {str(t_point): per_range_person_list}
+        in_dict[t_point] = per_range_person_list
+    print(in_dict)
+
+    # 还没想好出入处理如何放在一起 一个in_dict,out_dict
+    time_range1 = []
+    id_list1 = []
+    for content in sorted_out_list:
+        # print(content)
+        for front, back in zip(time_list[::1], time_list[1::1]):
+            # print(front, back)
+            if front < content[1] < back:
+                # print(content[1], '在', front, back, '区间内，此时间区间列表加入content[0]')
+                time_range1.append(str(s2t(front)) + '-' + str(s2t(back)))
+                id_list1.append(content[0])
+            # else:
+            #     print(content[1], 'bu在', front, back, '区间内')
+    sorted_time_range1 = sorted(list(set(time_range1)))
+    # print(time_range1)
+    # print(sorted_time_range1)
+    out_dict = {}
+    for t_point in sorted_time_range1:
+        per_range_person_list1 = []
+        for a, b in zip(time_range1, id_list1):
+            # print(a, b)
+            if a == t_point:
+                # print(a)
+                per_range_person_list1.append(b)
+        # print(per_range_person_list)
+        # test = {str(t_point): per_range_person_list}
+        out_dict[t_point] = per_range_person_list1
+    print(out_dict)
+    # 生成分割时间的字符串，用来遍历进出字典的keys
+    ttt = []
+    for front, back in zip(time_list[::1], time_list[1::1]):
+        ttt.append(str(s2t(front)) + '-' + str(s2t(back)))
+
+    print(in_dict)
+    print(len(in_dict))
+    print(out_dict)
+    print(len(out_dict))
+    # 将进出的字典中每个时间段记录的人员id替换成数目，出来的人加-号
+    mount_in_dict = {}
+    mount_out_dict = {}
+    for ccc, ddd in zip(in_dict.keys(), in_dict.values()):
+        mount_in_dict[ccc] = len(ddd)
+    print(mount_in_dict)
+    print(len(mount_in_dict))
+
+    for ccc, ddd in zip(out_dict.keys(), out_dict.values()):
+        mount_out_dict[ccc] = -len(ddd)
+    print(mount_out_dict)
+    print(len(mount_out_dict))
+    # 将出入字典合并成计数字典
+    mount_dict = {}
+    for a in ttt:
+       if a in mount_in_dict.keys() and a in mount_out_dict.keys():
+           mount_dict[a] = mount_in_dict[a] + mount_out_dict[a]
+       elif a in mount_in_dict.keys() and a not in mount_out_dict.keys():
+           mount_dict[a] = mount_in_dict[a]
+       elif a not in mount_in_dict.keys() and a in mount_out_dict.keys():
+           mount_dict[a] = mount_out_dict[a]
+    print(len(mount_dict))
+    print(mount_dict)
+    print(sum(mount_dict.values()))
 
 
-    in_id = [id[0] for id in in_list]
-    in_time = [time[1] for time in in_list]
-
-
-
-
-    in_out_list = sorted(in_list + out_list, key=lambda x: x[0])
-    time_list = [time[1] for time in in_list]
-
-    # result = {timestamp: person_list}
-    # result = {'25200-25260': [01, 02, 03], '25260-25320': [5, 8, 12]}
-
-
-
-    # exist_time_range_list = []
-    # num_list = []
-    # for m in range(len(time_range)):
-    #     if m + 1 < len(time_range):
-    #         len_list = []
-    #         count_time_list = []
-    #
-    #         for n in range(len(time_list)):
-    #             if time_range[m] <= time_list[n] < time_range[m + 1]:
-    #                 count_time_list.append(time_list[n])
-    #                 len_list.append(len(count_time_list))
-    #                 exist_time_range = str(s2t(time_range[m])) + '~' + str(s2t(time_range[m + 1]))
-    #
-    #         if len_list:    # 当时间段内有记录
-    #             exist_time_range_list.append(exist_time_range)
-    #             # print(list(reversed(len_list))[0])
-    #             num_list.append(list(reversed(len_list))[0])
-    #
-    # t_p_list = [exist_time_range_list, num_list]
-
-    # exist_time_range_list = []
-    # num_list = []
-    # for m in range(len(time_range)):
-    #     if m + 1 < len(time_range):     # 防止迭代溢出
-    #         len_list = []
-    #         count_time_list = []
-    #
-    #         for n in range(len(time_list)):
-    #             if time_range[m] <= time_list[n] < time_range[m + 1]:
-    #                 count_time_list.append(time_list[n])
-    #                 len_list.append(len(count_time_list))
-    #                 exist_time_range = str(s2t(time_range[m])) + '~' + str(s2t(time_range[m + 1]))
-    #
-    #         if len_list:    # 当时间段内有记录
-    #             exist_time_range_list.append(exist_time_range)
-    #             # print(list(reversed(len_list))[0])
-    #             num_list.append(list(reversed(len_list))[0])
-    #
-    # t_p_list = [exist_time_range_list, num_list]
-    # print(t_p_list)
-
-
-
+    # 叠加每个时间段的人数变量的到每个时间段的人数
+    count_sum = []
+    for c in mount_dict.values():
+        count_sum.append(c)
+    count_sum_num = []
+    for i, con in enumerate(count_sum):
+        count_sum_num.append(sum(count_sum[:i + 1]))
+    print(count_sum_num)
 
 
 
