@@ -231,6 +231,46 @@ def analysis_place(path, place, place_name):
     write(save_path, sensor_list)
 
 
+def grid_realtime_num(grid_sid):
+    a_list = core(path1)
+    b_list = []
+    for c in a_list:
+        if grid_sid == c[1]:
+            b_list.append(c)
+    print(b_list)
+    sorted_b_list = sorted(b_list, key=lambda x: x[0])
+    print(sorted_b_list)
+
+    time_list = split_time(1)
+    time_range = []
+    id_list = []
+
+    # for content in sorted_b_list:
+    #     id_single = []
+    #     for front, back in zip(time_list[::1], time_list[1::1]):
+    #         if front <= content[2] < back:
+    #             time_range.append(str(s2t(front)) + '-' + str(s2t(back)))
+    #             id_single.append(content[0])
+    #     id_list.append(id_single)
+    # print(len(time_range))
+    # print(len(id_list))
+    # print(time_range)
+    # print(id_list)
+
+    for front, back in zip(time_list[::1], time_list[1::1]):
+        id_single = []
+        for content in sorted_b_list:
+            if front <= content[2] < back:
+                time_range.append(str(s2t(front)) + '-' + str(s2t(back)))
+                id_single.append(content[0])
+                id_list.append(id_single)
+    print(len(time_range))
+    print(len(id_list))
+    print(time_range)
+    print(id_list)
+    pass
+
+
 def area_realtime_num(day, n, k, v):
     # 两个函数传入待处理的数据，一个是时间按整数分割出的时间列表；第二个是区域进出列表（id:time）
     time_list = split_time(n)
@@ -238,7 +278,8 @@ def area_realtime_num(day, n, k, v):
         day, v, k)
     sorted_in_list = sorted(in_list, key=lambda x: x[1])    # 改为时间排序
     sorted_out_list = sorted(out_list, key=lambda x: x[1])
-    # print(len(sorted_in_list))
+    print(len(sorted_in_list))
+    print(len(sorted_out_list))
     # print(sorted_in_list)
     # for ii in sorted_in_list:
     #     print(ii[1])
@@ -310,9 +351,9 @@ def area_realtime_num(day, n, k, v):
         ttt.append(str(s2t(front)) + '-' + str(s2t(back)))
 
     # print(in_dict)
-    # print(len(in_dict))
+    print(len(in_dict))
     # print(out_dict)
-    # print(len(out_dict))
+    print(len(out_dict))
     # 将进出的字典中每个时间段记录的人员id替换成数目，出来的人加-号
     mount_in_dict = {}
     mount_out_dict = {}
@@ -324,7 +365,7 @@ def area_realtime_num(day, n, k, v):
     for ccc, ddd in zip(out_dict.keys(), out_dict.values()):
         mount_out_dict[ccc] = -len(ddd)
     # print(mount_out_dict)
-    # print(len(mount_out_dict))
+    print(len(mount_out_dict))
     # 将出入字典合并成计数字典
     mount_dict = {}
     for a in ttt:
@@ -334,7 +375,7 @@ def area_realtime_num(day, n, k, v):
             mount_dict[a] = mount_in_dict[a]
         elif a not in mount_in_dict.keys() and a in mount_out_dict.keys():
             mount_dict[a] = mount_out_dict[a]
-    # print(len(mount_dict))
+    print(len(mount_dict))
     # print(mount_dict)
     print(sum(mount_dict.values()))
 
@@ -354,10 +395,10 @@ def area_realtime_num(day, n, k, v):
     # for a, b in zip(count_sum_time, count_sum_num):
     #     result[a] = b
     result = [count_sum_time, count_sum_num]
-    print(result)
+    # print(result)
     which_day = day.split('/')[3].split('.')[0]
     resultbla = {which_day: result}
-    print(resultbla)
+    # print(resultbla)
     return resultbla
 
 
@@ -466,28 +507,69 @@ def analysis_some_person_stay(person_id):
                             print(k, data['sid'].iloc[i], s2t(
                                 data['time'].iloc[i + 1] - data['time'].iloc[i]))
 
+def sum_emm():
+    all_emm = core(path1) + core(path2) + core(path3)
+    all_id_list = [id[0] for id in all_emm]
+    set_list = list(set(all_id_list))
+    print(len(set_list))
+
+    all_id = {}
+    all_id['id'] = set_list
+    print(all_id)
+
+    # # 写入json
+    # with open("../res/results/all_id.json", 'a') as outfile:
+    #     json.dump(all_id, outfile, ensure_ascii=False)
+    #     outfile.write('\n')
+
+
 
 if __name__ == "__main__":
+    # 总人数
+    # sum_emm()
     # 在算区域实时人数的时候 很有意思的是有人进出卫生间十四次
-    for k, v in zip(place_door_all.keys(), place_door_all.values()):
-        print(k, v)
-        all_results = {}
-        result_list_day1 = area_realtime_num(day=path1, n=1, k=k, v=v)
-        result_list_day2 = area_realtime_num(day=path2, n=1, k=k, v=v)
-        result_list_day3 = area_realtime_num(day=path3, n=1, k=k, v=v)
-        result_list = {}
-        result_list.update(result_list_day1)
-        result_list.update(result_list_day2)
-        result_list.update(result_list_day3)
-        single_results = {k: result_list}
-        all_results.update(single_results)
-        print(all_results)
-        break
+    # result_list_day1 = area_realtime_num(day=path1, n=1, k='toilet1_door', v=toilet1_door)
+    # result_list_day2 = area_realtime_num(day=path2, n=1, k='toilet1_door', v=toilet1_door)
+    # result_list_day3 = area_realtime_num(day=path3, n=1, k='toilet1_door', v=toilet1_door)
+    # result_list_day4 = area_realtime_num(day=path1, n=1, k='toilet2_door', v=toilet2_door)
+    # result_list_day5 = area_realtime_num(day=path2, n=1, k='toilet2_door', v=toilet2_door)
+    # result_list_day6 = area_realtime_num(day=path3, n=1, k='toilet2_door', v=toilet2_door)
+    # result_list_day7 = area_realtime_num(day=path1, n=1, k='toilet3_door', v=toilet3_door)
+    # result_list_day8 = area_realtime_num(day=path2, n=1, k='toilet3_door', v=toilet3_door)
+    # result_list_day9 = area_realtime_num(day=path3, n=1, k='toilet3_door', v=toilet3_door).
+    # print(result_list_day1)..
+    # print(result_list_day2)
+    # print(result_list_day3)
+    # print(result_list_day4)
+    # print(result_list_day5)
+    # print(result_list_day6)
+    # print(result_list_day7)
+    # print(result_list_day8)
+    # print(result_list_day9)
+    # ????????????????????????????????????
+    grid_realtime_num(10119)
+    # result_list_day2333 = area_realtime_num(day=path2, n=1, k='restaurant_door', v=restaurant_door)
+    # print(result_list_day2333)
 
-    # 写入json
-    with open("../res/results/place_real_time_person_num.json", 'a') as outfile:
-        json.dump(all_results, outfile, ensure_ascii=False)
-        outfile.write('\n')
+    # all_results = {}
+    # for k, v in zip(place_door_all.keys(), place_door_all.values()):
+    #     print(k, v)
+    #
+    #     result_list_day1 = area_realtime_num(day=path1, n=1, k=k, v=v)
+    #     result_list_day2 = area_realtime_num(day=path2, n=1, k=k, v=v)
+    #     result_list_day3 = area_realtime_num(day=path3, n=1, k=k, v=v)
+    #     result_list = {}
+    #     result_list.update(result_list_day1)
+    #     result_list.update(result_list_day2)
+    #     result_list.update(result_list_day3)
+    #     single_results = {k: result_list}
+    #     all_results.update(single_results)
+    #     print(all_results)
+
+    # # 写入json
+    # with open("../res/results/place_real_time_person_num.json", 'a') as outfile:
+    #     json.dump(all_results, outfile, ensure_ascii=False)
+    #     outfile.write('\n')
 
     # analysis_person(path1, 19965)
     # analysis_place_person_count(path1, main_venue, 'main_venue')
