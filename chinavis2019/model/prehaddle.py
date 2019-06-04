@@ -104,14 +104,35 @@ path3 = '../res/传感器日志数据/day3.csv'
 #     'lounge_area': area_lounge_area
 # }
 
-# 展厅门
+# 签到处
+check_in_desk = [[11302, 11301], [11302, 11401], [11302, 11402], [11302, 11403],
+                      [11303, 11402], [11303, 11403], [11303, 11404],
+                      [11304, 11403], [11304, 11404], [11304, 11405],
+                      [11305, 11404], [11305, 11405], [11305, 11406], [11305, 11306], [11305, 11206],
+                      [11205, 11106], [11205, 11206], [11205, 11306]]
+# 海报区
+poster_area = [[10307, 10406], [10307, 10306], [10307, 10206], [10307, 10207], [10307, 10208],
+                    [10308, 10207], [10308, 10208], [10308, 10209], [10308, 10309], [10308, 10409],
+                    [10407, 10306], [10407, 10406], [10407, 10506],
+                    [10507, 10406], [10507, 10506], [10507, 10606],
+                    [10607, 10506], [10607, 10606], [10607, 10706],
+                    [10707, 10606], [10707, 10706], [10707, 10806],
+                    [10807, 10706], [10807, 10806], [10807, 10906],
+                    [10907, 10806], [10907, 10906], [10907, 11006], [10907, 11007], [10907, 11008],
+                    [10908, 11007], [10908, 11008], [10908, 11009], [10908, 10909], [10908, 10809],
+                    [10808, 10909], [10808, 10809], [10808, 10709],
+                    [10708, 10809], [10708, 10709], [10708, 10609],
+                    [10608, 10709], [10608, 10609], [10608, 10509],
+                    [10508, 10609], [10508, 10509], [10508, 10409],
+                    [10408, 10509], [10408, 10409], [10408, 10309]]
+# 展厅
 exhibition_hall = [[11116, 11216], [11117, 11217], [10218, 10219]]
-# 主会场门
-main_venue = [[11121, 11221], [11123, 11223],
-                   [11125, 11225], [10219, 10218], [10219, 10119]]
-# 服务台门
+# 服务台
 service_desk = [[11419, 11418], [11419, 11318], [11419, 11319], [11419, 11320],
                 [11420, 11319], [11420, 11320], [11420, 11321]]
+# 主会场
+main_venue = [[11121, 11221], [11123, 11223],
+              [11125, 11225], [10219, 10218], [10219, 10119]]
 room1 = [[10710, 10709], [10910, 10909]]
 room2 = [[11110, 11109]]
 room3 = [[11422, 11322], [11424, 11324]]
@@ -125,12 +146,19 @@ venue_a = [[10205, 10206], [10305, 10306]]
 venue_b = [[10405, 10406], [10505, 10506]]
 venue_c = [[10605, 10606], [10705, 10706]]
 venue_d = [[10805, 10806], [10905, 10906]]
+# 南北扶梯
+escalator_north = [[10111, 10210], [10111, 10211], [10111, 10112],
+                   [20111, 20211], [20111, 20210]]
+escalator_south = [[11411, 11310], [11411, 11311], [11411, 11312], [11411, 11412],
+                   [21411, 21311], [21411, 21310]]
 restaurant = [[20205, 20206], [20505, 20506], [20805, 20806]]
 lounge_area = [[21405, 21406]]
 place_all = {
+    'check_in_desk': check_in_desk,
+    'poster_area': poster_area,
     'exhibition_hall': exhibition_hall,
-    'main_venue': main_venue,
     'service_desk': service_desk,
+    'main_venue': main_venue,
     'room1': room1,
     'room2': room2,
     'room3': room3,
@@ -144,6 +172,8 @@ place_all = {
     'venue_b': venue_b,
     'venue_c': venue_c,
     'venue_d': venue_d,
+    'escalator_north': escalator_north,
+    'escalator_south': escalator_south,
     'restaurant': restaurant,
     'lounge_area': lounge_area
 }
@@ -226,17 +256,17 @@ def analysis_place(path, place, place_name):
     write(save_path, sensor_list)
 
 
-def grid_realtime_num(grid_sid):
-    a_list = core(path1)
+def grid_realtime_num(path, n, sid):
+    a_list = core(path)
     b_list = []
     for c in a_list:
-        if grid_sid == c[1]:
+        if sid == c[1]:
             b_list.append(c)
     print(b_list)
     sorted_b_list = sorted(b_list, key=lambda x: x[0])
     print(sorted_b_list)
 
-    time_list = split_time(1)
+    time_list = split_time(n)
     time_range = []
     id_list = []
 
@@ -247,10 +277,17 @@ def grid_realtime_num(grid_sid):
                 time_range.append(str(s2t(front)) + '-' + str(s2t(back)))
                 id_single.append(content[0])
                 id_list.append(id_single)
-    print(len(time_range))
-    print(len(id_list))
-    print(time_range)
-    print(id_list)
+
+
+    # print(len(time_range))
+    # print(len(id_list))
+    # print(time_range)
+    # print(id_list)
+    which_day = path.split('/')[3].split('.')[0]
+    result = [time_range, id_list]
+    result_dict = {which_day: result}
+    print(result_dict)
+    return result_dict
     pass
 
 
@@ -430,10 +467,10 @@ def area_in_out_count(path, place, place_name):
                 if [front, back] in place:
                     # print('出')
                     area_out_person_list.append([b_id, b_time])
-    # print(area_in_person_list)
-    # print(len(area_in_person_list))
-    # print(area_out_person_list)
-    # print(len(area_out_person_list))
+    print(area_in_person_list)
+    print(len(area_in_person_list))
+    print(area_out_person_list)
+    print(len(area_out_person_list))
     return area_in_person_list, area_out_person_list
 
 
@@ -502,10 +539,7 @@ def get_all_id():
 
 
 if __name__ == "__main__":
-    # 所有id
-    # get_all_id()
-
-    # grid_realtime_num(10119)
+    # grid_realtime_num(path1, n=1, sid=10119)
     # result_list = area_realtime_num(day=path2, n=1, k='restaurant', v=restaurant)
     # print(result_list)
 
@@ -528,3 +562,10 @@ if __name__ == "__main__":
     with open("../res/results/place_real_time_person_num.json", 'a') as outfile:
         json.dump(all_results, outfile, ensure_ascii=False)
         outfile.write('\n')
+
+    # result_list_day = area_realtime_num(day=path1, n=1, k='escalator_north', v=escalator_north)
+    # print(result_list_day)
+    # a_l = core(path1)
+    # for c in a_l:
+    #     if c[1] == 11201:
+    #         print(c)
