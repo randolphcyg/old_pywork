@@ -187,9 +187,20 @@ escalator_south = [[11411, 11310], [11411, 11311], [11411, 11312], [11411, 11412
 restaurant = [[20205, 20206], [20505, 20506], [20805, 20806]]
 # 休息区
 lounge_area = [[21405, 21406]]
-# 签到周围 误差几十 建模没问题
-around_check_in_desk = [[11301, 11300], [11301, 11302],
-                        [11401, 11302], [11401, 11502], [11402, 11300], [11402, 11302], [11402, 11502],
+# 前走廊 第一天16332进入主会场后信号异常
+front_main_venue = [[11225, 11125], [11223, 11123], [11221, 11121], [11217, 11117], [11216, 11116],
+                    [11327, 11427], [11326, 11426], [11325, 11425], [11324, 11424], [11322, 11422],
+                    [11321, 11420], [11320, 11420], [11320, 11419], [11319, 11420], [11319, 11419], [11318, 11419],
+                    [11418, 11419], [11417, 11517], [11415, 11515], [11412, 11411], [11312, 11411], [11311, 11411],
+                    [11310, 11411], [11310, 11309], [11310, 11209], [11310, 11409],
+                    [11210, 11109], [11210, 11209], [11210, 11309]]
+# 后走廊
+back_main_venue = [[10119, 10019], [10119, 10219], [10118, 10019], [10112, 10111], [10211, 10111], [10210, 10111],
+                   [10210, 10209], [10210, 10309], [10310, 10209], [10310, 10309], [10310, 10409]]
+# 签到周围走廊
+around_check_in_desk = [[11301, 11202], [11301, 11300], [11301, 11302],
+                        [11401, 11302], [11401, 11502], [11401, 11300],
+                        [11402, 11302], [11402, 11303], [11402, 11502],
                         [11403, 11302], [11403, 11303], [11403, 11304], [11403, 11502], [11403, 11504],
                         [11404, 11303], [11404, 11304], [11404, 11305], [11404, 11504], [11404, 11505],
                         [11405, 11304], [11405, 11305], [11405, 11504], [11405, 11505],
@@ -203,14 +214,8 @@ around_check_in_desk = [[11301, 11300], [11301, 11302],
                         [11209, 11210], [11209, 11310],
                         [11309, 11210], [11309, 11310],
                         [11409, 11310]]
-# 前走廊 有一个没出去16332进入主会场后信号异常
-front_main_venue = [[11225, 11125], [11223, 11123], [11221, 11121], [11217, 11117], [11216, 11116],
-                    [11327, 11427], [11326, 11426], [11325, 11425], [11324, 11424], [11322, 11422],
-                    [11321, 11420], [11320, 11420], [11320, 11419], [11319, 11420], [11319, 11419], [11318, 11419],
-                    [11418, 11419], [11417, 11517], [11415, 11515], [11412, 11411], [11312, 11411], [11311, 11411],
-                    [11310, 11411], [11310, 11309], [11310, 11209], [11310, 11409],
-                    [11210, 11109], [11210, 11209], [11210, 11309]]
-# 差了57个，但是建模都正常啊
+
+# 海报区周围走廊
 around_poster_area = [[10406, 10307], [10306, 10307], [10206, 10307], [10207, 10307], [10208, 10307],
                       [10207, 10308], [10208, 10308], [10209, 10308], [10309, 10308], [10409, 10308],
                       [10306, 10407], [10406, 10407], [10506, 10407], [10406, 10507], [10506, 10507],
@@ -223,16 +228,15 @@ around_poster_area = [[10406, 10307], [10306, 10307], [10206, 10307], [10207, 10
                       [10509, 10508], [10409, 10508], [10509, 10408], [10409, 10408], [10309, 10408],
                       [10206, 10205], [10306, 10305], [10406, 10405], [10506, 10505], [10606, 10605],
                       [10706, 10705], [10806, 10805], [10906, 10905], [10409, 10410], [10509, 10510],
-                      [10709, 10710], [10909, 10910],
-                      [10209, 10210], [10209, 10310], [10309, 10310], [10309, 10210],
-                      [11006, 11106], [11006, 11107],
-                      [11007, 11106], [11007, 11107], [11007, 11108],
-                      [11008, 11107], [11008, 11108], [11008, 11109],
+                      [10409, 10310], [10709, 10710], [10909, 10910], [10209, 10210], [10209, 10310],
+                      [10309, 10310], [10309, 10210], [11006, 11106], [11006, 11107], [11007, 11106],
+                      [11007, 11107], [11007, 11108], [11008, 11107], [11008, 11108], [11008, 11109],
                       [11009, 11108], [11009, 11109]]
-# 后走廊
-back_main_venue = [[10119, 10019], [10119, 10219], [10118, 10019], [10112, 10111], [10211, 10111], [10210, 10111],
-                   [10210, 10209], [10210, 10309], [10310, 10209], [10310, 10309], [10310, 10409]]
-second_lobby = []
+# 二楼走廊
+second_lobby = [[20206, 20205], [20506, 20505], [20806, 20805], [21006, 21005], [21106, 21005], [21406, 21405],
+                [20409, 20410], [20509, 20510], [20609, 20610], [20709, 20710],
+                [20209, 20110], [20210, 20110], [20210, 20111], [20211, 20110], [20211, 20111],
+                [21409, 21410], [21309, 21410], [21310, 21410], [21310, 21411], [21311, 21410], [21311, 21411]]
 place_all = {
     'check_in_desk': check_in_desk,
     'poster_area': poster_area,
@@ -255,16 +259,14 @@ place_all = {
     'escalator_north': escalator_north,
     'escalator_south': escalator_south,
     'restaurant': restaurant,
-    'lounge_area': lounge_area
-}
-# 所有走廊，一楼四部分 二楼整体
-lobby = {
-    'around_check_in_desk': around_check_in_desk,
+    'lounge_area': lounge_area,
     'front_main_venue': front_main_venue,
-    'around_poster_area': around_poster_area,
     'back_main_venue': back_main_venue,
+    'around_check_in_desk': around_check_in_desk,
+    'around_poster_area': around_poster_area,
     'second_lobby': second_lobby
 }
+
 
 def core(path):
     """
@@ -319,7 +321,6 @@ def analysis_person(path, person_id):
     :param person_id:
     :return:
     """
-
     if person_id in [x[0] for x in core(path)]:
         save_path = '../res/test/' + str(person_id) + '.csv'
         go_list = []
@@ -381,10 +382,10 @@ def grid_realtime_num(path, n, sid):
     pass
 
 
-def area_realtime_num(day, n, k, v):
+def area_realtime_num(day, n, v):
     # 两个函数传入待处理的数据，一个是时间按整数分割出的时间列表；第二个是区域进出列表（id:time）
     time_list = split_time(n)
-    (in_list, out_list) = area_in_out_count(day, v, k)
+    (in_list, out_list) = area_in_out_count(day, v)
     sorted_in_list = sorted(in_list, key=lambda x: x[1])    # 改为时间排序
     sorted_out_list = sorted(out_list, key=lambda x: x[1])
 
@@ -397,7 +398,7 @@ def area_realtime_num(day, n, k, v):
     # sorted_in_list = sorted(in_list, key=lambda x: x[1])  # 改为时间排序
     # sorted_out_list = sorted(out_list, key=lambda x: x[1])
 
-    # 处理进出列表，将数据整理为{time_range：[id1, id2]，...}
+    # 处理进出列表，将数据整理为in_dict = {time_range：[id1, id2]，...}
     time_range = []
     id_list = []
     for content in sorted_in_list:
@@ -425,7 +426,7 @@ def area_realtime_num(day, n, k, v):
     # print(in_dict)
     # print(len(in_dict))
 
-    # 还没想好出入处理如何放在一起 一个in_dict,out_dict
+    # out_dict
     time_range1 = []
     id_list1 = []
     for content in sorted_out_list:
@@ -557,18 +558,19 @@ def area_in_out_count(path, place):
     print(len(in__list))
     print('outlist=', out_list)
     print(len(out_list))
+
     # 检验
-    from collections import Counter
-    pid1 = [x[0] for x in sorted(in__list, key=lambda x: x[0])]
-    pid2 = [x[0] for x in sorted(out_list, key=lambda x: x[0])]
-    ana_pid = sorted(list(set(pid1)))
-    # for ppid in ana_pid:
-    a = Counter(pid1)
-    b = Counter(pid2)
-    print(a)
-    print(b)
-    print(a - b)
-    print(b - a)
+    # from collections import Counter
+    # pid1 = [x[0] for x in sorted(in__list, key=lambda x: x[0])]
+    # pid2 = [x[0] for x in sorted(out_list, key=lambda x: x[0])]
+    # ana_pid = sorted(list(set(pid1)))
+    # # for ppid in ana_pid:
+    # a = Counter(pid1)
+    # b = Counter(pid2)
+    # print(a)
+    # print(b)
+    # print(a - b)
+    # print(b - a)
 
     return in__list, out_list
 
@@ -696,28 +698,23 @@ def full_time_range():
             json.dump(results, outfile, ensure_ascii=False)
             outfile.write('\n')
 
+
 if __name__ == "__main__":
+    # 单个格子实时人数
+    grid_realtime_num(path1, 1, 11300)  # 待写完
+
     # full_time_range() # 填充无人时间点
-    # for k, v in zip(place_all.keys(), place_all.values()):
-    #     print(k)
-    #     area_in_out_count(path1, v)
-    area_in_out_count(path2, front_main_venue)
-    # pass
+
     # analysis_person(path1, 10001)
     # analysis_some_person_stay(16632)
-    # person_area()
-    # analysis_some_person_stay()
-    # grid_realtime_num(path1, n=1, sid=10119)
-    # result_list = area_realtime_num(day=path2, n=1, k='restaurant', v=restaurant)
-    # print(result_list)
-
+    # 0.计算全区域实时人数
     # all_results = {}
     # for k, v in zip(place_all.keys(), place_all.values()):
     #     print(k, v)
     #
-    #     result_list_day1 = area_realtime_num(day=path1, n=1, k=k, v=v)
-    #     result_list_day2 = area_realtime_num(day=path2, n=1, k=k, v=v)
-    #     result_list_day3 = area_realtime_num(day=path3, n=1, k=k, v=v)
+    #     result_list_day1 = area_realtime_num(day=path1, n=1, v=v)
+    #     result_list_day2 = area_realtime_num(day=path2, n=1, v=v)
+    #     result_list_day3 = area_realtime_num(day=path3, n=1, v=v)
     #     result_list = {}
     #     result_list.update(result_list_day1)
     #     result_list.update(result_list_day2)
@@ -727,13 +724,6 @@ if __name__ == "__main__":
     #     print(all_results)
     #
     # # 写入json
-    # with open("../res/results/place_real_time_person_num.json", 'a') as outfile:
+    # with open("../res/results/all_place_real_time_person_num.json", 'a') as outfile:
     #     json.dump(all_results, outfile, ensure_ascii=False)
     #     outfile.write('\n')
-
-    # result_list_day = area_realtime_num(day=path1, n=1, k='venue_a', v=venue_a)
-    # print(result_list_day)
-    # a_l = core(path1)
-    # for c in a_l:
-    #     if c[1] == 11201:
-    #         print(c)
