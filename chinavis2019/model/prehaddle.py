@@ -442,10 +442,6 @@ def area_realtime_num(day, n, v):
                 # print(content[1])
                 time_range.append(str(s2t(front)) + '-' + str(s2t(back)))
                 id_list.append(content[0])
-            # # 00000000处理
-            # else:
-            #     time_range.append(str(s2t(front)) + '-' + str(s2t(back)))
-            #     id_list.append(0)
 
     sorted_time_range = sorted(list(set(time_range)))
 
@@ -474,10 +470,6 @@ def area_realtime_num(day, n, v):
                 # print(content[1], '在', front, back, '区间内，此时间区间列表加入content[0]')
                 time_range1.append(str(s2t(front)) + '-' + str(s2t(back)))
                 id_list1.append(content[0])
-            # # 000000处理
-            # else:
-            #     time_range.append(str(s2t(front)) + '-' + str(s2t(back)))
-            #     id_list.append(0)
 
     sorted_time_range1 = sorted(list(set(time_range1)))
     # print(time_range1)
@@ -890,11 +882,61 @@ def grid_signal_check_id(person_id):
     print(err_dict)
 
 
-def look_err_id_info():
-    pass
+def in_out_degree():
+    read_path = '../res/results/all_place_real_time_person_num.json'
+
+    with open(read_path, 'r') as load_f:
+        f_dict = json.load(load_f)
+        # print(f_dict)
+        new_f_dict = {}
+        for k, v in zip(place_all.keys(), place_all.values()):
+            print(k)
+
+            new_f_dict_day = {}
+            for day in ['day1', 'day2', 'day3']:
+                # print(f_dict[k][day][1])
+                # break
+
+                haddle_list = f_dict[k][day][1]     # 待处理列表
+                # print(haddle_list)
+                # print(len(haddle_list))
+                new_haddle_list = []
+                new_haddle_list.append(0)  # 起始为0
+                for front, back in zip(haddle_list[::1], haddle_list[1::1]):
+                    if back == 0:
+                        new_haddle_list.append(0)
+                    elif back != 0:
+                        new_haddle_list.append(float('%.2f' % abs((back - front) / back)))
+                # print(new_haddle_list)
+                # print(len(new_haddle_list))
+
+                new_f_dict_day[day] = new_haddle_list
+            new_f_dict[k] = new_f_dict_day
+        print(new_f_dict)
+        # 写入json
+        # with open("../res/results/in_out_degree.json", 'a') as outfile:
+        #     json.dump(new_f_dict, outfile, ensure_ascii=False)
+        #     outfile.write('\n')
+        #     # break
+
+
+def check():
+    # 时间长度全部都是790 早7晚8.10
+    read_path = '../res/results/in_out_degree.json'
+
+    with open(read_path, 'r') as load_f:
+        f_dict = json.load(load_f)
+        for k, v in zip(place_all.keys(), place_all.values()):
+            print(k)
+            for day in ['day1', 'day2', 'day3']:
+                print(f_dict[k][day])
+                print(len(f_dict[k][day]))
 
 
 if __name__ == "__main__":
+    # 出入度计算
+    # in_out_degree()
+    check()
     # 全文件扫描
     # results = {}
     # results_day1 = grid_signal_check(path1)
@@ -910,7 +952,7 @@ if __name__ == "__main__":
     #     outfile.write('\n')
 
     # 按id扫描
-    grid_signal_check_id(19720)
+    # grid_signal_check_id(19720)
 
     # grid_set_model(11300)
     # print(area_realtime_num(path2, 1, grid_set_model(11221)))
