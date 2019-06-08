@@ -884,19 +884,13 @@ def grid_signal_check_id(person_id):
 
 def in_out_degree():
     read_path = '../res/results/all_place_real_time_person_num.json'
-
     with open(read_path, 'r') as load_f:
         f_dict = json.load(load_f)
-        # print(f_dict)
         new_f_dict = {}
         for k, v in zip(place_all.keys(), place_all.values()):
             print(k)
-
             new_f_dict_day = {}
             for day in ['day1', 'day2', 'day3']:
-                # print(f_dict[k][day][1])
-                # break
-
                 haddle_list = f_dict[k][day][1]     # 待处理列表
                 # print(haddle_list)
                 # print(len(haddle_list))
@@ -923,11 +917,10 @@ def in_out_degree():
 def check():
     # 时间长度全部都是790 早7晚8.10
     read_path = '../res/results/in_out_degree.json'
-
     with open(read_path, 'r') as load_f:
         f_dict = json.load(load_f)
         for k, v in zip(place_all.keys(), place_all.values()):
-            print(k)
+            # print(k)
             for day in ['day1', 'day2', 'day3']:
                 print(f_dict[k][day])
                 print(len(f_dict[k][day]))
@@ -936,16 +929,17 @@ def check():
 if __name__ == "__main__":
     # 出入度计算
     # in_out_degree()
-    check()
+    # check()
+
     # 全文件扫描
-    # results = {}
+    results = {}
     # results_day1 = grid_signal_check(path1)
-    # results_day2 = grid_signal_check(path2)
+    results_day2 = grid_signal_check(path2)
     # results_day3 = grid_signal_check(path3)
     # results.update(results_day1)
-    # results.update(results_day2)
+    results.update(results_day2)
     # results.update(results_day3)
-    # print(results)
+    print(results)
     # # 写入json
     # with open("../res/results/err_id_info_few.json", 'a') as outfile:
     #     json.dump(results, outfile, ensure_ascii=False)
@@ -957,6 +951,7 @@ if __name__ == "__main__":
     # grid_set_model(11300)
     # print(area_realtime_num(path2, 1, grid_set_model(11221)))
     # area_in_out_count(path1, grid_set_model(10725))
+
     # 单个格子记录数目
     # all_results = {}
     # for c in core(path0):
@@ -979,9 +974,10 @@ if __name__ == "__main__":
     #     json.dump(all_results, outfile, ensure_ascii=False)
     #     outfile.write('\n')
 
-    # full_time_range() # 填充无人时间点
+    # full_time_range() # 填充无人时间点 填充判断错误，稳定时也塞0，后从生成数据入手成功
     # area_realtime_num(path2, 1, around_check_in_desk)
     # analysis_person(path1, 10001)
+
     # analysis_some_person_stay(16632)
     # 0.计算全区域实时人数
     # area_realtime_num(day=path1, n=1, v=venue_a)      # 测试
