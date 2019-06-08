@@ -136,6 +136,15 @@ area_place_all = {
 }
 
 # 各区域门位置建模
+entrance_exit_port = [[11300, 11301], [11300, 11401], [11502, 11401], [11502, 11402], [11502, 11403],
+                      [11504, 11403], [11504, 11404], [11504, 11405], [11507, 11406], [11507, 11407],
+                      [11507, 11408], [11505, 11404], [11505, 11405], [11505, 11406], [11515, 11414],
+                      [11515, 11415], [11515, 11416], [11517, 11416], [11517, 11417], [11517, 11418],
+                      [10019, 10119], [10019, 10118]]
+entrance_port = [[11300, 11301], [11300, 11401], [11502, 11401], [11502, 11402], [11502, 11403],
+                 [11504, 11403], [11504, 11404], [11504, 11405], [11507, 11406], [11507, 11407], [11507, 11408]]
+exit_port = [[11505, 11404], [11505, 11405], [11505, 11406], [11515, 11414], [11515, 11415], [11515, 11416],
+             [11517, 11416], [11517, 11417], [11517, 11418], [10019, 10119], [10019, 10118]]
 # 签到处
 check_in_desk = [[11302, 11301], [11302, 11401], [11302, 11402], [11302, 11403],
                  [11303, 11402], [11303, 11403], [11303, 11404],
@@ -198,7 +207,7 @@ front_main_venue = [[11225, 11125], [11223, 11123], [11221, 11121], [11217, 1111
 back_main_venue = [[10119, 10019], [10119, 10219], [10118, 10019], [10112, 10111], [10211, 10111], [10210, 10111],
                    [10210, 10209], [10210, 10309], [10310, 10209], [10310, 10309], [10310, 10409]]
 # 签到周围走廊
-around_check_in_desk = [[11301, 11202], [11301, 11300], [11301, 11302],
+around_check_in_desk = [[11301, 11300], [11301, 11302],
                         [11401, 11302], [11401, 11502], [11401, 11300],
                         [11402, 11302], [11402, 11303], [11402, 11502],
                         [11403, 11302], [11403, 11303], [11403, 11304], [11403, 11502], [11403, 11504],
@@ -302,7 +311,7 @@ def s2t(second_time):
 
 def split_time(n):
     """
-    设置从07:00:00 18:10:00 20:01:31 20:10:00 72600
+    设置从07:00:00 18:10:00 - 20:10:00 72600
     :param n:几分钟统计一次,给整数
     :return:
     """
@@ -349,37 +358,62 @@ def analysis_place(path, place, place_name):
 
 
 def grid_realtime_num(path, n, sid):
-    a_list = core(path)
-    b_list = []
-    for c in a_list:
+    # 准备待处理数据完成
+    sid_list = []
+    for c in core(path):
         if sid == c[1]:
-            b_list.append(c)
-    print(b_list)
-    sorted_b_list = sorted(b_list, key=lambda x: x[0])
-    print(sorted_b_list)
-
-    time_list = split_time(n)
-    time_range = []
+            sid_list.append(c)
+    sorted_sid_list = sorted(sid_list, key=lambda x: x[0])      # 这块sid格子上按照id-time排序的列表
+    spilt_time_list = split_time(n)       # 切分时间列表
+    which_day = path.split('/')[3].split('.')[0]
+    # 判断每个时间段通过sid的人数
+    time_list = []
     id_list = []
 
-    for front, back in zip(time_list[::1], time_list[1::1]):
+    for front, back in zip(spilt_time_list[::1], spilt_time_list[1::1]):
         id_single = []
-        for content in sorted_b_list:
+
+        for content in sorted_sid_list:
             if front <= content[2] < back:
-                time_range.append(str(s2t(front)) + '-' + str(s2t(back)))
+                # print(str(s2t(front)) + '-' + str(s2t(back)))
+                time_list.append(str(s2t(front)) + '-' + str(s2t(back)))
                 id_single.append(content[0])
                 id_list.append(id_single)
-
-    # print(len(time_range))
-    # print(len(id_list))
-    # print(time_range)
+    # print(time_list)
+    # print(len(time_list))
     # print(id_list)
-    which_day = path.split('/')[3].split('.')[0]
-    result = [time_range, id_list]
+    # print(len(id_list))
+
+    # 一个时间段出现多个记录处理
+
+    new_time_list = []
+    new_id_list = []
+    for time in time_list:
+        if time not in new_time_list:
+            new_time_list.append(time)
+    for id in id_list:
+        if id not in new_id_list:
+            new_id_list.append(id)
+    # print(new_time_list)
+    # print(new_id_list)
+    # print(len(new_time_list))
+    # print(len(new_id_list))
+
+    # id数目当作人数
+    num_new_id_list = []
+    for k, v in zip(new_time_list, new_id_list):
+        # print(k, v)
+        num_new_id_list.append(len(v))
+
+    # print(new_time_list)
+    # print(len(new_time_list))
+    # print(new_time_list)
+    # print(len(num_new_id_list))
+    # 封装字典
+    result = [new_time_list, num_new_id_list]
     result_dict = {which_day: result}
     print(result_dict)
     return result_dict
-    pass
 
 
 def area_realtime_num(day, n, v):
@@ -389,7 +423,6 @@ def area_realtime_num(day, n, v):
     sorted_in_list = sorted(in_list, key=lambda x: x[1])    # 改为时间排序
     sorted_out_list = sorted(out_list, key=lambda x: x[1])
 
-    # print(sorted_in_list)
     # for ii in sorted_in_list:
     #     print(ii[1])
     # time_list = [50000, 53000, 56000, 59000, 62000, 65000]
@@ -409,6 +442,10 @@ def area_realtime_num(day, n, v):
                 # print(content[1])
                 time_range.append(str(s2t(front)) + '-' + str(s2t(back)))
                 id_list.append(content[0])
+            # # 00000000处理
+            # else:
+            #     time_range.append(str(s2t(front)) + '-' + str(s2t(back)))
+            #     id_list.append(0)
 
     sorted_time_range = sorted(list(set(time_range)))
 
@@ -437,6 +474,10 @@ def area_realtime_num(day, n, v):
                 # print(content[1], '在', front, back, '区间内，此时间区间列表加入content[0]')
                 time_range1.append(str(s2t(front)) + '-' + str(s2t(back)))
                 id_list1.append(content[0])
+            # # 000000处理
+            # else:
+            #     time_range.append(str(s2t(front)) + '-' + str(s2t(back)))
+            #     id_list.append(0)
 
     sorted_time_range1 = sorted(list(set(time_range1)))
     # print(time_range1)
@@ -487,11 +528,28 @@ def area_realtime_num(day, n, v):
     # print(len(mount_dict))
     # print(mount_dict)
     # print(sum(mount_dict.values()))
+    # 无人时间段给零处理
+    # print("无人或无变化时间段零处理")
+    all_time_range = []
+    for front, back in zip(time_list[::1], time_list[1::1]):
+        all_time_range.append(str(s2t(front)) + '-' + str(s2t(back)))
+    # print(all_time_range)
+    new_mount_dict = {}
+    for c in all_time_range:
+        if c in mount_dict.keys():
+            # print('字典已经记录，忽略')
+            new_mount_dict[c] = mount_dict[c]
+            pass
+        else:
+            # print(c)
+            new_mount_dict[c] = 0
+    # print(new_mount_dict)
+
 
     # 叠加每个时间段的人数变量的到每个时间段的人数
     count_sum = []
     count_sum_time = []
-    for t, c in zip(mount_dict.keys(), mount_dict.values()):
+    for t, c in zip(new_mount_dict.keys(), new_mount_dict.values()):
         count_sum.append(c)
         count_sum_time.append(t)
     count_sum_num = []
@@ -500,6 +558,7 @@ def area_realtime_num(day, n, v):
     # print(len(count_sum_num))
     # print(count_sum_num)
     # print(count_sum_time)
+
     # result = {}
     # for a, b in zip(count_sum_time, count_sum_num):
     #     result[a] = b
@@ -699,19 +758,194 @@ def full_time_range():
             outfile.write('\n')
 
 
+def grid_set_model(grid):
+    print('建模格子:', grid)
+    first = str(grid)[0:1]
+    second = int(str(grid)[1:3])
+    third = int(str(grid)[3:5])
+    if second == 0:
+        second_list = [second, second + 1]
+        third_list = [third - 1, third, third + 1]
+    elif third == 0:
+        second_list = [second, second - 1, second + 1]
+        third_list = [third, third + 1]
+    else:
+        second_list = [second - 1, second, second + 1]
+        third_list = [third - 1, third, third + 1]
+
+    exist_grid = [x[0] for x in core(path0)]        # 存在的格子
+
+    str_model_list = []
+    for c1 in second_list:
+        for c2 in third_list:
+            if "%02d" % c1 + "%02d" % c2 != str(grid)[1:5]:
+                str_model_list.append(first + "%02d" % c1 + "%02d" % c2)
+    exist_model_list = []
+    for grids in str_model_list:
+        if int(grids) in exist_grid:
+            exist_model_list.append(int(grids))
+    # print(exist_model_list)   # 输入格子周围八个中存在的格子
+    model_list = []
+    # [grid, [x for x in exist_model_list]]
+    for new_grid in exist_model_list:
+        model_list.append([grid, new_grid])
+    print(model_list)
+
+    return model_list
+
+
+def grid_signal_check(path):
+    which_day = path.split('/')[3].split('.')[0]
+    read_path = '../res/person/' + which_day + '/'
+    err_dict = {}
+    # err_id_list = []
+    err_id_sid_list = []
+    for i, f in enumerate(os.listdir(read_path)):
+        handle_path = read_path + f
+        person_id = int(f.split('.')[0])
+        # print(i + 1, handle_path, person_id)
+        print(i + 1, '检查：', person_id)
+
+        df_y = pd.read_csv(handle_path, encoding='utf-8', error_bad_lines=False, usecols=[0, 1, 2])
+        log_data = np.array(df_y)
+        log_list = log_data.tolist()
+        person_sid_list = [x[1] for x in log_list]
+        person_time_list = [x[2] for x in log_list]
+        # print(person_sid_list)
+        for front, back in zip(person_sid_list[::1], person_sid_list[1::1]):
+            # print(front, back)
+
+            second_front = int(str(front)[1:3])
+            third_front = int(str(front)[3:5])
+
+            second_back = int(str(back)[1:3])
+            third_back = int(str(back)[3:5])
+            # print(second_front, third_front, second_back, third_back)
+
+            second_front_list = [second_front, second_front - 1, second_front + 1]
+            third_front_list = [third_front, third_front - 1, third_front + 1]
+            if second_back in second_front_list and third_back in third_front_list:
+                # print('合适')
+                pass
+            else:
+                print('error:', front, '>', back, 'time:', person_time_list[person_sid_list.index(front)])
+                # err_id_list.append(person_id)
+
+                # 确定出错的区域
+                for k, v in zip(area_place_all.keys(), area_place_all.values()):
+                    if front in v:
+                        print('出错信号在', k, '区域的', front, '和', back, '之间')
+
+                        err_id_sid_list.append([front, back])
+                        err_dict[person_id] = err_id_sid_list
+    # print(err_id_list)
+    # print(err_dict)
+    everyday_err_dict = dict()
+    everyday_err_dict[which_day] = err_dict
+    # print(everyday_err_dict)
+    return everyday_err_dict
+
+
+def grid_signal_check_id(person_id):
+    read_path = '../res/person/day2/' + str(person_id) + '.csv'
+
+    err_id_list = []
+    err_id_sid_list = []
+    err_dict = {}
+    print('检查：', person_id)
+
+    df_y = pd.read_csv(read_path, encoding='utf-8', error_bad_lines=False, usecols=[0, 1, 2])
+    log_data = np.array(df_y)
+    log_list = log_data.tolist()
+    person_sid_list = [x[1] for x in log_list]
+    person_time_list = [x[2] for x in log_list]
+    # print(person_sid_list)
+    for front, back in zip(person_sid_list[::1], person_sid_list[1::1]):
+        # print(front, back)
+
+        second_front = int(str(front)[1:3])
+        third_front = int(str(front)[3:5])
+
+        second_back = int(str(back)[1:3])
+        third_back = int(str(back)[3:5])
+        # print(second_front, third_front, second_back, third_back)
+
+        second_front_list = [second_front, second_front - 1, second_front + 1]
+        third_front_list = [third_front, third_front - 1, third_front + 1]
+        if second_back in second_front_list and third_back in third_front_list:
+            # print('合适')
+            pass
+        else:
+            print('error:', front, '>', back, 'time:', person_time_list[person_sid_list.index(front)],
+                  person_time_list[person_sid_list.index(front) + 1])
+            err_id_list.append(person_id)
+
+            # 确定出错的区域
+            for k, v in zip(area_place_all.keys(), area_place_all.values()):
+                if front in v:
+                    print('出错信号在', k, '区域的', front, '和', back, '之间')
+                    err_id_sid_list.append([k, front, back])
+                    err_dict[person_id] = err_id_sid_list
+    print(err_id_sid_list)
+    print(err_dict)
+
+
+def look_err_id_info():
+    pass
+
+
 if __name__ == "__main__":
-    # 单个格子实时人数
-    grid_realtime_num(path1, 1, 11300)  # 待写完
+    # 全文件扫描
+    # results = {}
+    # results_day1 = grid_signal_check(path1)
+    # results_day2 = grid_signal_check(path2)
+    # results_day3 = grid_signal_check(path3)
+    # results.update(results_day1)
+    # results.update(results_day2)
+    # results.update(results_day3)
+    # print(results)
+    # # 写入json
+    # with open("../res/results/err_id_info_few.json", 'a') as outfile:
+    #     json.dump(results, outfile, ensure_ascii=False)
+    #     outfile.write('\n')
+
+    # 按id扫描
+    grid_signal_check_id(19720)
+
+    # grid_set_model(11300)
+    # print(area_realtime_num(path2, 1, grid_set_model(11221)))
+    # area_in_out_count(path1, grid_set_model(10725))
+    # 单个格子记录数目
+    # all_results = {}
+    # for c in core(path0):
+    #     print(c[0])
+    #     # grid_set_model(c[0])
+    #     result_list_day1 = area_realtime_num(path1, 10, grid_set_model(c[0]))
+    #     result_list_day2 = area_realtime_num(path2, 10, grid_set_model(c[0]))
+    #     result_list_day3 = area_realtime_num(path3, 10, grid_set_model(c[0]))
+    #     result_list = {}
+    #     result_list.update(result_list_day1)
+    #     result_list.update(result_list_day2)
+    #     result_list.update(result_list_day3)
+    #     single_results = {c[0]: result_list}
+    #     all_results.update(single_results)
+    #     print(all_results)
+    #     break
+
+    # # 写入json
+    # with open("../res/results/all_sid_real_time_person_num.json", 'a') as outfile:
+    #     json.dump(all_results, outfile, ensure_ascii=False)
+    #     outfile.write('\n')
 
     # full_time_range() # 填充无人时间点
-
+    # area_realtime_num(path2, 1, around_check_in_desk)
     # analysis_person(path1, 10001)
     # analysis_some_person_stay(16632)
     # 0.计算全区域实时人数
+    # area_realtime_num(day=path1, n=1, v=venue_a)      # 测试
     # all_results = {}
     # for k, v in zip(place_all.keys(), place_all.values()):
-    #     print(k, v)
-    #
+    #     print('统计区域', k, 'ing')
     #     result_list_day1 = area_realtime_num(day=path1, n=1, v=v)
     #     result_list_day2 = area_realtime_num(day=path2, n=1, v=v)
     #     result_list_day3 = area_realtime_num(day=path3, n=1, v=v)
@@ -722,7 +956,7 @@ if __name__ == "__main__":
     #     single_results = {k: result_list}
     #     all_results.update(single_results)
     #     print(all_results)
-    #
+    #     # break
     # # 写入json
     # with open("../res/results/all_place_real_time_person_num.json", 'a') as outfile:
     #     json.dump(all_results, outfile, ensure_ascii=False)
