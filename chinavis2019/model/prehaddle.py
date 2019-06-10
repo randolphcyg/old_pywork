@@ -17,6 +17,7 @@ path2 = '../res/传感器日志数据/day2.csv'
 path3 = '../res/传感器日志数据/day3.csv'
 
 # area_placename 意思是各区域（房间、走廊）对应的格子
+area_entrance_exit_port = [11300, 11502, 11504, 11507, 10019, 11505, 11515, 11517]
 # 入口位置
 area_entrance_port = [11300, 11502, 11504, 11507]
 # 出口位置
@@ -551,7 +552,7 @@ def area_realtime_num(day, n, v):
     # print(result)
     which_day = day.split('/')[3].split('.')[0]
     result_dict = {which_day: result}
-    # print(result_dict)
+    print(result_dict)
     return result_dict
 
 
@@ -604,17 +605,17 @@ def area_in_out_count(path, place):
     print(len(out_list))
 
     # 检验
-    # from collections import Counter
-    # pid1 = [x[0] for x in sorted(in__list, key=lambda x: x[0])]
-    # pid2 = [x[0] for x in sorted(out_list, key=lambda x: x[0])]
-    # ana_pid = sorted(list(set(pid1)))
-    # # for ppid in ana_pid:
-    # a = Counter(pid1)
-    # b = Counter(pid2)
-    # print(a)
-    # print(b)
-    # print(a - b)
-    # print(b - a)
+    from collections import Counter
+    pid1 = [x[0] for x in sorted(in__list, key=lambda x: x[0])]
+    pid2 = [x[0] for x in sorted(out_list, key=lambda x: x[0])]
+    ana_pid = sorted(list(set(pid1)))
+    # for ppid in ana_pid:
+    a = Counter(pid1)
+    b = Counter(pid2)
+    print(a)
+    print(b)
+    print(a - b)
+    print(b - a)
 
     return in__list, out_list
 
@@ -656,13 +657,13 @@ def analysis_some_person_stay(person_id):
     判断mou个人停留时间长度较长的点
     :return:
     """
-    handle_path = '../res/test/' + str(person_id) + '.csv'
+    handle_path = '../res/person/day1/' + str(person_id) + '.csv'
     print(handle_path)
     with open(handle_path, 'r') as file:
         data = pd.read_csv(file)
         for i in range(len(data)):
             if i + 1 < len(data):   # 错误处理，防止i+1超过迭代数目
-                if data['time'].iloc[i + 1] - data['time'].iloc[i] > 20:
+                if data['time'].iloc[i + 1] - data['time'].iloc[i] > 120:
                     for k, v in zip(area_place_all.keys(), area_place_all.values()):
                         if data['sid'].iloc[i] in v:    # 判断停留所在的地点, 停留时间
                             print(k, data['sid'].iloc[i], s2t(
@@ -768,12 +769,16 @@ def grid_signal_check(path):
                 for k, v in zip(area_place_all.keys(), area_place_all.values()):
                     if front in v:
                         print('出错信号在', k, '区域的', front, '和', back, '之间')
-                        err_id_sid_list.append([front, back])
-                        err_dict[person_id] = err_id_sid_list
-    # print(err_dict)
+                        # err_id_sid_list.append([front, back])     # 存错误的信号前后俩sid
+                        # err_dict[person_id] = err_id_sid_list
+                err_id_sid_list.append(person_id)
+    # # print(err_dict)
+    # everyday_err_dict = dict()
+    # everyday_err_dict[which_day] = err_dict
+    # # print(everyday_err_dict)
+    # return everyday_err_dict
     everyday_err_dict = dict()
-    everyday_err_dict[which_day] = err_dict
-    # print(everyday_err_dict)
+    everyday_err_dict[which_day] = list(set(err_id_sid_list))
     return everyday_err_dict
 
 
@@ -865,22 +870,104 @@ def check():
                 print(len(f_dict[k][day]))
 
 
+def volunteers_check():
+    read_path = '../res/place/room6.csv'
+    df_y = pd.read_csv(read_path, encoding='utf-8', error_bad_lines=False, usecols=[0, 1, 2])
+    log_data = np.array(df_y)
+    log_list = log_data.tolist()
+    person_sid_list = [x[0] for x in log_list]
+    person_sid_list_set = list(set(person_sid_list))
+    print(person_sid_list_set)
+    print(len(person_sid_list_set))
+    return person_sid_list_set
+
+
 if __name__ == "__main__":
+    # service_man_list = [
+    #     11396,
+    #     11462,
+    #     18123,
+    #     11143,
+    #     13982,
+    #     12856,
+    #     18059,
+    #     18347,
+    #     18689,
+    #     19027,
+    #     19627,
+    #     12573,
+    #     16290,
+    #     11165,
+    #     13339,
+    #     16111,
+    #     12206,
+    #     12426,
+    #     15095,
+    #     19682,
+    #     10164,
+    #     10196,
+    #     10345,
+    #     11251,
+    #     11532,
+    #     11876,
+    #     12602,
+    #     13300,
+    #     14678,
+    #     14819,
+    #     14825,
+    #     14859,
+    #     15152,
+    #     15367,
+    #     15408,
+    #     15670,
+    #     15801,
+    #     16065,
+    #     17054,
+    #     18367,
+    #     11778,
+    #     17516,
+    #     19617,
+    #     10638,
+    #     10762,
+    #     13322,
+    #     15800,
+    #     11714]
     # 出入度计算
     # in_out_degree()
     # check()
-    pass
+    # analysis_some_person_stay(12426)
+    # retA = [i for i in volunteers_check() if i in service_man_list]
+    # print(len(retA))
+    # print(len(volunteers_check() - service_man_list))
+
+    # 所有sid实时人数
+
+    # area_realtime_num(path1, 100, grid_set_model(11300))
+
     # 全文件扫描
     # results = {}
-    # # results_day1 = grid_signal_check(path1)
+    # results_day1 = grid_signal_check(path1)
     # results_day2 = grid_signal_check(path2)
-    # # results_day3 = grid_signal_check(path3)
-    # # results.update(results_day1)
+    # results_day3 = grid_signal_check(path3)
+    # results.update(results_day1)
     # results.update(results_day2)
-    # # results.update(results_day3)
+    # results.update(results_day3)
     # print(results)
     # # 写入json
-    # with open("../res/results/err_id_info_few.json", 'a') as outfile:
+    # with open("../res/results/err_id_info_onlyid.json", 'a') as outfile:
+    #     json.dump(results, outfile, ensure_ascii=False)
+    #     outfile.write('\n')
+    # 天：人字典
+    # results = {}
+    # results_day1 = grid_signal_check(path1)
+    # results_day2 = grid_signal_check(path2)
+    # results_day3 = grid_signal_check(path3)
+    # results.update(results_day1)
+    # results.update(results_day2)
+    # results.update(results_day3)
+    # print(results)
+    # # 写入json
+    # with open("../res/results/err_id_info_onlyid.csv", 'a') as outfile:
     #     json.dump(results, outfile, ensure_ascii=False)
     #     outfile.write('\n')
 
@@ -892,26 +979,32 @@ if __name__ == "__main__":
     # area_in_out_count(path1, grid_set_model(10725))
 
     # 单个格子记录数目
-    # all_results = {}
-    # for c in core(path0):
-    #     print(c[0])
-    #     # grid_set_model(c[0])
-    #     result_list_day1 = area_realtime_num(path1, 10, grid_set_model(c[0]))
-    #     result_list_day2 = area_realtime_num(path2, 10, grid_set_model(c[0]))
-    #     result_list_day3 = area_realtime_num(path3, 10, grid_set_model(c[0]))
-    #     result_list = {}
-    #     result_list.update(result_list_day1)
-    #     result_list.update(result_list_day2)
-    #     result_list.update(result_list_day3)
-    #     single_results = {c[0]: result_list}
-    #     all_results.update(single_results)
-    #     print(all_results)
-    #     break
+    # 每分钟可能存在拥堵情况的实时人数数据
+    all_results = {}
+    for c in core(path0):
+        print(c[0])
+        ready_grid = c[0]
+    #
+    # for c in [10119]:
+        # ready_grid = c
+        if ready_grid not in area_entrance_exit_port:   # 去掉出入口
+            print(ready_grid)
+            result_list_day1 = area_realtime_num(path1, 1, grid_set_model(ready_grid))
+            result_list_day2 = area_realtime_num(path2, 1, grid_set_model(ready_grid))
+            result_list_day3 = area_realtime_num(path3, 1, grid_set_model(ready_grid))
+            result_list = {}
+            result_list.update(result_list_day1)
+            result_list.update(result_list_day2)
+            result_list.update(result_list_day3)
+            single_results = {ready_grid: result_list}
+            all_results.update(single_results)
+            print(all_results)
+            # break
 
-    # # 写入json
-    # with open("../res/results/all_sid_real_time_person_num.json", 'a') as outfile:
-    #     json.dump(all_results, outfile, ensure_ascii=False)
-    #     outfile.write('\n')
+    # 写入json
+    with open("../res/results/all_sid_real_time_person_num_per_min.json", 'a') as outfile:
+        json.dump(all_results, outfile, ensure_ascii=False)
+        outfile.write('\n')
 
     # 0.计算全区域实时人数
     # area_realtime_num(day=path1, n=1, v=venue_a)      # 测试
