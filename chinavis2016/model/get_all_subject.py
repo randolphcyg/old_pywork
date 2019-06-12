@@ -214,7 +214,7 @@ def each_top_100_subject():
 
 if __name__ == "__main__":
     # 1.主题清洗保存 all_subject
-    # read_all_sub_csv(all_subject_txt)
+    # read_all_sub_csv(all_subject_txt)     # 运行时间较长
 
     # 2.主题分词 all_subject_words
     # text = open(all_subject_txt, encoding='utf_8', errors='ignore').read()

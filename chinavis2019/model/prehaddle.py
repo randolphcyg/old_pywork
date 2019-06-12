@@ -883,6 +883,102 @@ def volunteers_check():
 
 
 if __name__ == "__main__":
+    pass
+    # 出入度计算
+    # in_out_degree()
+    # check()
+    # analysis_some_person_stay(12426)
+    # retA = [i for i in volunteers_check() if i in service_man_list]
+    # print(len(retA))
+    # print(len(volunteers_check() - service_man_list))
+
+    # 所有sid实时人数
+
+    # area_realtime_num(path1, 100, grid_set_model(11300))
+
+    # 全文件扫描
+    # results = {}
+    # results_day1 = grid_signal_check(path1)
+    # results_day2 = grid_signal_check(path2)
+    # results_day3 = grid_signal_check(path3)
+    # results.update(results_day1)
+    # results.update(results_day2)
+    # results.update(results_day3)
+    # print(results)
+    # # 写入json
+    # with open("../res/results/err_id_info_onlyid.json", 'a') as outfile:
+    #     json.dump(results, outfile, ensure_ascii=False)
+    #     outfile.write('\n')
+    # 天：人字典
+    # results = {}
+    # results_day1 = grid_signal_check(path1)
+    # results_day2 = grid_signal_check(path2)
+    # results_day3 = grid_signal_check(path3)
+    # results.update(results_day1)
+    # results.update(results_day2)
+    # results.update(results_day3)
+    # print(results)
+    # # 写入json
+    # with open("../res/results/err_id_info_onlyid.csv", 'a') as outfile:
+    #     json.dump(results, outfile, ensure_ascii=False)
+    #     outfile.write('\n')
+
+    # 按id扫描
+    # grid_signal_check_id(19720)
+
+    # grid_set_model(11300)
+    # print(area_realtime_num(path2, 1, grid_set_model(11221)))
+    # area_in_out_count(path1, grid_set_model(10725))
+
+    # 单个格子记录数目
+    # 每分钟可能存在拥堵情况的实时人数数据
+    # all_results = {}
+    # for c in core(path0):
+    #     print(c[0])
+    #     ready_grid = c[0]
+    # #
+    # # for c in [10119]:
+    #     # ready_grid = c
+    #     if ready_grid not in area_entrance_exit_port:   # 去掉出入口
+    #         print(ready_grid)
+    #         result_list_day1 = area_realtime_num(path1, 1, grid_set_model(ready_grid))
+    #         result_list_day2 = area_realtime_num(path2, 1, grid_set_model(ready_grid))
+    #         result_list_day3 = area_realtime_num(path3, 1, grid_set_model(ready_grid))
+    #         result_list = {}
+    #         result_list.update(result_list_day1)
+    #         result_list.update(result_list_day2)
+    #         result_list.update(result_list_day3)
+    #         single_results = {ready_grid: result_list}
+    #         all_results.update(single_results)
+    #         print(all_results)
+    #         # break
+    #
+    # # 写入json
+    # with open("../res/results/all_sid_real_time_person_num_per_min.json", 'a') as outfile:
+    #     json.dump(all_results, outfile, ensure_ascii=False)
+    #     outfile.write('\n')
+
+    # 0.计算全区域实时人数
+    # area_realtime_num(day=path1, n=1, v=venue_a)      # 测试
+    # all_results = {}
+    # for k, v in zip(place_all.keys(), place_all.values()):
+    #     print('统计区域', k, 'ing')
+    #     result_list_day1 = area_realtime_num(day=path1, n=1, v=v)
+    #     result_list_day2 = area_realtime_num(day=path2, n=1, v=v)
+    #     result_list_day3 = area_realtime_num(day=path3, n=1, v=v)
+    #     result_list = {}
+    #     result_list.update(result_list_day1)
+    #     result_list.update(result_list_day2)
+    #     result_list.update(result_list_day3)
+    #     single_results = {k: result_list}
+    #     all_results.update(single_results)
+    #     print(all_results)
+    #     # break
+    # # 写入json
+    # with open("../res/results/all_place_real_time_person_num.json", 'a') as outfile:
+    #     json.dump(all_results, outfile, ensure_ascii=False)
+    #     outfile.write('\n')
+    # 服务人员清单
     # service_man_list = [
     #     11396,
     #     11462,
@@ -932,97 +1028,3 @@ if __name__ == "__main__":
     #     13322,
     #     15800,
     #     11714]
-    # 出入度计算
-    # in_out_degree()
-    # check()
-    # analysis_some_person_stay(12426)
-    # retA = [i for i in volunteers_check() if i in service_man_list]
-    # print(len(retA))
-    # print(len(volunteers_check() - service_man_list))
-
-    # 所有sid实时人数
-
-    # area_realtime_num(path1, 100, grid_set_model(11300))
-
-    # 全文件扫描
-    # results = {}
-    # results_day1 = grid_signal_check(path1)
-    # results_day2 = grid_signal_check(path2)
-    # results_day3 = grid_signal_check(path3)
-    # results.update(results_day1)
-    # results.update(results_day2)
-    # results.update(results_day3)
-    # print(results)
-    # # 写入json
-    # with open("../res/results/err_id_info_onlyid.json", 'a') as outfile:
-    #     json.dump(results, outfile, ensure_ascii=False)
-    #     outfile.write('\n')
-    # 天：人字典
-    # results = {}
-    # results_day1 = grid_signal_check(path1)
-    # results_day2 = grid_signal_check(path2)
-    # results_day3 = grid_signal_check(path3)
-    # results.update(results_day1)
-    # results.update(results_day2)
-    # results.update(results_day3)
-    # print(results)
-    # # 写入json
-    # with open("../res/results/err_id_info_onlyid.csv", 'a') as outfile:
-    #     json.dump(results, outfile, ensure_ascii=False)
-    #     outfile.write('\n')
-
-    # 按id扫描
-    # grid_signal_check_id(19720)
-
-    # grid_set_model(11300)
-    # print(area_realtime_num(path2, 1, grid_set_model(11221)))
-    # area_in_out_count(path1, grid_set_model(10725))
-
-    # 单个格子记录数目
-    # 每分钟可能存在拥堵情况的实时人数数据
-    all_results = {}
-    for c in core(path0):
-        print(c[0])
-        ready_grid = c[0]
-    #
-    # for c in [10119]:
-        # ready_grid = c
-        if ready_grid not in area_entrance_exit_port:   # 去掉出入口
-            print(ready_grid)
-            result_list_day1 = area_realtime_num(path1, 1, grid_set_model(ready_grid))
-            result_list_day2 = area_realtime_num(path2, 1, grid_set_model(ready_grid))
-            result_list_day3 = area_realtime_num(path3, 1, grid_set_model(ready_grid))
-            result_list = {}
-            result_list.update(result_list_day1)
-            result_list.update(result_list_day2)
-            result_list.update(result_list_day3)
-            single_results = {ready_grid: result_list}
-            all_results.update(single_results)
-            print(all_results)
-            # break
-
-    # 写入json
-    with open("../res/results/all_sid_real_time_person_num_per_min.json", 'a') as outfile:
-        json.dump(all_results, outfile, ensure_ascii=False)
-        outfile.write('\n')
-
-    # 0.计算全区域实时人数
-    # area_realtime_num(day=path1, n=1, v=venue_a)      # 测试
-    # all_results = {}
-    # for k, v in zip(place_all.keys(), place_all.values()):
-    #     print('统计区域', k, 'ing')
-    #     result_list_day1 = area_realtime_num(day=path1, n=1, v=v)
-    #     result_list_day2 = area_realtime_num(day=path2, n=1, v=v)
-    #     result_list_day3 = area_realtime_num(day=path3, n=1, v=v)
-    #     result_list = {}
-    #     result_list.update(result_list_day1)
-    #     result_list.update(result_list_day2)
-    #     result_list.update(result_list_day3)
-    #     single_results = {k: result_list}
-    #     all_results.update(single_results)
-    #     print(all_results)
-    #     # break
-    # # 写入json
-    # with open("../res/results/all_place_real_time_person_num.json", 'a') as outfile:
-    #     json.dump(all_results, outfile, ensure_ascii=False)
-    #     outfile.write('\n')

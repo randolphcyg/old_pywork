@@ -14,7 +14,7 @@ import re
 source_path = '../res/results/display_list.txt'
 path = '../res/chinavis2016_data'
 save_path = '../res/corpus_file/'
-top100 = '../res/results/test_top100.txt'
+top100 = '../res/results/raw_modify_top100.txt'
 path2 = '../res/test_corpus_seg'
 
 

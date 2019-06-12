@@ -88,7 +88,6 @@ def each_top100_num():
         for i, c in enumerate(content):
             c = c.replace('\n', '')     # 读top100，去换行符，判断c即可
 
-            #
             catelist = os.listdir(test_corpus)  # 获取corpus_path下的所有子目录
             for i, f in enumerate(catelist):
                 f_path = test_corpus + f    # 拼出待查询文件相对路径

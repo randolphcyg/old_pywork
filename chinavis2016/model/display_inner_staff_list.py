@@ -81,6 +81,7 @@ def core():
             else:
                 employees.append(name)
         print(len(employees))
+        print(employees)
 
     for employee in employees:
         open_save_file.write(employee + '\n')
