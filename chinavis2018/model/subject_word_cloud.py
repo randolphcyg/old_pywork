@@ -67,15 +67,16 @@ def subject_word_cloud():
         text,
         subject_dict,
         stopwords)  # 送值，分词，去停用词，加载自定义词典
-
+    # print(type(text))
+    # print(text)
     wc.generate(text)   # 生成词云 用generate输入全部文本
+
     image_colors = ImageColorGenerator(back_coloring)   # 从背景图片生成颜色值
     plt.figure()
     plt.imshow(wc.recolor(color_func=image_colors))  # 显示图片
     plt.axis("off")
     plt.show()  # 绘制词云
     wc.to_file(img)    # 保存图片
-
 
 
 if __name__ == "__main__":

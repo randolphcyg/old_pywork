@@ -133,9 +133,9 @@ if __name__ == "__main__":
     # find_name = 'serge woon'
     # get_display_subject(find_name)
 
-    # display_occur_to_array()
+    display_occur_to_array()
 
-    display_occur_to_array_single(filename='alberto_ornaghi_subject.txt')
+    # display_occur_to_array_single(filename='alberto_ornaghi_subject.txt')
 
     # with open(top100, encoding='utf8', errors='ignore') as fw:
     #     wordlist = fw.read().split('\n')    # top词汇表

@@ -8,8 +8,10 @@
 import os
 import re
 import pickle
+import numpy as np
 
 from sklearn.datasets.base import Bunch
+from sklearn.preprocessing import StandardScaler
 from Tools import readfile
 
 top100 = '../res/results/raw_modify_top100.txt'
@@ -38,9 +40,9 @@ def display_occur_to_array_single(filename):
 def corpus2bunch(wordbag_path, seg_path):
     catelist = os.listdir(seg_path)
     labellist = ['Financial', 'Technology', 'Technology', 'Human', 'Technology',
-                'Technology', 'Technology', 'Technology', 'Technology', 'Technology',
-                'Technology', 'Technology', 'Financial', 'Human', 'Technology',
-                'Technology', 'Technology', 'Technology', 'Technology', 'Technology']
+                 'Technology', 'Technology', 'Technology', 'Technology', 'Technology',
+                 'Technology', 'Technology', 'Financial', 'Human', 'Technology',
+                 'Technology', 'Technology', 'Technology', 'Technology', 'Technology']
     print(len(catelist))    # 20
     # 创建一个Bunch实例
     bunch = Bunch(target_name=[], label=[], filenames=[], contents=[])
@@ -95,7 +97,14 @@ def train_bunch():
         single_array = display_occur_to_array_single(filename)
         print(single_array)
         all_array.append(single_array)
-    # print(all_array)  # 训练集二维数组
+    print(all_array)  # 训练集二维数组
+
+    # data = np.random.uniform(0, 100, 10)[:, np.newaxis]
+    # print(data)
+    # ss = StandardScaler()
+
+    # std_all_array = ss.fit_transform(all_array)
+    # print(std_all_array)
     # # 对训练集进行Bunch化操作：
     # wordbag_path = "../res/train_word_bag/train_set.dat"  # Bunch存储路径
     # seg_path = "../res/train_corpus_seg/"  # 分词后分类语料库路径
@@ -129,6 +138,7 @@ def test_bunch():
 if __name__ == "__main__":
     train_bunch()
     test_bunch()
+
     # 对训练集进行Bunch化操作：
     wordbag_path = "../res/train_word_bag/train_set.dat"  # Bunch存储路径
     seg_path = "../res/train_corpus_seg/"  # 分词后分类语料库路径
