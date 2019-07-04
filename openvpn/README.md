@@ -2,7 +2,7 @@
 >https://www.ilanni.com/?p=9847
 
 ### vars配置文件
-`
+```
 [root@ easyrsa3]# cat vars
 
 set_var EASYRSA_REQ_COUNTRY “CN” //定义所在国家
@@ -16,9 +16,9 @@ set_var EASYRSA_REQ_ORG “Test” //所在组织
 set_var EASYRSA_REQ_EMAIL “test@test.com” //定义邮箱地址
 
 set_var EASYRSA_REQ_OU “TestOpenVpn” //所在单位
-`
+```
 ### server.conf服务器端配置文件
-`
+```
 cal 192.168.255.128 #本地IP，既服务器的IP地址
 
 port 1194 #vpn端口，定义openvpn监听的的端口，默认为1194端口。
@@ -96,9 +96,9 @@ plugin /usr/lib64/openvpn/plugin/lib/openvpn-auth-pam.so login #我是64位操�
 client-cert-not-required #只需验证用户名密码，不要求客户端证书
 
 username-as-common-name #用户名做common-name，既用户名相当于客户端名，个性化的时候使用用户名即可。
-`
+```
 ### client.conf配置文件
-`
+```
 client #标记为客户端
 
 dev tun #与服务器端配置一致
@@ -132,10 +132,10 @@ comp-lzo #与服务器端配置一致
 verb 3 #设置日志记录冗长级别
 
 auth-user-pass pwd.txt #读取pwd.txt用户密码文件
-`
+```
 
 ## mysql5.7.24离线安装配置
-`
+```
 ### 查看是否安装并删除旧版本
 rpm -qa | grep mysql   // 这个命令就会查看该操作系统上是否已经安装了mysql数据库
 
@@ -183,4 +183,4 @@ set password = password('your_password');
 // 创建用户并授权
 grant all on *.* to name@'%' identified by "password" with grant option;
 flush privileges;
-`
+```
