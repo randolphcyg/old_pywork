@@ -76,7 +76,7 @@ auth-user-pass pwd.txt #读取pwd.txt用户密码文件
 
 ## mysql5.7.24离线安装配置
 ```
-### 查看是否安装并删除旧版本
+### 1.查看是否安装并删除旧版本
 rpm -qa | grep mysql   // 这个命令就会查看该操作系统上是否已经安装了mysql数据库
 
 // 普通删除模式   
@@ -84,43 +84,74 @@ rpm -e mysql-libs-5.1.73-3.el6_5.x86_64　　
 // 强力删除模式，如果使用上面命令删除时，提示有依赖的其它文件，则用该命令
 rpm -e --nodeps mysql-libs-5.1.73-3.el6_5.x86_64　　
 
-### 离线下载解压安装并启动
+### 2.离线下载解压安装并启动
 // 使用wget命令从mysql官网下载离线包(地址可能不一定是下面这个，请自行更改)
 wget https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.24-linux-glibc2.12-x86_64.tar.gz
-*这里在主机下载好sftp get到虚机中*
+*这里在主机下载好sftp get到虚机中* 
+文件为mysql-5.7.24-linux-glibc2.12-x86_64.tar.gz
 // 解压
-tar -xvf mysql-5.7.24-1.el6.x86_64.rpm-bundle.tar
+tar -xvf mysql-5.7.24-linux-glibc2.12-x86_64.tar.gz
+解压后文件夹为mysql-5.7.24-linux-glibc2.12-x86_64
+将文件夹改名放到/usr/local/mysql
+//安装
+[root@ mysql]# pwd
+/usr/local/mysql
+[root@ mysql]# chown -R mysql:mysql *
+[root@ mysql]#  ./bin/mysqld --user=mysql --basedir=/usr/local/mysql --datadir=/usr/local/mysql/data --initialize
+2019-07-04T05:40:42.435333Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).
+2019-07-04T05:40:42.712449Z 0 [Warning] InnoDB: New log files created, LSN=45790
+2019-07-04T05:40:42.771650Z 0 [Warning] InnoDB: Creating foreign key constraint system tables.
+2019-07-04T05:40:42.844598Z 0 [Warning] No existing UUID has been found, so we assume that this is the first time that this server has been started. Generating a new UUID: 4365889b-9e1e-11e9-9cdd-000c291def52.
+2019-07-04T05:40:42.846341Z 0 [Warning] Gtid table is not ready to be used. Table 'mysql.gtid_executed' cannot be opened.
+2019-07-04T05:40:42.847849Z 1 [Note] A temporary password is generated for root@localhost: wHQz7N;w(n>_
 
-// 安装工具包以及兼容性相关包
-rpm -ivh mysql-community-common-5.7.24-1.el6.x86_64.rpm
-rpm -ivh mysql-community-libs-5.7.24-1.el6.x86_64.rpm
-rpm -ivh mysql-community-libs-compat-5.7.24-1.el6.x86_64.rpm
+这里出现了mysql登陆初始密码：wHQz7N;w(n>_
 
-// 安装mysql服务端
-rpm -ivh mysql-community-server-5.7.24-1.el6.x86_64.rpm
+将mysql/目录下除了data/目录的所有文件，改回root用户所有
+[root@localhost mysql]# chown -R root .
+#mysql用户只需作为mysql/data/目录下所有文件的所有者
+[root@localhost mysql]# chown -R mysql data
 
-// 安装mysql客户端
-rpm -ivh mysql-community-client-5.7.24-1.el6.x86_64.rpm
+### 3.文件配置
+复制启动文件 [root@localhost mysql]# cp support-files/mysql.server /etc/init.d/mysqld
 
-// 启动mysql
-service mysqld start
+[root@localhost mysql]# chmod 755 /etc/init.d/mysqld
 
-### 基本配置
-// 创建配置文件
-cp /usr/share/mysql/my-default.cnf /etc/my.cnf
+[root@localhost bin]# cp /usr/local/mysql/bin/my_print_defaults  /usr/bin/
 
-// 修改配置文件/etc/my.cnf，最后一行加上
-lower_case_table_names=1  #表名不区分大小写
+#修改启动脚本
+[root@localhost mysql]# vi /etc/init.d/mysqld
+#修改项：
+basedir=/usr/local/mysql/
+datadir=/usr/local/mysql/data
+port=3306
 
-// 由于mysql5.7有弱密码限制，可以在配置文件中加上下面内容，关闭限制
-[mysqld]
-validate_password=off
+### 4.启动服务并使用
+[root@localhost mysql]# service mysqld start
+#加入环境变量，编辑 /etc/profile，这样可以在任何地方用mysql命令了
+[root@localhost mysql]# vi /etc/profile
+#添加mysql路径
+export PATH=$PATH:/usr/local/mysql/bin
+#刷新立即生效
+[root@localhost mysql]# source /etc/profile
 
-// 查看root用户初始密码并修改root密码
-grep 'temporary password' /data/mysql/error.log 
-set password = password('your_password');
+ 配置以上信息之后，基本就可以启动了mysql（如果不能启动，请看最后的配置文件），但是现在还缺少mysql的配置文件，即my.cnf文件（没有它Mysql也可以使用内置的默认参数启动），最后说
+接下来就可以使用命令登录mysql了
+[root@localhost bin]# mysql -uroot -p
+Enter password: “ 这里数据上面的： m6Yifsio7n<*”
+##登录成功
 
-// 创建用户并授权
-grant all on *.* to name@'%' identified by "password" with grant option;
-flush privileges;
-```
+#然后设置root密码
+mysql>SET PASSWORD = PASSWORD('root');
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+4 rows in set (0.00 sec)
+--------------------- 
+
