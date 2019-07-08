@@ -13,7 +13,7 @@ set_var EASYRSA_REQ_OU “TestOpenVpn” //所在单位
 ```
 ### server.conf服务器端配置文件
 ```
-cal 192.168.255.128 #本地IP，既服务器的IP地址
+local 192.168.255.128 #本地IP，既服务器的IP地址
 port 1194 #vpn端口，定义openvpn监听的的端口，默认为1194端口。
 proto udp #定义openvpn使用的协议，默认使用UDP。如果是生产环境的话，建议使用TCP协议。
 dev tun #相对应的tab，tab是桥接模式，tun为虚拟网卡模式
@@ -130,8 +130,9 @@ port=3306
 [root@localhost mysql]# service mysqld start
 #加入环境变量，编辑 /etc/profile，这样可以在任何地方用mysql命令了
 [root@localhost mysql]# vi /etc/profile
-#添加mysql路径
-export PATH=$PATH:/usr/local/mysql/bin
+#在末尾添加mysql路径
+PATH=$PATH:/usr/local/mysql/bin
+export PATH
 #刷新立即生效
 [root@localhost mysql]# source /etc/profile
 
@@ -142,7 +143,7 @@ Enter password: “ 这里数据上面的： m6Yifsio7n<*”
 ##登录成功
 
 #然后设置root密码
-mysql>SET PASSWORD = PASSWORD('root');
+mysql>SET PASSWORD = PASSWORD('3588');
 mysql> show databases;
 +--------------------+
 | Database           |
